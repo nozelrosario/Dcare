@@ -1,0 +1,32 @@
+
+.fade-animation
+{
+    opacity: 0;
+    transition: 1s linear all; /* All other modern browsers and IE10+ */
+}
+
+.fade-animation.fade-in
+{
+     /* Chrome, Safari, Opera */
+    -webkit-animation-name: mymove; 
+    -webkit-animation-duration: 3s;  
+    -webkit-animation-iteration-count: 1; 
+    -webkit-animation-fill-mode: forwards; 
+    /* Others */
+    animation-name: mymove;
+    animation-delay: 2s;
+    animation-duration: 1s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes mymove {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+ /* Others */
+@keyframes mymove {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}

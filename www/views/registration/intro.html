@@ -1,0 +1,16 @@
+﻿<!--<  This Template isnt used yet, but in future may be we can modularize the loading od templates in singe seperate registration ui-view  >-->      
+      <ion-content>
+        <div class="fade-animation" ng-class="{'fade-in': isFirstRun }">
+        	<center><h1> {{welcomeTitle}} </h1></center>
+        	<div ng-repeat="introductionTextLines in introductionText" > 
+        		<h3> {{introductionTextLines.textLine}} </h3>        	
+        	</div>
+        	
+      	</div>
+      </ion-content>
+      <div class="bar bar-footer" style="height:70px" >
+          <!--<button class="button icon-right ion-chevron-right button-energized button-block button-large">Proceed</button>-->
+          <md-button class="md-primary md-raised button-block button-large"  ng-click="proceed()"> <b> Proceed </b> 
+          <span class="ion-button-style next-arrow"></span>
+          </md-button>
+      </div>

@@ -1,0 +1,45 @@
+﻿<ion-pane md-theme="amber">
+    <ion-header-bar class="bar bar-header bar-energized">
+    <h1 class="title">D-Care</h1>
+    </ion-header-bar>
+
+<!--    <form style="padding: 20px;" md-theme="amber">-->
+    <ion-scroll direction="y" style="height:90%">
+    <md-content class="content has-header has-footer" layout-align="center center" layout="row" layout-phone="column" style="height:auto;" >
+        
+        <div layout="column" layout-phone="column"  layout-align="center center" class="padding " >
+            <div class="padding"><center><h1> Systolic BP ? </h1></center></div>
+            <div ng-model="vitals.bpsystolic" jquery-dynameter  jquery-dynameter-config="{ label:'Systolic BP', unit:'mm Hg', min:80, max:210, regions:{ 80:'normal', 120:'warn', 160:'error' } }" ></div>
+            <div layout="row" layout-phone="row"  layout-align="center center" class="padding range" style="width:300px">
+                <i class="icon ion-minus-circled"></i>
+                <input type="range" name="height" min="80" max="210" ng-change="validate()" ng-model="vitals.bpsystolic" >
+                <i class="icon ion-plus-circled"></i>
+            </div>
+        </div>
+        <div layout="column" layout-phone="column"  layout-align="center center" class="padding " >
+            <div class="padding"><center><h1> Diastolic BP ? </h1></center></div>
+            <div ng-model="vitals.bpdiastolic" jquery-dynameter  jquery-dynameter-config="{ label:'Diastolic BP', unit:'mm Hg', min:40, max:140, regions:{ 40:'normal', 80:'warn', 99:'error' } }" ></div>
+            <div layout="row" layout-phone="row"  layout-align="center center" class="padding range" style="width:300px">
+                <i class="icon ion-minus-circled"></i>
+                <input type="range" name="height" min="40" max="140" ng-change="validate()" ng-model="vitals.bpdiastolic" >
+                <i class="icon ion-plus-circled"></i>
+            </div>
+        </div>        
+    </md-content>
+    </ion-scroll>
+    
+<!--    </form>-->
+    <div class="bar bar-footer" style="height:70px" layout >
+        <!--<button class="button icon-right ion-chevron-right button-energized button-block button-large">Proceed</button>-->
+        <div flex>
+            <md-button class="md-raised button-block button-large"  ng-click="skipAndProceed()"> <b> Skip and Proceed </b>
+                <span class="ion-button-style next-arrow"></span>
+            </md-button> 
+        </div>
+        <div flex>
+            <md-button class="md-primary md-raised button-block button-large"  ng-click="saveAndProceed()"> <b> Save and Proceed </b> 
+                <span class="ion-button-style next-arrow"></span>
+            </md-button>
+        </div>
+    </div>
+</ion-pane>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <!-- Mobiscroll CSS-->
+
+    <link rel="stylesheet" type="text/css" href="lib/mobiscroll/css/mobiscroll.core-2.4.css" />
+	<link rel="stylesheet" type="text/css" href="lib/mobiscroll/css/mobiscroll.jqm-2.4.css" />
+	<link rel="stylesheet" type="text/css" href="lib/mobiscroll/css/mobiscroll.ios-2.4.css" />
+	<link rel="stylesheet" type="text/css" href="lib/mobiscroll/css/mobiscroll.android-ics-2.4.css" />
+	<link rel="stylesheet" type="text/css" href="lib/mobiscroll/css/mobiscroll.android-2.4.css" />
+	<link rel="stylesheet" type="text/css" href="lib/mobiscroll/css/mobiscroll.sense-ui-2.4.css" />
+	<link rel="stylesheet" type="text/css" href="lib/mobiscroll/css/mobiscroll.animation-2.4.css" />
+	<link rel="stylesheet" type="text/css" href="lib/mobiscroll/css/mobiscroll.wp-2.4.css" />
+
+    <!-- Mobiscroll CSS-->
+    <!-- Jquery Dynameter CSS-->
+    <link rel="stylesheet" type="text/css" href="lib/jquery-dynameter/jquery.dynameter.css" />
+    <!-- Jquery Dynameter CSS-->
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link rel="stylesheet" href="lib/angular-material/angular-material.css">
+    <link rel="stylesheet" href="lib/angular-material/themes/amber-theme.css">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+    <!-- JQuery -->
+    <script src="lib/jquery/jquery-1.11.1.min.js"></script>
+    <!-- JQuery -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+    <!--<script src="lib/ionic/js/angular/angular-animate.js"></script>-->
+    <script src="lib/angular-material/hammer.js"></script>
+    <script src="lib/angular-material/angular-aria.js"></script>
+    <script src="lib/angular-material/angular-material.js"></script>
+
+
+    <!-- cordova script (this will be a 404 during development) Uncomment when deploying-->
+    <!--script src="cordova.js"></script-->
+
+    <!-- Mobiscroll Lib -->
+    
+    <script src="lib/mobiscroll/js/mobiscroll.core-2.4.js"></script>
+	<script src="lib/mobiscroll/js/mobiscroll.datetime-2.4.js"></script>
+	<script src="lib/mobiscroll/js/mobiscroll.jqm-2.4.js"></script>
+	<script src="lib/mobiscroll/js/mobiscroll.ios-2.4.js"></script>
+	<script src="lib/mobiscroll/js/mobiscroll.android-ics-2.4.js"></script>
+	<script src="lib/mobiscroll/js/mobiscroll.android-2.4.js"></script>
+	<script src="lib/mobiscroll/js/mobiscroll.wp-2.4.js"></script>
+    <!-- Mobiscroll Lib -->
+
+    <!-- JQuery Knob -->
+    <script src="lib/jquery-knob/jquery.knob.js"></script>
+    <!-- JQuery Knob-->
+
+    <!-- JQuery Dynameter -->
+    <script src="lib/jquery-dynameter/jquery.dynameter.js"></script>
+    <!-- JQuery Dynameter-->
+
+    <!-- JQuery Add Clear to textbox -->
+    <script src="lib/add-clear/addclear.js"></script>
+    <!-- JQuery JQuery Add Clear to textbox-->
+
+    <!-- App's Directives -->
+    <script src="directives/mobiscroll.js"></script>
+    <script src="directives/jqueryknob.js"></script>
+    <script src="directives/addclear.js"></script>
+    <script src="directives/jquerydynameter.js"></script>
+
+
+    <!-- App's js -->
+    <script src="js/app.js"></script>
+    <script src="js/stateRoutings.js"></script>
+
+    
+
+    <!-- Controllers -->
+
+    <script src="controllers/starter/starterController.js"></script>
+    <script src="controllers/starter/registrationModule.js"></script>
+   <!-- <script src="controllers/starter/dashboardController.js"></script>-->
+    
+    <!-- Models -->
+    <script src="models/patients/patientsStore.js"></script>
+    <script src="models/vitals/vitalsStore.js"></script>
+    
+ 
+    
+    
+       
+    
+  </head>
+  <body ng-app="dCare" ng-controller="InitApp">
+     <div ui-view></div>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+<ion-pane md-theme="amber" >
+      <ion-header-bar class="bar bar-header bar-energized">
+        <h1 class="title">D-Care</h1>
+      </ion-header-bar>
+      <ion-content class="content has-header padding">
+        <div class="fade-animation" ng-class="{'fade-in': isFirstRun }">
+        	<center><h1> {{welcomeTitle}} </h1></center>
+            <div ng-repeat="introductionTextLines in introductionText" > 
+        		<h3>{{introductionTextLines.textLine}} </h3>        	
+        	</div>
+      	</div>
+      </ion-content>
+      <div class="bar bar-footer" style="height:70px" >
+          <!--<button class="button icon-right ion-chevron-right button-energized button-block button-large">Proceed</button>-->
+          <md-button class="md-primary md-raised button-block button-large"  ng-click="proceed()"> <b> Proceed </b> 
+          <span class="ion-button-style next-arrow"></span>
+          </md-button>
+      </div>
+</ion-pane>

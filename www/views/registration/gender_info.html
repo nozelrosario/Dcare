@@ -1,0 +1,22 @@
+﻿<ion-pane md-theme="amber">
+	  <ion-header-bar class="bar bar-header bar-energized">
+		<h1 class="title">D-Care</h1>
+	  </ion-header-bar>
+<md-whiteframe class="md-whiteframe-z2 content has-header" layout layout-align="center center" style="height:100%">
+<div layout="column" layout-phone="row"  layout-align="center center">
+<div class="padding"><center><h1> Gender ? </h1></center></div>
+<div layout="row" layout-phone="column"  layout-align="center center">
+  <div flex>
+		<md-button class="md-fab ion-man GenderOptionButton" aria-label="Male" ng-click="registerMale()"  ng-class="{'md-primary': patient.gender == 'male' }">
+		</md-button>
+	</div>
+	<div flex>
+		<md-button class="md-fab ion-woman GenderOptionButton" aria-label="Female" ng-click="registerFemale()" ng-class="{'md-primary': patient.gender == 'female' }">
+		</md-button>
+	</div>
+</div>
+	</div>
+  </md-whiteframe>
+
+
+</ion-pane>

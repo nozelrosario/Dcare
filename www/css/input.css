@@ -1,0 +1,17 @@
+﻿.large-input
+{
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-top: 25px;
+}
+
+.large-input label
+{
+    font-size: 1.8em;
+}
+
+.large-input input
+{
+    border-bottom-style: solid;  /*workaround-- as ionic overides material theme css*/
+    font-size:1.3em;
+}

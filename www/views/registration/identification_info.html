@@ -1,0 +1,24 @@
+﻿<ion-pane md-theme="amber">
+	  <ion-header-bar class="bar bar-header bar-energized">
+		<h1 class="title">D-Care</h1>
+	  </ion-header-bar>
+<form style="padding: 20px;" md-theme="amber">
+<br />
+<div layout="column">
+	<div layout="column" >
+		<md-text-float label="First Name" ng-model="patient.firstname" class="large-input"> </md-text-float>
+		<md-text-float label="Last Name" ng-model="patient.lastname" class="large-input"> </md-text-float>
+	</div>
+	<div layout="column">
+		<md-text-float label="Phone" ng-model="patient.phone" class="large-input"> </md-text-float>
+		<md-text-float label="Email" ng-model="patient.email" type="email" class="large-input"> </md-text-float>
+	</div>
+</div>
+</form>
+      <div class="bar bar-footer" style="height:70px" >
+          <!--<button class="button icon-right ion-chevron-right button-energized button-block button-large">Proceed</button>-->
+          <md-button class="md-primary md-raised button-block button-large"  ng-click="proceed()"> <b> Save and Proceed </b> 
+          <span class="ion-button-style next-arrow"></span>
+          </md-button>
+      </div>
+</ion-pane>

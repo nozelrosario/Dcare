@@ -1,0 +1,42 @@
+﻿<ion-pane md-theme="amber">
+    <ion-header-bar class="bar bar-header bar-energized">
+    <h1 class="title">D-Care</h1>
+    </ion-header-bar>
+
+<!--    <form style="padding: 20px;" md-theme="amber">-->
+    <ion-scroll direction="y" style="height:100%">
+    <md-content class="content has-header" layout-align="center center" layout="row" layout-phone="column" style="height:auto;" >
+        
+        <div layout="column" layout-phone="column"  layout-align="center center" class="padding " style="height:350px" >
+            <div class="padding"><center><h1> Date of Birth </h1></center></div>
+            <div layout="row" layout-phone="column"  layout-align="center center" class="padding">
+                <input id="birthdate" type="text" ng-show="false" ng-change="calculateAge()" ng-model="patient.birthdate" mobiscroll-date mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'inline'}"/>
+            </div>
+            <h1><b><input disabled ng-model="patient.birthdate" add-clear add-clear-config="{returnFocus:false, showOnLoad:true, hidOnBlur:false }" style="border-bottom: 1px solid rgb(163, 157, 157) !important; width: 280px; background-color:#ffffff; border:none; text-align:center;font-weight:bold;"/></b></h1>
+        </div>
+        <div layout="column" layout-phone="column"  layout-align="center center" class="padding " style="height:350px;margin-top: -65px;"  >
+            <div class="padding"><center><h1> Age <b> {{patient.age}} </b><span ng-show="patient.age > 0">Year(s)</span></h1></center></div>
+            <div layout="row" class="padding" style="margin-top: -20px;" >
+                <input id="age" type="text" ng-model="patient.age" data-displayInput="true"  jquery-knob jquery-knob-config="{step:1, angleOffset:90, lineCap:'round', min:0, max:100, displayInput:false, cursor:false }"/>
+            </div>
+            
+        </div>
+        
+    </md-content>
+    </ion-scroll>
+    
+<!--    </form>-->
+    <div class="bar bar-footer" style="height:70px" layout >
+        <!--<button class="button icon-right ion-chevron-right button-energized button-block button-large">Proceed</button>-->
+        <div flex>
+            <md-button class="md-raised button-block button-large"  ng-click="skipAndProceed()"> <b> Skip and Proceed </b>
+                <span class="ion-button-style next-arrow"></span>
+            </md-button> 
+        </div>
+        <div flex>
+            <md-button class="md-primary md-raised button-block button-large"  ng-click="saveAndProceed()"> <b> Save and Proceed </b> 
+                <span class="ion-button-style next-arrow"></span>
+            </md-button>
+        </div>
+    </div>
+</ion-pane>
