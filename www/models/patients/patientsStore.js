@@ -12,7 +12,7 @@ angular.module('patientsStore.services', [])
 	                { id: 1, name: 'G.I. Joe', firstname: "G.I.", lastname: "Joe", phone: "2222222", email: "asd@qwe.com", gender: "male" },
 	                { id: 2, name: 'Miss Frizzle', firstname: "Miss", lastname: "Frizzle", phone: "3333333", email: "rty@dfg.com", gender: "female" },
 	                { id: 3, name: 'Ash Ketchum', firstname: "Ash", lastname: "Ketchum", phone: "4444444", email: "rty@dfgh.com", gender: "female" }
-	                ];
+	               ];
 
     return {
         getCount: function () {

@@ -46,6 +46,17 @@ angular.module('vitalsStore.services', [])
             deferredFetch.resolve(vitalsByID);
             return deferredFetch.promise;
         },
+        getLatestVitalsForPatient: function (patientID) {
+            // Search on patients
+            var deferredFetch = $q.defer();
+
+            ////NR:TODO:  Mock  ////
+            var latestVitals = vitalsList[1];
+            ////NR:TODO:  Mock  ////
+
+            deferredFetch.resolve(latestVitals);
+            return deferredFetch.promise;
+        },
         save: function (vitals) {
             // execute deferred / return promise
             var deferredSave = $q.defer();

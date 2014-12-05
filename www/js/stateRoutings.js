@@ -14,7 +14,7 @@
 
         .state('registration', {
             //url: '/registration',  // cannot use as using params[]
-            templateUrl: 'views/registration.html',
+            templateUrl: 'views/registration/registration.html',
             controller: 'RegistrationController',
             params: ['patientID', 'isFirstRun']
 
@@ -22,7 +22,7 @@
 
         .state('dashboard', {
             //url: '/dashboard',
-            templateUrl: 'views/dashboard.html',
+            templateUrl: 'views/dashboard/dashboard.html',
             controller: 'DashBoardController'
 
         });

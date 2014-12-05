@@ -11,6 +11,8 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
         // new patient
         $scope.patient = {};
     } else {
+
+    // TODO : Implement this via resolve on state provider : https://github.com/angular-ui/ui-router/wiki#resolve
         //alert("id = " + $stateParams.patientID);
         // existing patient , load data first
         var getPatientDataPromise = PatientsStore.getPatientByID($stateParams.patientID);
@@ -37,7 +39,7 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
         savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
     };
 
-})
+});
 
 /**
 * Gender Information
@@ -56,6 +58,8 @@ registrationModule.controller('GenderInfoController', function ($scope, $mdDialo
                                });
         
     } else {
+
+    // TODO : Implement this via resolve on state provider : https://github.com/angular-ui/ui-router/wiki#resolve
         //alert("id = " + $stateParams.patientID);
         // existing patient , load data first
         var getPatientDataPromise = PatientsStore.getPatientByID($stateParams.patientID);
@@ -89,7 +93,7 @@ registrationModule.controller('GenderInfoController', function ($scope, $mdDialo
         savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
     };
 
-})
+});
 
 /**
 * Age Information
@@ -108,6 +112,8 @@ registrationModule.controller('AgeInfoController', function ($scope, $mdDialog, 
                                });
         
     } else {
+
+    // TODO : Implement this via resolve on state provider : https://github.com/angular-ui/ui-router/wiki#resolve
         //alert("id = " + $stateParams.patientID);
         // existing patient , load data first
         var getPatientDataPromise = PatientsStore.getPatientByID($stateParams.patientID);
@@ -149,7 +155,7 @@ registrationModule.controller('AgeInfoController', function ($scope, $mdDialog, 
         savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
     };
 
-})
+});
 
 
 /**
@@ -178,6 +184,7 @@ registrationModule.controller('BodySizeInfoController', function ($scope, $mdDia
 //            });
 //        }
 
+// TODO : Implement this via resolve on state provider : https://github.com/angular-ui/ui-router/wiki#resolve
         //If vitals id passed, load existing data for vitals
         if($stateParams.vitalsID && $stateParams.vitalsID != "") {
             var getvitalsDataPromise = VitalsStore.getVitalByID($stateParams.vitalsID);
@@ -240,7 +247,7 @@ registrationModule.controller('BodySizeInfoController', function ($scope, $mdDia
         saveVitalsDataPromise.then($scope.changeState, $scope.saveFailed);
     };
 
-})
+});
 
 
 /**
@@ -269,6 +276,8 @@ registrationModule.controller('BloodPressureInfoController', function ($scope, $
 //            });
 //        }
 
+
+        // TODO : Implement this via resolve on state provider : https://github.com/angular-ui/ui-router/wiki#resolve
         //If vitals id passed, load existing data for vitals
         if($stateParams.vitalsID && $stateParams.vitalsID != "") {
             var getvitalsDataPromise = VitalsStore.getVitalByID($stateParams.vitalsID);
