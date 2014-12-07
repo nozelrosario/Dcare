@@ -1,11 +1,23 @@
-var dashboardModule = angular.module('dCare.dashboard', ['ionic', 'patientsStore.services' , 'vitalsStore.services']);
+var dashboardModule = angular.module('dCare.dashboard', ['ionic', 'patientsStore.services', 'vitalsStore.services']);
 
 //Controllers
-dashboardModule.controller('DashboardController', function ($scope, $ionicLoading, PatientsStore) {
+dashboardModule.controller('DashboardController', function ($scope, $ionicLoading,$ionicSideMenuDelegate, $state, $stateParams, patients) {
     $ionicLoading.show({
         template: 'Loading...'
     });
-    //$ionicLoading.hide();
+
+    $scope.patients = patients;
+    $scope.toggleActionsMenu = function () {
+        $ionicSideMenuDelegate.toggleLeft();
+    };
+
+    $scope.togglePatientsList = function () {
+        $ionicSideMenuDelegate.toggleRight();
+    };
+    // check state params for patient ID , if present load data for that patient
+    // else load data for first patient
+
+    $ionicLoading.hide();
 });
 
 
@@ -13,17 +25,17 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
 
 
 // Routings
-dashboardModule.config(function ($stateProvider, $urlRouterProvider, PatientsStore, VitalsStore) {
+dashboardModule.config(function ($stateProvider, $urlRouterProvider) {
 
     $stateProvider
         .state('dashboard', {
             resolve: {
-                patients: PatientsStore.getAllPatients(),
-                vitals: VitalsStore.getLatestVitalsForPatient($stateParams.patientID)
+                patients: function (PatientsStore) { return PatientsStore.getAllPatients(); },
+                vitals: function (VitalsStore, $stateParams) { return VitalsStore.getLatestVitalsForPatient($stateParams.patientID); }
             },
             //url: '/identificationInfo',  // cannot use as using params[]
-            templateUrl: 'views/registration/identification_info.html',
-            controller: 'IdentificationInfoController',
+            templateUrl: 'views/dashboard/dashboard.html',
+            controller: 'DashboardController',
             params: ['patientID']
         });
 

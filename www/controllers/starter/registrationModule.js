@@ -2,6 +2,26 @@ var registrationModule = angular.module('dCare.registration', ['ionic', 'patient
 
 // Controllers
 
+registrationModule.controller('RegistrationController', function ($scope, $stateParams, PatientsStore, $state) {
+    // NR: here stateParam 'patientID' is not required, might be needed for testing.
+    // NR: also no need of passing to the 'identification' controller.
+
+    $scope.isFirstRun = $stateParams.isFirstRun;
+    if ($scope.isFirstRun) {
+        $scope.isFirstRun = true;
+        $scope.welcomeTitle = "Welcome to D-Care";
+        $scope.introductionText = [{ "textLine": "A ultimate solution for your daily diabetes care ." },
+		                            { "textLine": "Help us knowing you by completing the registration process." },
+        ];
+        $scope.proceed = function () {
+            $state.go("identificationInfo", { patientID: $stateParams.patientID });
+        };
+
+
+    }
+});
+
+
 /**
 * Identification Information
 * [FirstName, Last Name, email, Phone ]
@@ -311,6 +331,7 @@ registrationModule.controller('BloodPressureInfoController', function ($scope, $
     $scope.changeState = function (vitals) {
         $scope.vitals = vitals;
         // transition to next state with patientID form vitals [$scope.vitals.patientID]
+        $state.go("dashboard", { patientID: $scope.vitals.patientID});
     };
     $scope.saveFailed = function (errorMessage) {
         $mdDialog.show($mdDialog.alert()

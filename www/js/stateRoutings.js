@@ -18,13 +18,13 @@
             controller: 'RegistrationController',
             params: ['patientID', 'isFirstRun']
 
-        })
-
-        .state('dashboard', {
-            //url: '/dashboard',
-            templateUrl: 'views/dashboard/dashboard.html',
-            controller: 'DashBoardController'
-
         });
+
+        //.state('dashboard', {
+        //    //url: '/dashboard',
+        //    templateUrl: 'views/dashboard/dashboard.html',
+        //    controller: 'DashboardController'
+
+        //});
 
 });

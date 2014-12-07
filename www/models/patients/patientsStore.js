@@ -8,10 +8,10 @@ angular.module('patientsStore.services', [])
 
     // Some fake testing data
     var patients = [
-	                { id: 0, name: 'Scruff McGruff', firstname: "Scruff", lastname: "McGruff", phone: "111111111", email: "asd@asd.com", gender: "male" },
-	                { id: 1, name: 'G.I. Joe', firstname: "G.I.", lastname: "Joe", phone: "2222222", email: "asd@qwe.com", gender: "male" },
-	                { id: 2, name: 'Miss Frizzle', firstname: "Miss", lastname: "Frizzle", phone: "3333333", email: "rty@dfg.com", gender: "female" },
-	                { id: 3, name: 'Ash Ketchum', firstname: "Ash", lastname: "Ketchum", phone: "4444444", email: "rty@dfgh.com", gender: "female" }
+	                { id: 0, name: 'Scruff McGruff', firstname: "Scruff", lastname: "McGruff", phone: "111111111", email: "asd@asd.com", gender: "male", birthdate:"12/12/1980", age:"26 years", photo:"img/ionic.png" },
+	                { id: 1, name: 'G.I. Joe', firstname: "G.I.", lastname: "Joe", phone: "2222222", email: "asd@qwe.com", gender: "male", birthdate: "12/12/1980", age: "26 years", photo: "img/ionic.png" },
+	                { id: 2, name: 'Miss Frizzle', firstname: "Miss", lastname: "Frizzle", phone: "3333333", email: "rty@dfg.com", gender: "female", birthdate: "12/12/1980", age: "26 years", photo: "img/ionic.png" },
+	                { id: 3, name: 'Ash Ketchum', firstname: "Ash", lastname: "Ketchum", phone: "4444444", email: "rty@dfgh.com", gender: "female", birthdate: "12/12/1980", age: "26 years", photo: "img/ionic.png" }
 	               ];
 
     return {
@@ -19,7 +19,7 @@ angular.module('patientsStore.services', [])
             var deferredCount = $q.defer();
 
             ////NR:TODO:  Mock  ////
-            var count = 0; // fire query for count
+            var count = 4; // fire query for count
             ////NR:TODO:  Mock  ////
 
             deferredCount.resolve(count);
