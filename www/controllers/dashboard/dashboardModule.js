@@ -19,7 +19,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
         $scope.currentPatient = patients[0];
     }
 
-    $scope.glucose = {glucosevalue:165, type:'fasting', datetime:'12/12/2014 12:12 PM', isLastEntry:false, isFirstEntry:false};
+    $scope.glucose = { glucosevalue: 165, type: 'fasting', datetime: '1288323623006', isLastEntry: false, isFirstEntry: false };
 
 
     // Action Methods

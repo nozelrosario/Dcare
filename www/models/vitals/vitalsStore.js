@@ -8,10 +8,10 @@ angular.module('vitalsStore.services', [])
 
     // Some fake testing data
     var vitalsList = [
-	                { id: 0, patientID: '1', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145" },
-	                { id: 1, patientID: '1', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145" },
-	                { id: 2, patientID: '2', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145" },
-	                { id: 3, patientID: '4', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145" }
+	                { id: 0, patientID: '1', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145", datetime: '1288323623006' },
+	                { id: 1, patientID: '1', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145", datetime: '1288323623006' },
+	                { id: 2, patientID: '2', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145", datetime: '1288323623006' },
+	                { id: 3, patientID: '4', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145", datetime: '1288323623006' }
 	                ];
 
     return {

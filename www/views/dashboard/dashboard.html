@@ -52,37 +52,43 @@
                 </div>
 <!--Glucose Info Card-->
 				<div class="list card">
-                    <!--<div class="item item-avatar">
-                        <div class="">Glucose</div>
-                    </div>-->
                     <div class="item item-body">
                         <div layout="row" layout-phone="row" >
-                            <div flex layout="column"  style="border-right: 1px solid rgb(180, 180, 180);">
+                            <div flex="70" layout="column"  style="border-right: 1px solid rgb(180, 180, 180);">
                                 <!-- Glucose Reading-->
-                                <div flex layout="column" layout-align="center center"> 
-                                    <div  class="bold-label">{{glucose.glucosevalue}}</div>
+                                <div layout="column" layout-align="center center" class="digital-display"> 
+                                    <div style="height:55px; padding-top:5px;" ><span class="secondary-label">{{glucose.type}}</span></div>
+                                    <div layout="row" layout-phone="column" layout-align="center center">
+                                    <span class="primary-label">{{glucose.glucosevalue}}</span>
+                                    <span class="secondary-label">mg/dL</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div flex layout="column" layout-align="center center">
-                            <!-- Height-->
-                                <div style="border-bottom: 1px solid rgb(180, 180, 180);">
-                                    <div>{{glucose.type}}</div>
+                            <div flex layout="column" layout-align="center center" >
+                            <!-- Glucose type & Time-->
+                                <div style="border-bottom: 1px solid rgb(180, 180, 180); width:100%" >
+                                    <div class="bold-label">_-^-`\_</div>
                                 </div>
-                                <div>
-                                    <div class="">{{glucose.datetime}}</div>
+                                <div style="padding-top:10px">
+                                    <time datetime="2014-09-24" class="date-as-calendar inline-flex size1_5x">
+                                        <span class="weekday">{{glucose.datetime | date:'EEE'}}</span>
+                                        <span class="day">{{glucose.datetime | date:'dd'}}</span>
+                                        <span class="month">{{glucose.datetime | date:'MMM'}} {{glucose.datetime | date:'yyyy'}}</span>
+                                        <span class="year">{{glucose.datetime | date:'shortTime'}}</span>
+                                    </time>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="item tabs tabs-secondary tabs-icon-left" style="height:100px">
                         <div layout="row" layout-align="center center" class="tab-item">
-                            <md-button class="md-fab ion-android-arrow-dropleft-circle SmallFab " aria-label="Previous" ng-click="" ng-disabled="glucose.isFirstEntry"></md-button>
+                            <md-button class="md-fab ion-ios-arrow-left SmallFab " aria-label="Previous" ng-click="" ng-disabled="glucose.isFirstEntry"></md-button>
                         </div>
                         <div layout="row" layout-align="center center" class="tab-item">
-                            <md-button class="md-fab ion-android-add-circle MediumFab" aria-label="Add" ng-click=""></md-button>
+                            <md-button class="md-fab ion-ios-plus-outline MediumFab" aria-label="Add" ng-click=""></md-button>
                         </div>
                         <div layout="row" layout-align="center center" class="tab-item">
-                            <md-button class="md-fab ion-android-arrow-dropleft-circle SmallFab" aria-label="Next" ng-click="" ng-disabled="glucose.isLastEntry"></md-button>
+                            <md-button class="md-fab ion-ios-arrow-right SmallFab" aria-label="Next" ng-click="" ng-disabled="glucose.isLastEntry"></md-button>
                         </div>
                     </div>
                 </div>

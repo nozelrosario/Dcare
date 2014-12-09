@@ -26,9 +26,7 @@
 
 .ExtremeLargeFab:before
 {
-    font-size:150px !important;
-    font-size:150px !important;
-    
+    font-size:150px !important;    
 }
 
 .LargeFab 
@@ -40,9 +38,7 @@
 
 .LargeFab:before
 {
-    font-size:100px !important;
-    font-size:100px !important;
-    
+    font-size:100px !important;    
 }
 
 .MediumFab 
@@ -53,9 +49,7 @@
 
 .MediumFab:before
 {
-    font-size:70px !important;
-    font-size:70px !important;
-    
+    font-size:70px !important;        
 }
 
 .SmallFab 
@@ -66,7 +60,6 @@
 
 .SmallFab:before
 {
-    font-size:50px !important;
-    font-size:50px !important;
-    
+    font-size:50px !important;  
+    margin-top: -5px;  
 }

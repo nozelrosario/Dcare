@@ -6,7 +6,30 @@
 }
 
 .sub-label {
-font-size: 14px;
-padding: 3px;
-color: rgb(150, 150, 150);
+   font-size: 14px;
+   padding: 3px;
+   color: rgb(150, 150, 150);
+}
+
+.digital-display 
+{
+    font-family: 'ds-digital';
+    border-radius: 12px;
+    background-color: rgb(226, 226, 226);
+    margin-right: 15px;
+    padding-bottom: 10px;
+}
+
+.digital-display .primary-label
+{
+    font-size: 7em;
+    height:50px;
+    padding:5px;
+}
+
+.digital-display .secondary-label
+{
+    font-size: 1.5em;
+    padding:5px;
+    height:35px;
 }
