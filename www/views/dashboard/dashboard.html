@@ -11,11 +11,82 @@
     </ion-header-bar>
     <ion-side-menus>
         <!-- Center content -->
-        <ion-side-menu-content>
-            <!--Dashboard content will go here-->
-            <ion-content>
-                Main content
-            </ion-content>
+		<ion-side-menu-content>
+			<!--Dashboard content will go here-->
+<!--Patient Info Card -->
+			<ion-content>
+				<div class="list card">
+                    <div class="item item-avatar">
+                        <img ng-src="{{currentPatient.photo}}">
+                        <div class="bold-label">{{currentPatient.name}}</div>
+                        <p class="sub-label">{{currentPatient.gender}} - {{currentPatient.age}} old</p>
+                    </div>
+                    <div class="item item-body">
+                        <div layout="row" layout-phone="row" >
+                            <div flex layout="column"  style="border-right: 1px solid rgb(180, 180, 180);">
+                                <!-- Weight & BMI-->
+                                <div flex layout="column" layout-align="center center" style="border-bottom: 1px solid rgb(180, 180, 180);" > 
+                                    <div  class="bold-label">{{latestVitals.weight}}</div>
+                                    <div class="sub-label">Weight ({{latestVitals.weightunit}})</div>
+                                </div>
+                                <div flex layout="column" layout-align="center center"> 
+                                    <div  class="bold-label">{{latestVitals.bmi}}</div>
+                                    <div class="sub-label" >BMI</div>
+                                </div>
+                            </div>
+                            <div flex layout="row" layout-align="center center">
+                            <!-- Height-->
+                                <div layout="row">
+                                    <img ng-show="currentPatient.gender=='male'" ng-src="img\male.png" style="height:150px;width:auto;margin:10px">
+                                    <img ng-show="currentPatient.gender=='female'" ng-src="img\female.png" style="height:150px;width:auto;margin:10px">
+                                </div>
+                                <div layout="column" layout-align="center center">
+                                    <div><img src="img\arrow-up.png" style="height:40px;width:15px;margin:10px"></div>
+                                    <div class="bold-label">{{latestVitals.height}}</div>
+                                    <div class="sub-label">Height ({{latestVitals.heightunit}})</div>
+                                    <div><img src="img\arrow-down.png" style="height:40px;width:15px;margin:10px"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<!--Glucose Info Card-->
+				<div class="list card">
+                    <!--<div class="item item-avatar">
+                        <div class="">Glucose</div>
+                    </div>-->
+                    <div class="item item-body">
+                        <div layout="row" layout-phone="row" >
+                            <div flex layout="column"  style="border-right: 1px solid rgb(180, 180, 180);">
+                                <!-- Glucose Reading-->
+                                <div flex layout="column" layout-align="center center"> 
+                                    <div  class="bold-label">{{glucose.glucosevalue}}</div>
+                                </div>
+                            </div>
+                            <div flex layout="column" layout-align="center center">
+                            <!-- Height-->
+                                <div style="border-bottom: 1px solid rgb(180, 180, 180);">
+                                    <div>{{glucose.type}}</div>
+                                </div>
+                                <div>
+                                    <div class="">{{glucose.datetime}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item tabs tabs-secondary tabs-icon-left" style="height:100px">
+                        <div layout="row" layout-align="center center" class="tab-item">
+                            <md-button class="md-fab ion-android-arrow-dropleft-circle SmallFab " aria-label="Previous" ng-click="" ng-disabled="glucose.isFirstEntry"></md-button>
+                        </div>
+                        <div layout="row" layout-align="center center" class="tab-item">
+                            <md-button class="md-fab ion-android-add-circle MediumFab" aria-label="Add" ng-click=""></md-button>
+                        </div>
+                        <div layout="row" layout-align="center center" class="tab-item">
+                            <md-button class="md-fab ion-android-arrow-dropleft-circle SmallFab" aria-label="Next" ng-click="" ng-disabled="glucose.isLastEntry"></md-button>
+                        </div>
+                    </div>
+                </div>
+			</ion-content>
         </ion-side-menu-content>
 
         <!-- Left menu -->
@@ -59,20 +130,24 @@
 
         <!-- Right menu -->
         <ion-side-menu side="right">
-            <!--Dashboard left menu containing global actions [Add patient, All notificationa, e.t.c]-->
+            <!--Dashboard Right menu containing Patient List-->
             <ion-content>
-                <ion-list>
-                    <ion-item ng-repeat="patient in patients" layout="row">
-                        <img flex="20" ng-src="{{patient.photo}}" style="height:70px;width:70px;margin:10px">
-                        <div layout="column" layout-align="center center">
-                            <h2><b>{{patient.name}}</b></h2>
-                            <p>{{patient.gender}} - {{patient.age}}</p>
-                        </div>
-</ion-item>
-                </ion-list>
+                <md-list>
+                    <md-item ng-repeat="patient in patients" >
+                        <md-item-content >
+                        <md-button menu-close ng-click="switchDashboardForPatient(patient.id)" class="button-full">
+                            <div layout="row">
+                                <img flex="20" ng-src="{{patient.photo}}" style="height:70px;width:70px;margin:10px">
+                                <div layout="column" layout-align="center center">
+                                    <b>{{patient.name}}</b>
+                                    <div class="sub-label">{{patient.gender}} - {{patient.age}}</div>
+                                </div>
+                            </div>
+                        </md-button>
+                        </md-item-content>
+                    </md-item>
+                </md-list>
             </ion-content>
-</ion-side-menu>
+       </ion-side-menu>
     </ion-side-menus>
-    <div class="bar bar-footer" style="height:70px">
-    </div>
 </ion-pane>

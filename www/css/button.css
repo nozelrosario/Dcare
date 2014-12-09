@@ -17,18 +17,56 @@
     content: "\f125";
 }
 
-
-
-.GenderOptionButton 
+.ExtremeLargeFab 
 {
     width:150px !important;
     height:150px !important;
     margin:10px !important;
 }
 
-.GenderOptionButton:before
+.ExtremeLargeFab:before
 {
     font-size:150px !important;
     font-size:150px !important;
+    
+}
+
+.LargeFab 
+{
+    width:100px !important;
+    height:100px !important;
+    margin:8px !important;
+}
+
+.LargeFab:before
+{
+    font-size:100px !important;
+    font-size:100px !important;
+    
+}
+
+.MediumFab 
+{
+    width:80px !important;
+    height:80px !important;
+}
+
+.MediumFab:before
+{
+    font-size:70px !important;
+    font-size:70px !important;
+    
+}
+
+.SmallFab 
+{
+    width:50px !important;
+    height:50px !important;
+}
+
+.SmallFab:before
+{
+    font-size:50px !important;
+    font-size:50px !important;
     
 }

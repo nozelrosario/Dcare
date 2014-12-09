@@ -1,0 +1,12 @@
+﻿.bold-label 
+{
+    font-weight: bolder;
+    font-size: 30px;
+    padding: 5px;
+}
+
+.sub-label {
+font-size: 14px;
+padding: 3px;
+color: rgb(150, 150, 150);
+}
