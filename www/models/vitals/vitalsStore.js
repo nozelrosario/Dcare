@@ -29,7 +29,7 @@ angular.module('vitalsStore.services', [])
             var deferredFetchAll = $q.defer();
 
             ////NR:TODO:  Mock  ////
-            var allVitals = $filter('filter')(vitalsList, {id:patientID}, true);
+            var allVitals = $filter('filter')(vitalsList, { patientID: patientID }, true);
             ////NR:TODO:  Mock  ////
 
             deferredFetchAll.resolve(allPatients);

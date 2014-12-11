@@ -1,18 +1,19 @@
 <ion-pane>
-    <ion-header-bar class="bar bar-header bar-energized">
-
-        <div class="buttons">
-            <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
-        </div>
-        <h1 class="title">D-Care</h1>
-        <div class="buttons">
-            <button class="button " ng-click="togglePatientsList()"><i class="icon ion-person-stalker"></i></button>
-        </div>
-    </ion-header-bar>
+    
     <ion-side-menus>
         <!-- Center content -->
-		<ion-side-menu-content>
+	    <ion-side-menu-content>
+            <ion-header-bar class="bar bar-header bar-energized">
+                <div class="buttons">
+                    <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
+                </div>
+                <h1 class="title">{{currentPatient.name}}</h1>
+                <div class="buttons">
+                    <button class="button " ng-click="togglePatientsList()"><i class="icon ion-person-stalker"></i></button>
+                </div>
+            </ion-header-bar>
 			<!--Dashboard content will go here-->
+            <!--<ion-nav-view name="glucose"></ion-nav-view>-->
 <!--Patient Info Card -->
 			<ion-content>
 				<div class="list card">
@@ -57,7 +58,7 @@
                             <div flex="70" layout="column"  style="border-right: 1px solid rgb(180, 180, 180);">
                                 <!-- Glucose Reading-->
                                 <div layout="column" layout-align="center center" class="digital-display"> 
-                                    <div style="height:55px; padding-top:5px;" ><span class="secondary-label">{{glucose.type}}</span></div>
+                                    <div style="height:55px; padding-top:5px;" ><span class="secondary-label">{{enums.glucoseTypes[glucose.type].short_label}}</span></div>
                                     <div layout="row" layout-phone="column" layout-align="center center">
                                     <span class="primary-label">{{glucose.glucosevalue}}</span>
                                     <span class="secondary-label">mg/dL</span>
@@ -69,13 +70,9 @@
                                 <div style="border-bottom: 1px solid rgb(180, 180, 180); width:100%" >
                                     <div class="bold-label">_-^-`\_</div>
                                 </div>
-                                <div style="padding-top:10px">
-                                    <time datetime="2014-09-24" class="date-as-calendar inline-flex size1_5x">
-                                        <span class="weekday">{{glucose.datetime | date:'EEE'}}</span>
-                                        <span class="day">{{glucose.datetime | date:'dd'}}</span>
-                                        <span class="month">{{glucose.datetime | date:'MMM'}} {{glucose.datetime | date:'yyyy'}}</span>
-                                        <span class="year">{{glucose.datetime | date:'shortTime'}}</span>
-                                    </time>
+                                <div class="sub-label" >Measured on</div>
+                                <div >
+                                     <date-time-box ng-model="glucose.datetime" box-size="20px" box-positioning="inline-flex"></date-time-box>
                                 </div>
                             </div>
                         </div>
@@ -99,38 +96,21 @@
         <ion-side-menu side="left">
             <!--Dashboard left menu containing patient specific actions [Add medical data, appointments, medications e.t.c]-->
             <ion-content>
-                <ion-list>
-                    <ion-item>
-                        <a class="item item-icon-left" href="#">
-                            <i class="icon ion-home"></i>
-                            Dashboard
-                        </a>
-                    </ion-item>
-                    <ion-item>
-                        <a class="item item-icon-left" href="#">
-                            <i class="icon ion-person-add"></i>
-                            Add a Loved one
-                        </a>
-                    </ion-item>
-                    <ion-item>
-                        <a class="item item-icon-left" href="#">
-                            <i class="icon ion-android-chat"></i>
-                            Messages/Notificaions
-                        </a>
-                    </ion-item>
-                    <ion-item>
-                        <a class="item item-icon-left" href="#">
-                            <i class="icon ion-gear-b"></i>
-                            Settings
-                        </a>
-                    </ion-item>
-                    <ion-item>
-                        <a class="item item-icon-left" href="#">
-                            <i class="icon ion-information-circled"></i>
-                            About
-                        </a>
-                    </ion-item>
-                       
+                <md-list>
+                    <md-item ng-repeat="menuItem in menuItems" >
+                        <md-item-content >
+                        <md-button menu-close ng-click="activateMenuItem(menuItem.id)" class="button-full menu-button">
+                            <div layout="row">
+                                <i class="menu-icon" ng-class="menuItem.icon"></i>
+                                <div layout="column">
+                                    <div class="menu-title">{{menuItem.title}}</div>
+                                    <div class="menu-sub-title">{{menuItem.subTitle}}</div>
+                                </div>
+                            </div>
+                        </md-button>
+                        </md-item-content>
+                    </md-item>
+                </md-list>
             </ion-content>
         </ion-side-menu>
 
@@ -141,12 +121,12 @@
                 <md-list>
                     <md-item ng-repeat="patient in patients" >
                         <md-item-content >
-                        <md-button menu-close ng-click="switchDashboardForPatient(patient.id)" class="button-full">
+                        <md-button menu-close ng-click="switchDashboardForPatient(patient.id)" class="button-full menu-button">
                             <div layout="row">
                                 <img flex="20" ng-src="{{patient.photo}}" style="height:70px;width:70px;margin:10px">
-                                <div layout="column" layout-align="center center">
-                                    <b>{{patient.name}}</b>
-                                    <div class="sub-label">{{patient.gender}} - {{patient.age}}</div>
+                                <div layout="column" layout-align="center start">
+                                    <div class="menu-title">{{patient.name}}</div>
+                                    <div class="menu-sub-title">{{patient.gender}} - {{patient.age}}</div>
                                 </div>
                             </div>
                         </md-button>

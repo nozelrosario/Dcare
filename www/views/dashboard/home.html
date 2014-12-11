@@ -1,0 +1,116 @@
+    <ion-side-menus>
+    <ion-header-bar class="bar bar-header bar-energized">
+                <div class="buttons">
+                    <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
+                </div>
+                <h1 class="title">{{currentPatient.name}}</h1>
+                <div class="buttons">
+                    <button class="button " ng-click="togglePatientsList()"><i class="icon ion-person-stalker"></i></button>
+                </div>
+            </ion-header-bar>
+        <!-- Center content -->
+	    <ion-side-menu-content>
+            
+			<!--Dashboard content will go here-->
+            <ion-nav-view name="homePageContent" class="has-header"></ion-nav-view>
+        </ion-side-menu-content>
+
+<!-- Left menu -->
+        <ion-side-menu side="left">
+            <!--Dashboard left menu containing patient specific actions [Add medical data, appointments, medications e.t.c]-->
+            <ion-content>
+                <md-list>
+                    <md-item ng-repeat="menuItem in menuItems" >
+                        <md-item-content >
+                        <md-button menu-close ng-click="activateMenuItem(menuItem.id)" class="button-full menu-button">
+                            <div layout="row">
+                                <i class="menu-icon" ng-class="menuItem.icon"></i>
+                                <div layout="column">
+                                    <div class="menu-title">{{menuItem.title}}</div>
+                                    <div class="menu-sub-title">{{menuItem.subTitle}}</div>
+                                </div>
+                            </div>
+                        </md-button>
+                        </md-item-content>
+                    </md-item>
+                </md-list>
+            </ion-content>
+        </ion-side-menu>
+    </ion-side-menus>
+<!--Patient Info Card -->
+<ion-content>
+	<div class="list card">
+        <div class="item item-avatar">
+            <img ng-src="{{currentPatient.photo}}">
+            <div class="bold-label">{{currentPatient.name}}</div>
+            <p class="sub-label">{{currentPatient.gender}} - {{currentPatient.age}} old</p>
+        </div>
+        <div class="item item-body">
+            <div layout="row" layout-phone="row" >
+                <div flex layout="column"  style="border-right: 1px solid rgb(180, 180, 180);">
+                    <!-- Weight & BMI-->
+                    <div flex layout="column" layout-align="center center" style="border-bottom: 1px solid rgb(180, 180, 180);" > 
+                        <div  class="bold-label">{{latestVitals.weight}}</div>
+                        <div class="sub-label">Weight ({{latestVitals.weightunit}})</div>
+                    </div>
+                    <div flex layout="column" layout-align="center center"> 
+                        <div  class="bold-label">{{latestVitals.bmi}}</div>
+                        <div class="sub-label" >BMI</div>
+                    </div>
+                </div>
+                <div flex layout="row" layout-align="center center">
+                <!-- Height-->
+                    <div layout="row">
+                        <img ng-show="currentPatient.gender=='male'" ng-src="img\male.png" style="height:150px;width:auto;margin:10px">
+                        <img ng-show="currentPatient.gender=='female'" ng-src="img\female.png" style="height:150px;width:auto;margin:10px">
+                    </div>
+                    <div layout="column" layout-align="center center">
+                        <div><img src="img\arrow-up.png" style="height:40px;width:15px;margin:10px"></div>
+                        <div class="bold-label">{{latestVitals.height}}</div>
+                        <div class="sub-label">Height ({{latestVitals.heightunit}})</div>
+                        <div><img src="img\arrow-down.png" style="height:40px;width:15px;margin:10px"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--Glucose Info Card-->
+	<div class="list card">
+        <div class="item item-body">
+            <div layout="row" layout-phone="row" >
+                <div flex="70" layout="column"  style="border-right: 1px solid rgb(180, 180, 180);">
+                    <!-- Glucose Reading-->
+                    <div layout="column" layout-align="center center" class="digital-display"> 
+                        <div style="height:55px; padding-top:5px;" ><span class="secondary-label">{{enums.glucoseTypes[glucose.type].short_label}}</span></div>
+                        <div layout="row" layout-phone="column" layout-align="center center">
+                        <span class="primary-label">{{glucose.glucosevalue}}</span>
+                        <span class="secondary-label">mg/dL</span>
+                        </div>
+                    </div>
+                </div>
+                <div flex layout="column" layout-align="center center" >
+                <!-- Glucose type & Time-->
+                    <div style="border-bottom: 1px solid rgb(180, 180, 180); width:100%" >
+                        <div class="bold-label">_-^-`\_</div>
+                    </div>
+                    <div class="sub-label" >Measured on</div>
+                    <div >
+                            <date-time-box ng-model="glucose.datetime" box-size="20px" box-positioning="inline-flex"></date-time-box>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item tabs tabs-secondary tabs-icon-left" style="height:100px">
+            <div layout="row" layout-align="center center" class="tab-item">
+                <md-button class="md-fab ion-ios-arrow-left SmallFab " aria-label="Previous" ng-click="" ng-disabled="glucose.isFirstEntry"></md-button>
+            </div>
+            <div layout="row" layout-align="center center" class="tab-item">
+                <md-button class="md-fab ion-ios-plus-outline MediumFab" aria-label="Add" ng-click=""></md-button>
+            </div>
+            <div layout="row" layout-align="center center" class="tab-item">
+                <md-button class="md-fab ion-ios-arrow-right SmallFab" aria-label="Next" ng-click="" ng-disabled="glucose.isLastEntry"></md-button>
+            </div>
+        </div>
+    </div>
+</ion-content>
+        

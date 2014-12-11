@@ -20,11 +20,4 @@
 
         });
 
-        //.state('dashboard', {
-        //    //url: '/dashboard',
-        //    templateUrl: 'views/dashboard/dashboard.html',
-        //    controller: 'DashboardController'
-
-        //});
-
 });

@@ -1,28 +1,64 @@
-var dashboardModule = angular.module('dCare.dashboard', ['ionic', 'patientsStore.services', 'vitalsStore.services']);
+var dashboardModule = angular.module('dCare.dashboard', ['ionic',
+                                                         'patientsStore.services', 'vitalsStore.services', 'glucoseStore.services',
+                                                         'dCare.glucose',
+                                                         'dCare.dateTimeBoxDirectives']);
 
 //Controllers
-dashboardModule.controller('DashboardController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, patients, latestVitals, PatientsStore, VitalsStore) {
+dashboardModule.controller('DashboardController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, allPatients, defaultPatient, latestVitals, latestGlucose, PatientsStore, VitalsStore, GlucoseStore) {
     $ionicLoading.show({
         template: 'Loading...'
     });
 
-    // Init
-    $scope.patients = patients;
-    $scope.latestVitals = latestVitals;
-    // Set current selected patient in context
-    if ($stateParams.patientID && $stateParams.patientID !== "") {
-        var patientDataPromise = PatientsStore.getPatientByID($stateParams.patientID);
-        patientDataPromise.then(function (patient) {
-            $scope.currentPatient = patient;
-        });
-    } else {
-        $scope.currentPatient = patients[0];
-    }
+    // Init Menu
+    $scope.menuItems = [
+                        { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
+                        { id: 2, title: 'Add a Loved one', subTitle: 'Add a new person you care for', icon: 'ion-person-add' },
+                        { id: 3, title: 'Blood Glucose', subTitle: 'Blood glucose tracker', icon: 'ion-android-chat' },
+                        { id: 4, title: 'Messages/Notificaions', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
+                        { id: 5, title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' },
+                        { id: 6, title: 'About', subTitle: 'Know more about contributers', icon: 'ion-information-circled' }
+                       ];
 
-    $scope.glucose = { glucosevalue: 165, type: 'fasting', datetime: '1288323623006', isLastEntry: false, isFirstEntry: false };
+    // init enums [to add more enums use $.extend($scope.enums, newEnum)]
+    $scope.enums = GlucoseStore.enums;
+
+    // Init Data
+    $scope.patients = allPatients;
+    $scope.latestVitals = latestVitals;
+    $scope.glucose = latestGlucose;
+
+    if (!defaultPatient) {
+        $scope.currentPatient = allPatients[0];
+    } else {
+        $scope.currentPatient = defaultPatient;
+    }
 
 
     // Action Methods
+    $scope.activateMenuItem = function (menuItemId) {
+        switch(menuItemId) {
+            case 1:
+                alert('Dashboard');
+                break;
+            case 2:
+                alert('Add Patient');
+                break;
+            case 3:
+                $state.go("glucoselist", { patientID: $scope.currentPatient.id });
+                break;
+            case 4:
+                alert('Messages/Notificaions');
+                break;
+            case 5:
+                alert('Settings');
+                break;
+            case 6:
+                alert('About');
+                break;
+            default:
+                alert('No Match');
+        }
+    };
 
     $scope.switchDashboardForPatient = function (patientID) {
         var vitalsDataPromise = VitalsStore.getLatestVitalsForPatient(patientID);
@@ -34,6 +70,25 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
         patientDataPromise.then(function (patient) {
             $scope.currentPatient = patient;
         });
+
+        var glucoseDataPromise = GlucoseStore.getLatestGlucoseForPatient(patientID);
+        glucoseDataPromise.then(function (glucose) {
+            $scope.glucose = glucose;
+        });
+    };
+
+    $scope.getNextGlucose = function () {
+        var glucoseNextDataPromise = GlucoseStore.getNextGlucoseForPatient($scope.currentPatient.id, $scope.glucose.datetime);
+        glucoseNextDataPromise.then(function (glucose) {
+            $scope.glucose = glucose;
+        });
+    };
+
+    $scope.getPreviousGlucose = function (patientID, datetime) {
+        var glucosePreviousDataPromise = GlucoseStore.getPreviousGlucoseForPatient($scope.currentPatient.id, $scope.glucose.datetime);
+        glucosePreviousDataPromise.then(function (glucose) {
+            $scope.glucose = glucose;
+        });
     };
 
     $scope.toggleActionsMenu = function () {
@@ -43,8 +98,6 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
     $scope.togglePatientsList = function () {
         $ionicSideMenuDelegate.toggleRight();
     };
-
-    // else load data for first patient
 
     $ionicLoading.hide();
 });
@@ -59,8 +112,10 @@ dashboardModule.config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
         .state('dashboard', {
             resolve: {
-                patients: function (PatientsStore) { return PatientsStore.getAllPatients(); },
-                latestVitals: function (VitalsStore, $stateParams) { return VitalsStore.getLatestVitalsForPatient($stateParams.patientID); }
+                defaultPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); },
+                allPatients: function (PatientsStore) { return PatientsStore.getAllPatients(); },
+                latestVitals: function (VitalsStore, $stateParams) { return VitalsStore.getLatestVitalsForPatient($stateParams.patientID); },
+                latestGlucose: function (GlucoseStore, $stateParams) { return GlucoseStore.getLatestGlucoseForPatient($stateParams.patientID); }
             },
             //url: '/identificationInfo',  // cannot use as using params[]
             templateUrl: 'views/dashboard/dashboard.html',

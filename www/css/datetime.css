@@ -134,10 +134,12 @@
   order: 1;
   font-size: 0.75em;
   padding: 0.1em 0;
+  text-transform: capitalize;
 }
 .inline-flex.date-as-calendar .weekday {
   order: 2;
   font-size: 0.6125em;
+  font-weight:bold;
 }
 .inline-flex.date-as-calendar .day {
   order: 3;
@@ -146,31 +148,4 @@
 .inline-flex.date-as-calendar .year {
   order: 4;
   font-size: 0.87750em;
-}
-
-/****************************************/
-/* Multiple sizes. */
-.date-as-calendar.size0_5x {
-  font-size: 8px;
-}
-.date-as-calendar.size0_75x {
-  font-size: 12px;
-}
-.date-as-calendar.size1x {
-  font-size: 16px;
-}
-.date-as-calendar.size1_25x {
-  font-size: 20px;
-}
-.date-as-calendar.size1_5x {
-  font-size: 24px;
-}
-.date-as-calendar.size1_75x {
-  font-size: 28px;
-}
-.date-as-calendar.size2x {
-  font-size: 32px;
-}
-.date-as-calendar.size3x {
-  font-size: 48px;
 }

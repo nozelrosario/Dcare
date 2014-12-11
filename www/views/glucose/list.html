@@ -1,0 +1,57 @@
+<ion-pane>
+    
+    <ion-side-menus>
+        <ion-header-bar class="bar bar-header bar-energized">
+            <div class="buttons">
+                <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
+            </div>
+            <h1 class="title">{{currentPatient.name}} - Glucose</h1>
+            <div class="buttons">
+                <button class="button " ng-click=""><i class="icon ion-plus-round"></i></button>
+            </div>
+        </ion-header-bar>
+        <!-- Center content -->
+	    <ion-side-menu-content>
+			<ion-content>
+                <md-list>
+                    <md-item ng-repeat="glucose in glucoseList" >
+                        <md-item-content >
+                            <md-button menu-close ng-click="" class="button-full menu-button">
+                                <div layout="row" class="list-row">
+                                    <date-time-box ng-model="glucose.datetime" box-size="20px" box-positioning="inline-flex" class=""></date-time-box>
+                                    <div flex layout="column" layout-align="center start">
+                                        <div class="menu-title">{{glucose.glucosevalue}}  mg/dL</div>
+                                        <div class="menu-sub-title">{{glucose.type}}</div>
+                                    </div>
+                                    <i class="menu-icon" ng-class="{'ion-arrow-graph-up-left': glucose.trend == 'high' , 'ion-arrow-graph-down-right': glucose.trend == 'low' , 'ion-drag': glucose.trend == 'equal' }"></i>
+                                </div>
+                            </md-button>
+                        </md-item-content>
+                    </md-item>
+                </md-list>
+			</ion-content>  
+        </ion-side-menu-content>
+
+        <!-- Left menu -->
+        <ion-side-menu side="left">
+            <!--Dashboard left menu containing patient specific actions [Add medical data, appointments, medications e.t.c]-->
+            <ion-content>
+                <md-list>
+                    <md-item ng-repeat="menuItem in menuItems" >
+                        <md-item-content >
+                        <md-button menu-close ng-click="activateMenuItem(menuItem.id)" class="button-full menu-button">
+                            <div layout="row">
+                                <i class="menu-icon" ng-class="menuItem.icon"></i>
+                                <div layout="column">
+                                    <div class="menu-title">{{menuItem.title}}</div>
+                                    <div class="menu-sub-title">{{menuItem.subTitle}}</div>
+                                </div>
+                            </div>
+                        </md-button>
+                        </md-item-content>
+                    </md-item>
+                </md-list>
+            </ion-content>
+        </ion-side-menu>
+    </ion-side-menus>
+</ion-pane>

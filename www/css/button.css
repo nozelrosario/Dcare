@@ -63,3 +63,29 @@
     font-size:50px !important;  
     margin-top: -5px;  
 }
+
+.menu-button .menu-title
+{
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    text-transform:capitalize;
+    font-weight:bold;
+    font-size: 18px;
+}
+
+.menu-button .menu-icon
+{
+    font-size: 40px;
+    padding: 5px;
+}
+
+.menu-button .menu-sub-title 
+{
+    font-size: 14px;
+    color: rgb(150, 150, 150);
+    text-transform: capitalize;
+    padding-left: 10px;
+    text-align: left;
+}

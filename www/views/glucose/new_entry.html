@@ -1,0 +1,18 @@
+    <ion-scroll direction="y" style="height:90%">
+    <md-content class="content has-header has-footer" layout-align="center center" layout="row" layout-phone="column" style="height:auto;" >
+        
+        <div layout="column" layout-phone="column"  layout-align="center center" class="padding " >
+            <md-text-float label="Date & Time" ng-model="glucose.datetime" class="large-input" mobiscroll-date mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'inline'}"> </md-text-float>
+        </div>
+        <div layout="column" layout-phone="column"  layout-align="center center" class="padding " >
+            <div class="padding"><center><h1> Diastolic BP ? </h1></center></div>
+            <div ng-model="vitals.bpdiastolic" jquery-dynameter  jquery-dynameter-config="{ label:'Diastolic BP', unit:'mm Hg', min:40, max:140, regions:{ 40:'normal', 80:'warn', 99:'error' } }" ></div>
+            <div layout="row" layout-phone="row"  layout-align="center center" class="padding range" style="width:300px">
+                <i class="icon ion-minus-circled"></i>
+                <!--<input type="range" name="height" min="40" max="140" ng-change="validate()" ng-model="vitals.bpdiastolic" >-->
+                <md-slider name="height" aria-label="BP-Diastolic"  min="40" max="140" ng-change="validate()" ng-model="vitals.bpdiastolic" style="width:100%"> </md-slider>
+                <i class="icon ion-plus-circled"></i>
+            </div>
+        </div>        
+    </md-content>
+    </ion-scroll>
