@@ -47,7 +47,12 @@ angular.module('glucoseStore.services', [])
             var deferredFetch = $q.defer();
 
             ////NR:TODO:  Mock  ////
-            var glucoseByID = glucoseList[glucoseID];
+            var glucoseByID;
+            if (glucoseID && glucoseID !== "") {
+                glucoseByID = ($filter('filter')(glucoseList, { id: JSON.parse(glucoseID) }, true))[0];
+            } else {
+                glucoseByID = null;
+            }
             ////NR:TODO:  Mock  ////
 
             deferredFetch.resolve(glucoseByID);

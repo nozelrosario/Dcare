@@ -7,7 +7,7 @@
             </div>
             <h1 class="title">{{currentPatient.name}} - Glucose</h1>
             <div class="buttons">
-                <button class="button " ng-click=""><i class="icon ion-plus-round"></i></button>
+                <button class="button " ng-click="newGlucose()"><i class="icon ion-plus-round"></i></button>
             </div>
         </ion-header-bar>
         <!-- Center content -->
@@ -16,7 +16,7 @@
                 <md-list>
                     <md-item ng-repeat="glucose in glucoseList" >
                         <md-item-content >
-                            <md-button menu-close ng-click="" class="button-full menu-button">
+                            <md-button menu-close ng-click="editGlucose(glucose.id)" class="button-full menu-button">
                                 <div layout="row" class="list-row">
                                     <date-time-box ng-model="glucose.datetime" box-size="20px" box-positioning="inline-flex" class=""></date-time-box>
                                     <div flex layout="column" layout-align="center start">

@@ -36,7 +36,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
 
     // Action Methods
     $scope.activateMenuItem = function (menuItemId) {
-        switch(menuItemId) {
+        switch (menuItemId) {
             case 1:
                 alert('Dashboard');
                 break;
@@ -76,6 +76,12 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
             $scope.glucose = glucose;
         });
     };
+
+    $scope.addNewGlucoseEntry = function () {
+        $state.go("glucoseForm", { patientID: $scope.currentPatient.id, parentState: 'dashboard' });
+
+    };
+   
 
     $scope.getNextGlucose = function () {
         var glucoseNextDataPromise = GlucoseStore.getNextGlucoseForPatient($scope.currentPatient.id, $scope.glucose.datetime);
