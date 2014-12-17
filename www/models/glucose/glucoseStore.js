@@ -7,17 +7,17 @@ angular.module('glucoseStore.services', [])
     // Will call phonegap api for storing/retriving patient data and returns a JSON array
     var enums = {
         glucoseTypes: {
-                        'fasting' : { label: 'Fasting blood sugar (FBS) / Before Meal', short_label: 'Fasting', value: 'fasting' },
-                        'postmeal': { label: 'Post Meal / 2hrs after Meal', short_label: 'Post Meal', value: 'postmeal' },
-                        'random' : { label: 'Random / In between', short_label: 'Random', value: 'random' }
-                      }
+            'fasting': { label: 'Fasting blood sugar (FBS) / Before Meal', short_label: 'Fasting', value: 'fasting' },
+            'postmeal': { label: 'Post Meal / 2hrs after Meal', short_label: 'Post Meal', value: 'postmeal' },
+            'random': { label: 'Random / In between', short_label: 'Random', value: 'random' }
+        }
     };
     // Some fake testing data
     var glucoseList = [
-	                { id: 0, patientID: '1', glucosevalue: 165, type: 'fasting', datetime: '1288323623006', trend:'high' },
-	                { id: 1, patientID: '1', glucosevalue: 165, type: 'fasting', datetime: '1288323623006', trend: 'low' },
-	                { id: 2, patientID: '2', glucosevalue: 165, type: 'fasting', datetime: '1288323623006', trend:'high'  },
-	                { id: 3, patientID: '4', glucosevalue: 165, type: 'fasting', datetime: '1288323623006', trend: 'equal' }
+	                { id: 0, patientID: '1', glucosevalue: 165, type: 'fasting', datetime: '1288323623006', trend: 'high' },
+	                { id: 1, patientID: '1', glucosevalue: 125, type: 'fasting', datetime: '1289323623006', trend: 'low' },
+	                { id: 2, patientID: '2', glucosevalue: 140, type: 'fasting', datetime: '1298323623006', trend: 'high' },
+	                { id: 3, patientID: '4', glucosevalue: 198, type: 'fasting', datetime: '1288523623006', trend: 'equal' }
 	                ];
 
     return {
@@ -56,6 +56,40 @@ angular.module('glucoseStore.services', [])
             ////NR:TODO:  Mock  ////
 
             deferredFetch.resolve(glucoseByID);
+            return deferredFetch.promise;
+        },
+        glucoseSparklineData: function (patientID) {
+            // Search on patients
+            var deferredFetch = $q.defer();
+            var glucoseSparkline = {};
+            ////NR:TODO:  Mock  ////
+            glucoseSparkline.data = [[0, 0], [130, 126, 150, 180]];
+            glucoseSparkline.options = [{ type: 'line', lineColor: 'transparent', height: '100%', width: '100%', fillColor: false, normalRangeColor: 'rgba(70, 255, 30, 0.55)', normalRangeMin: 100, normalRangeMax: 160, chartRangeMin: 30, chartRangeMax: 200 },
+                                      { type: 'line', lineColor: 'red', fillColor: 'rgba(255, 196, 45, 0.54)', lineWidth: 3 }];
+
+            ////NR:TODO:  Mock  ////
+
+            deferredFetch.resolve(glucoseSparkline);
+            return deferredFetch.promise;
+        },
+        getLineGraphDataForPatient: function (patientID) {
+            // Search on patients
+            var deferredFetch = $q.defer();
+
+            ////NR:TODO:  Mock  ////
+            var lineGraphData = [
+                                    {
+                                        name: "Fasting",
+                                        data: [[1083297600000, 130], [1085976000000, 126], [1088568000000, 150], [1091246400000, 180]]
+                                    },
+                                    {
+                                        name: "Post Meal",
+                                        data: [[1083297600000, 150], [1085976000000, 186], [1088568000000, 200], [1091246400000, 150]]
+                                    }
+                                ];
+            ////NR:TODO:  Mock  ////
+
+            deferredFetch.resolve(lineGraphData);
             return deferredFetch.promise;
         },
         getLatestGlucoseForPatient: function (patientID) {

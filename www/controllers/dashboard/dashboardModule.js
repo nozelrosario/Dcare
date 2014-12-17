@@ -1,10 +1,10 @@
 var dashboardModule = angular.module('dCare.dashboard', ['ionic',
                                                          'patientsStore.services', 'vitalsStore.services', 'glucoseStore.services',
                                                          'dCare.glucose',
-                                                         'dCare.dateTimeBoxDirectives']);
+                                                         'dCare.dateTimeBoxDirectives', 'dCare.jqSparklineDirectives']);
 
 //Controllers
-dashboardModule.controller('DashboardController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, allPatients, defaultPatient, latestVitals, latestGlucose, PatientsStore, VitalsStore, GlucoseStore) {
+dashboardModule.controller('DashboardController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData, PatientsStore, VitalsStore, GlucoseStore) {
     $ionicLoading.show({
         template: 'Loading...'
     });
@@ -26,6 +26,8 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
     $scope.patients = allPatients;
     $scope.latestVitals = latestVitals;
     $scope.glucose = latestGlucose;
+    $scope.glucoseTrend = glucoseSparklineData; // glucoseSparklineData = {data:[], options:{}}
+
 
     if (!defaultPatient) {
         $scope.currentPatient = allPatients[0];
@@ -81,7 +83,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
         $state.go("glucoseForm", { patientID: $scope.currentPatient.id, parentState: 'dashboard' });
 
     };
-   
+
 
     $scope.getNextGlucose = function () {
         var glucoseNextDataPromise = GlucoseStore.getNextGlucoseForPatient($scope.currentPatient.id, $scope.glucose.datetime);
@@ -105,6 +107,10 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
         $ionicSideMenuDelegate.toggleRight();
     };
 
+    $scope.openTrend = function () {
+        $state.go("glucosetrend", { patientID: $scope.currentPatient.id, parentState: 'dashboard' });
+    };
+
     $ionicLoading.hide();
 });
 
@@ -121,7 +127,8 @@ dashboardModule.config(function ($stateProvider, $urlRouterProvider) {
                 defaultPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); },
                 allPatients: function (PatientsStore) { return PatientsStore.getAllPatients(); },
                 latestVitals: function (VitalsStore, $stateParams) { return VitalsStore.getLatestVitalsForPatient($stateParams.patientID); },
-                latestGlucose: function (GlucoseStore, $stateParams) { return GlucoseStore.getLatestGlucoseForPatient($stateParams.patientID); }
+                latestGlucose: function (GlucoseStore, $stateParams) { return GlucoseStore.getLatestGlucoseForPatient($stateParams.patientID); },
+                glucoseSparklineData: function (GlucoseStore, $stateParams) { return GlucoseStore.glucoseSparklineData($stateParams.patientID); }
             },
             //url: '/identificationInfo',  // cannot use as using params[]
             templateUrl: 'views/dashboard/dashboard.html',

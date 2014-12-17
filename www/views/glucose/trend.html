@@ -2,9 +2,12 @@
 <ion-header-bar class="bar bar-header bar-energized">
     <h1 class="title">{{currentPatient.name}} - Glucose Trend</h1>
 </ion-header-bar>
-<!-- <ion-scroll direction="y" style="height:90%">-->
+<ion-scroll direction="y" style="height:100%">
     <md-content class="content has-header " layout="column" style="height:auto;" >
-        <nvd3 options="options" data="data" config="config" ></nvd3> 
+        <highchart id="glucoseTrend" config="glucoseChartConfig"></highchart>
+        <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center">
+             <span> If the lines stay in the Green area, then you are Good </span>
+        </md-whiteframe>
     </md-content>
-<!--    </ion-scroll>-->
+</ion-scroll>
     </ion-pane>

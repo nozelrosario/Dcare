@@ -31,8 +31,12 @@
                                     <div class="sub-label">Weight ({{latestVitals.weightunit}})</div>
                                 </div>
                                 <div flex layout="column" layout-align="center center"> 
-                                    <div  class="bold-label">{{latestVitals.bmi}}</div>
-                                    <div class="sub-label" >BMI</div>
+                                    <div layout="row" class="padding"><div class="sub-label" >BMI :</div><div  class="bold-label">{{latestVitals.bmi}}</div></div>                                    
+                                    
+                                    <div  class="bold-label" ng-show="latestVitals.bmi < 18.5">Underweight</div>
+                                    <div  class="bold-label" ng-show="latestVitals.bmi > 18.5 && latestVitals.bmi < 25 ">Normal</div>
+                                    <div  class="bold-label" ng-show="latestVitals.bmi > 25 && latestVitals.bmi < 30 ">Overweight</div>
+                                    <div layout="row" ng-show="latestVitals.bmi > 30"><div class="sub-label"> Condition :</div><div class="bold-label">Obese</div></div>
                                 </div>
                             </div>
                             <div flex layout="row" layout-align="center center">
@@ -78,12 +82,13 @@
                             </div>
                             <div flex layout="column" layout-align="center center" >
                             <!-- Glucose type & Time-->
-                                <div style="border-bottom: 1px solid rgb(180, 180, 180); width:100%" >
-                                    <div class="bold-label">_-^-`\_</div>
+                                <div style="border-bottom: 1px solid rgb(180, 180, 180); width:100%"  >
+                                    <!--<div class="bold-label">_-^-`\_</div>-->
+                                    <div ng-click="openTrend()" jq-sparkline sparkline-config="glucoseTrend.options" ng-model="glucoseTrend.data" class="GlucoseSparkline"></div>
                                 </div>
                                 <div class="sub-label" >Measured on</div>
                                 <div >
-                                     <date-time-box ng-model="glucose.datetime" box-size="20px" box-positioning="inline-flex"></date-time-box>
+                                     <date-time-box ng-model="glucose.datetime" box-size="20px" box-positioning="inline-flex" style="margin-left:10px"></date-time-box>
                                 </div>
                             </div>
                         </div>
