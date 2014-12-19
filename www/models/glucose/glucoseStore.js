@@ -63,9 +63,22 @@ angular.module('glucoseStore.services', [])
             var deferredFetch = $q.defer();
             var glucoseSparkline = {};
             ////NR:TODO:  Mock  ////
-            glucoseSparkline.data = [[0, 0], [130, 126, 150, 180]];
-            glucoseSparkline.options = [{ type: 'line', lineColor: 'transparent', height: '100%', width: '100%', fillColor: false, normalRangeColor: 'rgba(70, 255, 30, 0.55)', normalRangeMin: 100, normalRangeMax: 160, chartRangeMin: 30, chartRangeMax: 200 },
-                                      { type: 'line', lineColor: 'red', fillColor: 'rgba(255, 196, 45, 0.54)', lineWidth: 3 }];
+            glucoseSparkline.data = [130, 95, 126, 150, 180, 200];
+            glucoseSparkline.options = { type: 'line',
+                                         height: '100%',
+                                         width: '100%',
+                                         lineColor: 'orange',
+                                         spotColor: 'orange',
+                                         spotRadius: 4,
+                                         valueSpots: { ':100': 'red', '101:180': 'green', '180:': 'red' },
+                                         fillColor: false,
+                                         lineWidth: 3,
+                                         normalRangeColor: 'rgba(70, 255, 30, 0.55)',
+                                         normalRangeMin: 100, normalRangeMax: 160,
+                                         chartRangeMin: 30,
+                                         chartRangeMax: 200
+                                       };
+
 
             ////NR:TODO:  Mock  ////
 

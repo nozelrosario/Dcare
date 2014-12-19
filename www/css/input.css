@@ -15,3 +15,16 @@
     border-bottom-style: solid;  /*workaround-- as ionic overides material theme css*/
     font-size:1.3em;
 }
+
+.datetime-input 
+{
+    display: block;
+    border-width: 0 0 1px 0;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-bottom-style: solid;
+    font-size: 1.3em;
+    text-align: center;
+    width: 300px;
+    cursor: text;
+}

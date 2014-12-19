@@ -31,12 +31,12 @@
                                     <div class="sub-label">Weight ({{latestVitals.weightunit}})</div>
                                 </div>
                                 <div flex layout="column" layout-align="center center"> 
-                                    <div layout="row" class="padding"><div class="sub-label" >BMI :</div><div  class="bold-label">{{latestVitals.bmi}}</div></div>                                    
+                                    <div layout="row" class="padding" layout-phone="column" layout-align="center center" ><div class="sub-label" >BMI :</div><div  class="bold-label">{{latestVitals.bmi}}</div></div>                                    
                                     
-                                    <div  class="bold-label" ng-show="latestVitals.bmi < 18.5">Underweight</div>
-                                    <div  class="bold-label" ng-show="latestVitals.bmi > 18.5 && latestVitals.bmi < 25 ">Normal</div>
-                                    <div  class="bold-label" ng-show="latestVitals.bmi > 25 && latestVitals.bmi < 30 ">Overweight</div>
-                                    <div layout="row" ng-show="latestVitals.bmi > 30"><div class="sub-label"> Condition :</div><div class="bold-label">Obese</div></div>
+                                    <div layout="row" layout-phone="column" layout-align="center center" ng-show="latestVitals.bmi < 18.5"><div class="sub-label"> Condition :</div><div  class="bold-label">Underweight</div></div>
+                                    <div layout="row" layout-phone="column" layout-align="center center" ng-show="latestVitals.bmi > 18.5 && latestVitals.bmi < 25 "><div class="sub-label"> Condition :</div><div  class="bold-label">Normal</div></div>
+                                    <div layout="row" layout-phone="column" layout-align="center center" ng-show="latestVitals.bmi > 25 && latestVitals.bmi < 30 "><div class="sub-label"> Condition :</div><div  class="bold-label">Overweight</div></div>
+                                    <div layout="row" layout-phone="column" layout-align="center center" ng-show="latestVitals.bmi > 30"><div class="sub-label"> Condition :</div><div class="bold-label">Obese</div></div>
                                 </div>
                             </div>
                             <div flex layout="row" layout-align="center center">

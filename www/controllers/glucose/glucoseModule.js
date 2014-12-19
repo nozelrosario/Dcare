@@ -90,7 +90,7 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicLoadin
     };
 
     $scope.save = function () {
-        $scope.glucose.datetime = Date.parse($scope.glucose.datetime); // Parse date to long format
+        $scope.glucose.datetime = ($scope.glucose.datetime) ? Date.parse($scope.glucose.datetime) : null; // Parse date to long format
         var saveGlucoseDataPromise = GlucoseStore.save($scope.glucose);
         saveGlucoseDataPromise.then($scope.changeState, $scope.saveFailed);
 
