@@ -13,11 +13,12 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
     $scope.menuItems = [
                         { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
                         { id: 2, title: 'Add a Loved one', subTitle: 'Add a new person you care for', icon: 'ion-person-add' },
-                        { id: 3, title: 'Blood Glucose', subTitle: 'Blood glucose tracker', icon: 'ion-android-chat' },
-                        { id: 4, title: 'Medications', subTitle: 'Medications', icon: 'ion-android-chat' },
-                        { id: 5, title: 'Messages/Notificaions', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
-                        { id: 6, title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' },
-                        { id: 7, title: 'About', subTitle: 'Know more about contributers', icon: 'ion-information-circled' }
+                        { id: 3, title: 'Vitals', subTitle: 'Register Vitals', icon: 'ion-android-chat' },
+                        { id: 4, title: 'Blood Glucose', subTitle: 'Blood glucose tracker', icon: 'ion-android-chat' },
+                        { id: 5, title: 'Medications', subTitle: 'Medications', icon: 'ion-android-chat' },
+                        { id: 6, title: 'Messages/Notificaions', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
+                        { id: 7, title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' },
+                        { id: 8, title: 'About', subTitle: 'Know more about contributers', icon: 'ion-information-circled' }
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
@@ -47,18 +48,21 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
                 alert('Add Patient');
                 break;
             case 3:
-                $state.go("glucoselist", { patientID: $scope.currentPatient.id });
+                $state.go("vitals", { patientID: $scope.currentPatient.id });
                 break;
             case 4:
-                $state.go("medicationslist", { patientID: $scope.currentPatient.id });
+                $state.go("glucoselist", { patientID: $scope.currentPatient.id });
                 break;
             case 5:
-                alert('Messages/Notificaions');
+                $state.go("medicationslist", { patientID: $scope.currentPatient.id });
                 break;
             case 6:
-                alert('Settings');
+                alert('Messages/Notificaions');
                 break;
             case 7:
+                alert('Settings');
+                break;
+            case 8:
                 alert('About');
                 break;
             default:

@@ -7,6 +7,7 @@ mobiscrollDirectives.directive('dateTimeBox', function () {
         scope: {
             ngModel: '='
         },
+        // This sometimes has date string parsin issues. TODO: parse manualy in link(), instead of angular parsers.
         template: "    <span class='weekday'>{{ngModel | date:'EEE'}}</span>\
                        <span class='day'>{{ngModel | date:'dd'}}</span>\
                        <span class='month'>{{ngModel | date:'MMM'}} {{ngModel | date:'yyyy'}}</span>\
