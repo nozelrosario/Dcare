@@ -5,25 +5,25 @@
             <div class="buttons">
                 <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
             </div>
-            <h1 class="title">{{currentPatient.name}} - Vitals</h1>
+            <h1 class="title">{{currentPatient.name}} - Glucose</h1>
             <div class="buttons">
-                <button class="button " ng-click="newVitals()"><i class="icon ion-plus-round"></i></button>
+                <button class="button " ng-click="newGlucose()"><i class="icon ion-plus-round"></i></button>
             </div>
         </ion-header-bar>
         <!-- Center content -->
 	    <ion-side-menu-content>
 			<ion-content>
                 <md-list>
-                    <md-item ng-repeat="vitals in vitalsList">
-                        <md-item-content>
-                            <md-button menu-close ng-click="editVitals(vitals.id)" class="button-full menu-button">
+                    <md-item ng-repeat="glucose in glucoseList" >
+                        <md-item-content >
+                            <md-button menu-close ng-click="editGlucose(glucose.id)" class="button-full menu-button">
                                 <div layout="row" class="list-row">
-                                    <date-time-box ng-model="vitals.datetime" box-size="20px" box-positioning="inline-flex" class=""></date-time-box>
+                                    <date-time-box ng-model="glucose.datetime" box-size="20px" box-positioning="inline-flex" class=""></date-time-box>
                                     <div flex layout="column" layout-align="center start">
-                                        <div class="menu-title">Weight & BMI : {{vitals.weight}} &nbsp;{{vitals.weightunit}} &amp; {{vitals.bmi}}</div>
-                                        <div class="menu-sub-title">BP : {{vitals.bpsystolic}}/{{vitals.bpdiastolic}}</div>
+                                        <div class="menu-title">{{glucose.glucosevalue}}  mg/dL</div>
+                                        <div class="menu-sub-title">{{glucose.type}}</div>
                                     </div>
-                                    <!--<i class="menu-icon" ng-class="{'ion-arrow-graph-up-left': glucose.trend == 'high' , 'ion-arrow-graph-down-right': glucose.trend == 'low' , 'ion-drag': glucose.trend == 'equal' }"></i>-->
+                                    <i class="menu-icon" ng-class="{'ion-arrow-graph-up-left': glucose.trend == 'high' , 'ion-arrow-graph-down-right': glucose.trend == 'low' , 'ion-drag': glucose.trend == 'equal' }"></i>
                                 </div>
                             </md-button>
                         </md-item-content>

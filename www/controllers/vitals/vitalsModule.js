@@ -1,9 +1,9 @@
-var glucoseModule = angular.module('dCare.vitals', ['ionic',
+var vitalsModule = angular.module('dCare.vitals', ['ionic',
                                                      'patientsStore.services', 'vitalsStore.services',
-                                                     'dCare.dateTimeBoxDirectives', 'highcharts-ng']);
+                                                     'dCare.dateTimeBoxDirectives', 'highcharts-ng', 'dCare.jqueryDynameterDirectives', 'dCare.mobiscrollDirectives', 'dCare.jqueryKnobDirectives', 'dCare.addclearDirectives']);
 
 //Controllers
-glucoseModule.controller('VitalsListController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, vitalsList, currentPatient, VitalsStore) {
+vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, latestVitals, currentPatient, VitalsStore) {
     $ionicLoading.show({
         template: 'Loading...'
     });
@@ -11,27 +11,32 @@ glucoseModule.controller('VitalsListController', function ($scope, $ionicLoading
     // Init Menu
     $scope.menuItems = [
                         { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
-                        { id: 2, title: 'Add New', subTitle: 'Add a new glucose measurement', icon: 'ion-person-add' },
-                        { id: 3, title: 'See Trend', subTitle: 'Blood glucose graph', icon: 'ion-android-chat' },
-                        { id: 4, title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
-                        { id: 5, title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' }
+                        { id: 2, title: 'Vitals List', subTitle: 'List of all recorded vitals', icon: 'ion-person-add' },
+                        { id: 3, title: 'Add New', subTitle: 'Add a new Vitals record', icon: 'ion-person-add' },
+                        { id: 4, title: 'See Height Trend', subTitle: 'Height values graph', icon: 'ion-android-chat' },
+                        { id: 5, title: 'See Weight Trend', subTitle: 'Weight values graph', icon: 'ion-android-chat' },
+                        { id: 6, title: 'See BMI Trend', subTitle: 'BMI values graph', icon: 'ion-android-chat' },
+                        { id: 7, title: 'See BP Trend', subTitle: 'Blood pressure values graph', icon: 'ion-android-chat' },
+                        { id: 8, title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
+                        { id: 9, title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' }
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = VitalsStore.enums;
 
     // Init Data
-    $scope.vitalsList = vitalsList;
+    $scope.vitals = latestVitals;
     $scope.currentPatient = currentPatient;
 
     // Action Methods
 
-    $scope.editVitals = function (vitalsID) {
-        $state.go("vitalsForm", { patientID: $scope.currentPatient.id, glucoseID: glucoseID, parentState: 'vitalslist' });
+    $scope.showVitalsList = function () {
+        //TODO : implement height Weight page
+        $state.go("vitalslist", { patientID: $scope.currentPatient.id, parentState: 'vitalsSummary' });
     };
 
-    $scope.newGlucose = function () {
-        $state.go("vitalsForm", { patientID: $scope.currentPatient.id, parentState: 'glucoselist' });
+    $scope.newVitals = function () {
+        $state.go("vitalsForm", { patientID: $scope.currentPatient.id, parentState: 'vitalsSummary' });
     };
 
     $scope.activateMenuItem = function (menuItemId) {
@@ -40,15 +45,27 @@ glucoseModule.controller('VitalsListController', function ($scope, $ionicLoading
                 $state.go("dashboard", { patientID: $stateParams.patientID });
                 break;
             case 2:
-                $scope.newGlucose();
+                $scope.showVitalsList();
                 break;
             case 3:
-                $state.go("vitalstrend", { patientID: $scope.currentPatient.id, parentState: 'vitalslist' });
+                $scope.newVitals();
                 break;
             case 4:
-                alert('Messages/Notificaions');
+                $state.go("vitalstrend", { patientID: $scope.currentPatient.id, trendType: 'Height', unit: 'Cm', parentState: 'vitalsSummary' });
                 break;
             case 5:
+                $state.go("vitalstrend", { patientID: $scope.currentPatient.id, trendType: 'Weight', unit: 'Kg', parentState: 'vitalsSummary' });
+                break;
+            case 6:
+                $state.go("vitalstrend", { patientID: $scope.currentPatient.id, trendType: 'BMI', unit: '', parentState: 'vitalsSummary' });
+                break;
+            case 7:
+                $state.go("vitalstrend", { patientID: $scope.currentPatient.id, trendType: 'BP', unit: 'Cm', parentState: 'vitalsSummary' });
+                break;
+            case 8:
+                alert('Messages/Notificaions');
+                break;
+            case 9:
                 alert('Settings');
                 break;
             default:
@@ -63,42 +80,130 @@ glucoseModule.controller('VitalsListController', function ($scope, $ionicLoading
     $ionicLoading.hide();
 });
 
+vitalsModule.controller('VitalsListController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, vitalsList, currentPatient, VitalsStore) {
+    $ionicLoading.show({
+        template: 'Loading...'
+    });
+
+    // Init Menu
+    $scope.menuItems = [
+                        { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
+                        { id: 2, title: 'Vitals Summary', subTitle: 'Vitals summary page', icon: 'ion-home' },
+                        { id: 3, title: 'Add New', subTitle: 'Add a new glucose measurement', icon: 'ion-person-add' },
+                        { id: 4, title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
+                        { id: 5, title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' }
+    ];
+
+    $scope.activateMenuItem = function (menuItemId) {
+        switch (menuItemId) {
+            case 1:
+                $state.go("dashboard", { patientID: $stateParams.patientID });
+                break;
+            case 2:
+                $scope.showVitalsSummary();
+                break;
+            case 3:
+                $scope.newVitals();
+                break;
+            case 4:
+                alert('Messages/Notificaions');
+                break;
+            case 5:
+                alert('Settings');
+                break;
+            default:
+                alert('No Match');
+        }
+    };
+
+    // init enums [to add more enums use $.extend($scope.enums, newEnum)]
+    //$scope.enums = VitalsStore.enums; // No Enums currentlly, may be in future.
+
+    // Init Data
+    $scope.vitalsList = vitalsList;
+    $scope.currentPatient = currentPatient;
+
+    // Action Methods
+    $scope.showVitalsSummary = function () {
+        //TODO : implement summary page
+        $state.go("vitalsSummary", { patientID: $scope.currentPatient.id, parentState: 'dashboard' });
+    };
+
+    $scope.editVitals = function (vitalsID) {
+        $state.go("vitalsForm", { patientID: $scope.currentPatient.id, vitalsID: vitalsID, parentState: 'vitalslist' });
+    };
+
+    $scope.newVitals = function () {
+        $state.go("vitalsForm", { patientID: $scope.currentPatient.id, parentState: 'vitalslist' });
+    };
+
+    $scope.toggleActionsMenu = function () {
+        $ionicSideMenuDelegate.toggleLeft();
+    };
 
 
-glucoseModule.controller('VitalsFormController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, glucose, currentPatient, GlucoseStore) {
+    $ionicLoading.hide();
+});
+
+
+vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, vitals, currentPatient, VitalsStore) {
     $ionicLoading.show({
         template: 'Loading...'
     });
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
-    $scope.enums = GlucoseStore.enums;
+    //$scope.enums = VitalsStore.enums; // NR: nor required currently
 
     // Init Data
     $scope.currentPatient = currentPatient;
-    if (glucose) {
-        $scope.glucose = glucose;
+    if (vitals) {
+        $scope.vitals = vitals;
     } else {
-        $scope.glucose = { patientID: $scope.currentPatient.id };  // New entry : make any default values here if any
+        $scope.vitals = { patientID: $scope.currentPatient.id };  // New entry : make any default values here if any
     }
-    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'vitalslist';
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'vitalsSummary';
+
+    $scope.calculateBMI = function () {
+        // Metric Units: BMI = Weight (kg) / (Height (m) x Height (m))
+        //English Units: BMI = Weight (lb) / (Height (in) x Height (in)) x 703
+        //http://www.freebmicalculator.net/healthy-bmi.php
+        if ($scope.vitals.weight > 0 && $scope.vitals.height > 0) {
+            $scope.vitals.bmi = ($scope.vitals.height / $scope.vitals.weight) * $scope.vitals.height;
+        } else {
+            $scope.vitals.bmi = 0;
+        }
+
+    };
+
+    $scope.validate = function () {
+
+        //NR TODO : Validate and sow error and clear model values if needed
+
+    };
 
     // Action Methods
-    $scope.changeState = function (glucose) {
-        //$scope.glucose = glucose;
-        // transition to next state
+    $scope.navigateBack = function () {
+        // transition to previous state
         $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
     };
 
+    $scope.changeState = function (vitals) {
+        // vitals = updated new vital from DB
+        //$scope.glucose = vitals;
+        // transition to next state
+        $scope.navigateBack();
+    };
+
     $scope.save = function () {
-        $scope.glucose.datetime = ($scope.glucose.datetime) ? Date.parse($scope.glucose.datetime) : null; // Parse date to long format
-        var saveGlucoseDataPromise = GlucoseStore.save($scope.glucose);
-        saveGlucoseDataPromise.then($scope.changeState, $scope.saveFailed);
+        $scope.vitals.datetime = ($scope.vitals.datetime) ? Date.parse($scope.vitals.datetime) : null; // Parse date to long format
+        var saveVitalsDataPromise = VitalsStore.save($scope.vitals);
+        saveVitalsDataPromise.then($scope.changeState, $scope.saveFailed);
 
     };
 
     $scope.cancel = function () {
         // If required ask for confirmation
-        $scope.changeState($scope.glucose);
+        $scope.changeState($scope.vitals);
     };
 
     $scope.saveFailed = function (errorMessage) {
@@ -113,25 +218,29 @@ glucoseModule.controller('VitalsFormController', function ($scope, $ionicLoading
 });
 
 
-glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, glucoseTrendData, currentPatient, GlucoseStore) {
+vitalsModule.controller('VitalsTrendController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, vitalsTrendData, currentPatient, VitalsStore) {
     $ionicLoading.show({
         template: 'Loading...'
     });
+
+    
 
     // Init Menu
 
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
-    $scope.enums = GlucoseStore.enums;
+    //$scope.enums = VitalsStore.enums; //NR: not requred currently
     //  High Charts config
 
     // Init Data
     $scope.currentPatient = currentPatient;
-    $scope.data = glucoseTrendData;
+    $scope.data = vitalsTrendData;
+    $scope.trendType = $stateParams.trendType;
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'vitalsSummary';
 
     //  High Charts options
 
-    $scope.glucoseChartConfig = {
+    $scope.vitalsChartConfig = {
         chart: {
                    type: 'lineChart',
                    spacingTop:0,
@@ -155,68 +264,31 @@ glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicLoadi
                },
      yAxis: {
         title: {
-                text: 'Glucose mg/dL'
+            text: 'Height (' + $stateParams.unit + ')'
             },
-            min: 0,
-            plotBands: [{ // Extreme High
-                from: 180,
-                to: 500,
-                color: 'rgba(255, 137, 137, 0.15)',
-                label: {
-                    text: 'High Blood Glucose',
-                    style: {
-                        color: '#606060'
-                    }
-                }
-            },
-                 { // 
-                from: 150,
-                to: 180,
-                color: 'rgba(255, 197, 70, 0.15)',
-                label: {
-                    text: 'Borderline Diabetic',
-                    style: {
-                        color: '#606060'
-                    }
-                }
-            }, { // Normal
-                from: 90,
-                to: 150,
-                color: 'rgba(70, 255, 30, 0.15)',
-                label: {
-                    text: 'Normal',
-                    style: {
-                        color: '#606060'
-                    }
-                }
-            }, { // Low blood sugar
-                from: 0,
-                to: 90,
-                color: 'rgba(255, 137, 137, 0.15)',
-                label: {
-                    text: 'Low Blood Sugar',
-                    style: {
-                        color: '#606060'
-                    }
-                }
-            }]
+        min: 0
         },
         tooltip: {
             headerFormat: '<b>{series.name}</b><br>',
-            pointFormat: '{point.x:%e. %b}: {point.y:.2f} mg/dL'
+            pointFormat: '{point.x:%e. %b}: {point.y:.2f} ' + $stateParams.unit
         },
         title: {
-            text: 'Glucose Trend over time'
+            text: $stateParams.trendType + ' Trend over time'
         },
         subtitle: {
-            text: 'Shows how did your glucose values perform'
+            text: 'Shows range of ' + $stateParams.trendType  + ' values over time'
         },
         series: $scope.data
     };
 
     
+    
 
     // Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
+    };
 
     $ionicLoading.hide();
 });
@@ -224,38 +296,60 @@ glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicLoadi
 
 
 // Routings
-glucoseModule.config(function ($stateProvider, $urlRouterProvider) {
+vitalsModule.config(function ($stateProvider, $urlRouterProvider) {
 
     $stateProvider
-          .state('glucoselist', {
+            .state('vitalsSummary', {
+                resolve: {
+                    latestVitals: function (VitalsStore, $stateParams) { return VitalsStore.getLatestVitalsForPatient($stateParams.patientID); },
+                    currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
+                },
+                //url: '/identificationInfo',  // cannot use as using params[]
+                templateUrl: 'views/vitals/vitals_summary.html',
+                controller: 'VitalsSummaryController',
+                params: ['patientID', 'parentState']
+            })
+          .state('vitalslist', {
               resolve: {
-                  glucoseList: function (GlucoseStore, $stateParams) { return GlucoseStore.getAllglucoseForPatient($stateParams.patientID); },
+                  vitalsList: function (VitalsStore, $stateParams) { return VitalsStore.getAllVitalsForPatient($stateParams.patientID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
               //url: '/identificationInfo',  // cannot use as using params[]
-              templateUrl: 'views/glucose/list.html',
-              controller: 'GlucoseListController',
-              params: ['patientID']
-          })
-          .state('glucoseForm', {
-              resolve: {
-                  glucose: function (GlucoseStore, $stateParams) { return GlucoseStore.getGlucoseByID($stateParams.glucoseID); },
-                  currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
-              },
-              //url: '/identificationInfo',  // cannot use as using params[]
-              templateUrl: 'views/glucose/new_entry.html',
-              controller: 'GlucoseFormController',
-              params: ['patientID','glucoseID','parentState']
-          })
-          .state('glucosetrend', {
-              resolve: {
-                  glucoseTrendData: function (GlucoseStore, $stateParams) { return GlucoseStore.getLineGraphDataForPatient($stateParams.patientID); },
-                  currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
-              },
-              //url: '/identificationInfo',  // cannot use as using params[]
-              templateUrl: 'views/glucose/trend.html',
-              controller: 'GlucoseTrendController',
+              templateUrl: 'views/vitals/list.html',
+              controller: 'VitalsListController',
               params: ['patientID', 'parentState']
+          })
+          .state('vitalsForm', {
+              resolve: {
+                  vitals: function (VitalsStore, $stateParams) { return VitalsStore.getVitalByID($stateParams.vitalsID); },
+                  currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
+              },
+              //url: '/identificationInfo',  // cannot use as using params[]
+              templateUrl: 'views/vitals/new_entry.html',
+              controller: 'VitalsFormController',
+              params: ['patientID','vitalsID','parentState']
+          })
+          .state('vitalstrend', {
+              resolve: {
+                  vitalsTrendData: function (VitalsStore, $stateParams) {
+                      if ($stateParams.trendType) {
+                          switch ($stateParams.trendType) {
+                              case "Height": return VitalsStore.getGraphDataForHeight($stateParams.patientID);
+                              case "Weight": return VitalsStore.getGraphDataForWeight($stateParams.patientID);
+                              case "BMI": return VitalsStore.getGraphDataForBMI($stateParams.patientID);
+                              case "BP": return VitalsStore.getGraphDataForBP($stateParams.patientID);
+                          }
+                      } else {
+                          alert("TrendType empty for Vitals Trend.");
+                      }
+                      
+                  },
+                  currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
+              },
+              //url: '/identificationInfo',  // cannot use as using params[]
+              templateUrl: 'views/vitals/trend.html',
+              controller: 'VitalsTrendController',
+              params: ['patientID', 'parentState','trendType', 'unit']
           });
 
 });

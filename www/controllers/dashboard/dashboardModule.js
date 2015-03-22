@@ -1,6 +1,6 @@
 var dashboardModule = angular.module('dCare.dashboard', ['ionic',
                                                          'patientsStore.services', 'vitalsStore.services', 'glucoseStore.services',
-                                                         'dCare.glucose', 'dCare.medications',
+                                                         'dCare.glucose', 'dCare.medications','dCare.vitals',
                                                          'dCare.dateTimeBoxDirectives', 'dCare.jqSparklineDirectives']);
 
 //Controllers
@@ -48,7 +48,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
                 alert('Add Patient');
                 break;
             case 3:
-                $state.go("vitals", { patientID: $scope.currentPatient.id });
+                $state.go("vitalsSummary", { patientID: $scope.currentPatient.id });
                 break;
             case 4:
                 $state.go("glucoselist", { patientID: $scope.currentPatient.id });

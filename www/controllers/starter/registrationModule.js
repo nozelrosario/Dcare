@@ -1,4 +1,6 @@
-var registrationModule = angular.module('dCare.registration', ['ionic', 'patientsStore.services', 'vitalsStore.services', 'dCare.jqueryDynameterDirectives' , 'dCare.mobiscrollDirectives', 'dCare.jqueryKnobDirectives', 'dCare.addclearDirectives']);
+var registrationModule = angular.module('dCare.registration', ['ionic',
+                                                                'patientsStore.services', 'vitalsStore.services',
+                                                                'dCare.jqueryDynameterDirectives', 'dCare.mobiscrollDirectives', 'dCare.jqueryKnobDirectives', 'dCare.addclearDirectives']);
 
 // Controllers
 
