@@ -50,7 +50,7 @@
                         </div>
                     </md-content>
                     <md-content class="content has-header " layout-align="center center" layout="row" layout-phone="column" style="height:auto;">
-                        <div layout="column" layout-phone="column" layout-align="center center" class="padding ">
+                        <div layout="column" layout-phone="column" layout-align="center center" class="padding " ng-show="{{vitals.bpsystolic > 0}}">
                             <div class="padding"><center><h1> Systolic BP ? </h1></center></div>
                             <div ng-model="vitals.bpsystolic" jquery-dynameter jquery-dynameter-config="{ label:'Systolic BP', unit:'mm Hg', min:80, max:210, regions:{ 80:'normal', 120:'warn', 160:'error' } }"></div>
                             <div layout="row" layout-phone="row" layout-align="center center" class="padding range" style="width:300px">
@@ -60,8 +60,8 @@
                                 <i class="icon ion-plus-circled"></i>
                             </div>
                         </div>
-                        <div layout="column" layout-phone="column" layout-align="center center" class="padding ">
-                            <div class="padding"><center><h1> Diastolic BP ? </h1></center></div>
+                        <div layout="column" layout-phone="column" layout-align="center center" class="padding " ng-show="{{vitals.bpdiastolic > 0}}">
+                            <div class=" padding"><center><h1> Diastolic BP ? </h1></center></div>
                             <div ng-model="vitals.bpdiastolic" jquery-dynameter jquery-dynameter-config="{ label:'Diastolic BP', unit:'mm Hg', min:40, max:140, regions:{ 40:'normal', 80:'warn', 99:'error' } }"></div>
                             <div layout="row" layout-phone="row" layout-align="center center" class="padding range" style="width:300px">
                                 <i class="icon ion-minus-circled"></i>

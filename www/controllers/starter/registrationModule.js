@@ -8,18 +8,20 @@ registrationModule.controller('RegistrationController', function ($scope, $state
     // NR: here stateParam 'patientID' is not required, might be needed for testing.
     // NR: also no need of passing to the 'identification' controller.
 
-    $scope.isFirstRun = $stateParams.isFirstRun;
+    $scope.isFirstRun = JSON.parse($stateParams.isFirstRun);
+    $scope.proceed = function () {
+        $state.go("identificationInfo", { patientID: $stateParams.patientID });
+    };
     if ($scope.isFirstRun) {
-        $scope.isFirstRun = true;
+        //$scope.isFirstRun = true;
         $scope.welcomeTitle = "Welcome to D-Care";
-        $scope.introductionText = [{ "textLine": "A ultimate solution for your daily diabetes care ." },
-		                            { "textLine": "Help us knowing you by completing the registration process." },
-        ];
-        $scope.proceed = function () {
-            $state.go("identificationInfo", { patientID: $stateParams.patientID });
-        };
-
-
+        $scope.introductionText = [ { "textLine": "A ultimate solution for your daily diabetes care ." },
+		                            { "textLine": "Help us knowing you by completing the registration process." }];
+        
+    } else {
+        $scope.welcomeTitle = "Welcome to D-Care";
+        $scope.introductionText = [ { "textLine": "A ultimate solution for your daily diabetes care ." },
+		                            { "textLine": "Help us knowing your loved one by completing the registration process." }];
     }
 });
 

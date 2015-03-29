@@ -11,14 +11,14 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
 
     // Init Menu
     $scope.menuItems = [
-                        { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
-                        { id: 2, title: 'Add a Loved one', subTitle: 'Add a new person you care for', icon: 'ion-person-add' },
-                        { id: 3, title: 'Vitals', subTitle: 'Register Vitals', icon: 'ion-android-chat' },
-                        { id: 4, title: 'Blood Glucose', subTitle: 'Blood glucose tracker', icon: 'ion-android-chat' },
-                        { id: 5, title: 'Medications', subTitle: 'Medications', icon: 'ion-android-chat' },
-                        { id: 6, title: 'Messages/Notificaions', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
-                        { id: 7, title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' },
-                        { id: 8, title: 'About', subTitle: 'Know more about contributers', icon: 'ion-information-circled' }
+                        { seq: 1, id: "newpatient", title: 'Add a Loved one', subTitle: 'Add a new person you care for', icon: 'ion-person-add' },
+                        { seq: 2, id: "editprofile", title: 'Edit Profile', subTitle: 'Edit you personal details', icon: 'ion-android-chat' },
+                        { seq: 3, id: "vitals", seq: 3, title: 'Vitals', subTitle: 'Register Vitals', icon: 'ion-android-chat' },
+                        { seq: 4, id: "glucose", title: 'Blood Glucose', subTitle: 'Blood glucose tracker', icon: 'ion-android-chat' },
+                        { seq: 5, id: "medications", title: 'Medications', subTitle: 'Medications', icon: 'ion-android-chat' },
+                        { seq: 6, id: "messages", title: 'Messages/Notificaions', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
+                        { seq: 7, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' },
+                        { seq: 8, id: "about", title: 'About', subTitle: 'Know more about contributers', icon: 'ion-information-circled' }
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
@@ -41,28 +41,28 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
     // Action Methods
     $scope.activateMenuItem = function (menuItemId) {
         switch (menuItemId) {
-            case 1:
-                alert('Dashboard');
+            case "newpatient":
+                $state.go("registration", { isFirstRun: false });
                 break;
-            case 2:
-                alert('Add Patient');
+            case "editprofile":
+                $state.go("identificationInfo", { patientID: $scope.currentPatient.id });
                 break;
-            case 3:
+            case "vitals":
                 $state.go("vitalsSummary", { patientID: $scope.currentPatient.id });
                 break;
-            case 4:
+            case "glucose":
                 $state.go("glucoselist", { patientID: $scope.currentPatient.id });
                 break;
-            case 5:
+            case "medications":
                 $state.go("medicationslist", { patientID: $scope.currentPatient.id });
                 break;
-            case 6:
+            case "messages":
                 alert('Messages/Notificaions');
                 break;
-            case 7:
+            case "settings":
                 alert('Settings');
                 break;
-            case 8:
+            case "about":
                 alert('About');
                 break;
             default:
