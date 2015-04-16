@@ -1,10 +1,12 @@
 var dashboardModule = angular.module('dCare.dashboard', ['ionic',
-                                                         'patientsStore.services', 'vitalsStore.services', 'glucoseStore.services',
+                                                         'patientsStore.services', 'vitalsStore.services', 'glucoseStore.services', 'notificationsStore.services',
                                                          'dCare.glucose', 'dCare.medications','dCare.vitals',
                                                          'dCare.dateTimeBoxDirectives', 'dCare.jqSparklineDirectives']);
 
 //Controllers
-dashboardModule.controller('DashboardController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData, PatientsStore, VitalsStore, GlucoseStore) {
+dashboardModule.controller('DashboardController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams,
+                                                            allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData,notificationsData,
+                                                            PatientsStore, VitalsStore, GlucoseStore) {
     $ionicLoading.show({
         template: 'Loading...'
     });
@@ -29,7 +31,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
     $scope.latestVitals = latestVitals;
     $scope.glucose = latestGlucose;
     $scope.glucoseTrend = glucoseSparklineData; // glucoseSparklineData = {data:[], options:{}}
-
+    $scope.notificationsList = notificationsData;
 
     if (!defaultPatient) {
         $scope.currentPatient = allPatients[0];
@@ -136,7 +138,8 @@ dashboardModule.config(function ($stateProvider, $urlRouterProvider) {
                 allPatients: function (PatientsStore) { return PatientsStore.getAllPatients(); },
                 latestVitals: function (VitalsStore, $stateParams) { return VitalsStore.getLatestVitalsForPatient($stateParams.patientID); },
                 latestGlucose: function (GlucoseStore, $stateParams) { return GlucoseStore.getLatestGlucoseForPatient($stateParams.patientID); },
-                glucoseSparklineData: function (GlucoseStore, $stateParams) { return GlucoseStore.glucoseSparklineData($stateParams.patientID); }
+                glucoseSparklineData: function (GlucoseStore, $stateParams) { return GlucoseStore.glucoseSparklineData($stateParams.patientID); },
+                notificationsData: function (notificationsStore, $stateParams) { return notificationsStore.getActivenotificationsForPatient($stateParams.patientID); }
             },
             //url: '/identificationInfo',  // cannot use as using params[]
             templateUrl: 'views/dashboard/dashboard.html',

@@ -16,6 +16,7 @@
             <!--<ion-nav-view name="glucose"></ion-nav-view>-->
 <!--Patient Info Card -->
 			<ion-content>
+    <!--Vitals Info Card-->
 				<div class="list card">
                     <div class="item item-avatar">
                         <img ng-src="{{currentPatient.photo}}">
@@ -55,7 +56,7 @@
                         </div>
                     </div>
                 </div>
-<!--Glucose Info Card-->
+    <!--Glucose Info Card-->
 				<div class="list card">
                     <div class="item item-body">
                         <div layout="row" layout-phone="row" >
@@ -94,6 +95,28 @@
                         </div>
                     </div>
                     
+                </div>
+     <!--Notifications Info Card-->
+                <div class="list card">
+                    <div class="item item-body">
+                        <div class="item item-divider">  Notifications   </div>
+                        <md-list>
+                            <md-item ng-repeat="notification in notificationsList">
+                                <md-item-content>
+                                    <md-button menu-close ng-click="editMedication(medication.id)" class="button-full menu-button">
+                                        <div layout="row" class="list-row">
+                                            <img ng-src="{{enums.notificationType[notification.notificationType].image}} style height:50px;width:50px;margin:10px">
+                                            <div layout="column" layout-align="center start">
+                                                <div class="menu-title">{{notification.title}}</div>
+                                                <div class="menu-sub-title">{{notification.text}} </div>
+                                            </div>
+                                        </div>
+                                    </md-button>
+                                </md-item-content>
+                            </md-item>
+                        </md-list>
+                    </div>
+
                 </div>
 			</ion-content>
         </ion-side-menu-content>

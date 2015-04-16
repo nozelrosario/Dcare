@@ -18,10 +18,10 @@ angular.module('remindersStore.services', [])
     };
     // Some fake testing data
     var notificationList = [
-	                { id: 0, patientID: '1', text: 'Notification 1', title: 'Notification 1', notificationType: 1, startdate: '1288323623006', enddate: '1288323623006', status: 'active' },
-	                { id: 1, patientID: '1', text: 'Notification 2', title: 'Notification 2', notificationType: 3, startdate: '1289323623006', enddate: '1288323623006', status: 'active' },
-	                { id: 2, patientID: '2', text: 'Notification 3', title: 'Notification 3', notificationType: 2, startdate: '1298323623006', enddate: '1288323623006', status: 'active' },
-	                { id: 3, patientID: '4', text: 'Notification 4', title: 'Notification 4', notificationType: 1, startdate: '1288523623006', enddate: '1288323623006', status: 'active' }
+	                { id: 0, patientID: '1', text: 'Reminder 1', title: 'Reminder 1', notificationType: 1, startdate: '1288323623006', enddate: '1288323623006', isRecursive: true,  status: 'active' },
+	                { id: 1, patientID: '1', text: 'Reminder 2', title: 'Reminder 2', notificationType: 3, startdate: '1289323623006', enddate: '1288323623006', status: 'active' },
+	                { id: 2, patientID: '2', text: 'Reminder 3', title: 'Reminder 3', notificationType: 2, startdate: '1298323623006', enddate: '1288323623006', status: 'active' },
+	                { id: 3, patientID: '4', text: 'Reminder 4', title: 'Reminder 4', notificationType: 1, startdate: '1288523623006', enddate: '1288323623006', status: 'active' }
 	                ];
 
     return {
