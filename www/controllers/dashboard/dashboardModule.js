@@ -1,12 +1,12 @@
 var dashboardModule = angular.module('dCare.dashboard', ['ionic',
                                                          'patientsStore.services', 'vitalsStore.services', 'glucoseStore.services', 'notificationsStore.services',
-                                                         'dCare.glucose', 'dCare.medications','dCare.vitals',
+                                                         'dCare.glucose', 'dCare.medications','dCare.vitals','dCare.reminders',
                                                          'dCare.dateTimeBoxDirectives', 'dCare.jqSparklineDirectives']);
 
 //Controllers
 dashboardModule.controller('DashboardController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams,
                                                             allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData,notificationsData,
-                                                            PatientsStore, VitalsStore, GlucoseStore, notificationsStore) {
+                                                            PatientsStore, VitalsStore, GlucoseStore, NotificationsStore) {
     $ionicLoading.show({
         template: 'Loading...'
     });
@@ -18,13 +18,13 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
                         { seq: 3, id: "vitals", seq: 3, title: 'Vitals', subTitle: 'Register Vitals', icon: 'ion-android-chat' },
                         { seq: 4, id: "glucose", title: 'Blood Glucose', subTitle: 'Blood glucose tracker', icon: 'ion-android-chat' },
                         { seq: 5, id: "medications", title: 'Medications', subTitle: 'Medications', icon: 'ion-android-chat' },
-                        { seq: 6, id: "messages", title: 'Messages/Notificaions', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
+                        { seq: 6, id: "reminders", title: 'Reminders', subTitle: 'Your reminders', icon: 'ion-android-chat' },
                         { seq: 7, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' },
                         { seq: 8, id: "about", title: 'About', subTitle: 'Know more about contributers', icon: 'ion-information-circled' }
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
-    $scope.enums = angular.extend({}, GlucoseStore.enums, notificationsStore.enums);
+    $scope.enums = angular.extend({}, GlucoseStore.enums, NotificationsStore.enums);
 
     // Init Data
     $scope.patients = allPatients;
@@ -58,8 +58,8 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
             case "medications":
                 $state.go("medicationslist", { patientID: $scope.currentPatient.id });
                 break;
-            case "messages":
-                alert('Messages/Notificaions');
+            case "reminders":
+                $state.go("reminderslist", { patientID: $scope.currentPatient.id });
                 break;
             case "settings":
                 alert('Settings');
@@ -139,7 +139,7 @@ dashboardModule.config(function ($stateProvider, $urlRouterProvider) {
                 latestVitals: function (VitalsStore, $stateParams) { return VitalsStore.getLatestVitalsForPatient($stateParams.patientID); },
                 latestGlucose: function (GlucoseStore, $stateParams) { return GlucoseStore.getLatestGlucoseForPatient($stateParams.patientID); },
                 glucoseSparklineData: function (GlucoseStore, $stateParams) { return GlucoseStore.glucoseSparklineData($stateParams.patientID); },
-                notificationsData: function (notificationsStore, $stateParams) { return notificationsStore.getActiveNotificationsForPatient($stateParams.patientID); }
+                notificationsData: function (NotificationsStore, $stateParams) { return NotificationsStore.getActiveNotificationsForPatient($stateParams.patientID); }
             },
             //url: '/identificationInfo',  // cannot use as using params[]
             templateUrl: 'views/dashboard/dashboard.html',

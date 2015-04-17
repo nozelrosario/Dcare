@@ -3,7 +3,7 @@ angular.module('remindersStore.services', [])
 /**
 * A Patient Store service that returns reminders data.
 */
-.factory('remindersStore', function ($q, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
+.factory('RemindersStore', function ($q, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
     // Will call phonegap api for storing/retriving patient data and returns a JSON array
     var enums = {
         reminderType: {
@@ -24,11 +24,11 @@ angular.module('remindersStore.services', [])
         }
     };
     // Some fake testing data
-    var notificationList = [
-	                { id: 0, patientID: '1', text: 'Reminder 1', title: 'Reminder 1', notificationType: 1, startdate: '1288323623006', enddate: '1288323623006', isRecursive: true, frequencyUnit: 1, frequency: 1,  status: 'active' },
-	                { id: 1, patientID: '1', text: 'Reminder 2', title: 'Reminder 2', notificationType: 3, startdate: '1289323623006', enddate: '1288323623006', isRecursive: false, frequencyUnit: null, frequency: null, status: 'active' },
-	                { id: 2, patientID: '2', text: 'Reminder 3', title: 'Reminder 3', notificationType: 2, startdate: '1298323623006', enddate: '1288323623006', isRecursive: false, frequencyUnit: null, frequency: null, status: 'active' },
-	                { id: 3, patientID: '4', text: 'Reminder 4', title: 'Reminder 4', notificationType: 1, startdate: '1288523623006', enddate: '1288323623006', isRecursive: true, frequencyUnit: 3, frequency: 1, status: 'active' }
+    var remindersList = [
+	                { id: 0, patientID: '1', text: 'Reminder 1', title: 'Reminder 1', reminderType: 1, startdate: '1288323623006', enddate: '1288323623006', isRecursive: true, frequencyUnit: 1, frequency: 1, status: 'active' },
+	                { id: 1, patientID: '1', text: 'Reminder 2', title: 'Reminder 2', reminderType: 3, startdate: '1289323623006', enddate: '1288323623006', isRecursive: false, frequencyUnit: null, frequency: null, status: 'active' },
+	                { id: 2, patientID: '2', text: 'Reminder 3', title: 'Reminder 3', reminderType: 2, startdate: '1298323623006', enddate: '1288323623006', isRecursive: false, frequencyUnit: null, frequency: null, status: 'active' },
+	                { id: 3, patientID: '4', text: 'Reminder 4', title: 'Reminder 4', reminderType: 1, startdate: '1288523623006', enddate: '1288323623006', isRecursive: true, frequencyUnit: 3, frequency: 1, status: 'active' }
 	                ];
 
     return {
@@ -43,64 +43,64 @@ angular.module('remindersStore.services', [])
             deferredCount.resolve(count);
             return deferredCount.promise;
         },
-        getAllnotificationsForPatient: function (patientID) {
+        getAllRemindersForPatient: function (patientID) {
             var deferredFetchAll = $q.defer();
 
             ////NR:TODO:  Mock  ////
-            var allnotifications = $filter('filter')(notificationList, { patientID: patientID }, true);
+            var allReminders = $filter('filter')(remindersList, { patientID: patientID }, true);
             ////NR:TODO:  Mock  ////
 
-            deferredFetchAll.resolve(allnotifications);
+            deferredFetchAll.resolve(allReminders);
             return deferredFetchAll.promise;
         },
-        getActivenotificationsForPatient: function (patientID) {
+        getActiveRemindersForPatient: function (patientID) {
             var deferredFetchAll = $q.defer();
 
             ////NR:TODO:  Mock  ////
-            var allnotifications = $filter('filter')(notificationList, { patientID: patientID, status:'active'}, true);
+            var allReminders = $filter('filter')(remindersList, { patientID: patientID, status: 'active' }, true);
             ////NR:TODO:  Mock  ////
 
-            deferredFetchAll.resolve(allnotifications);
+            deferredFetchAll.resolve(allReminders);
             return deferredFetchAll.promise;
         },
-        getnotificationByID: function (notificationID) {
+        getReminderByID: function (reminderID) {
             // Search on patients
             var deferredFetch = $q.defer();
 
             ////NR:TODO:  Mock  ////
-            var notificationByID;
-            if (notificationID && notificationID !== "") {
-                notificationByID = ($filter('filter')(notificationList, { id: JSON.parse(notificationID) }, true))[0];
+            var reminderByID;
+            if (reminderID && reminderID !== "") {
+                reminderByID = ($filter('filter')(remindersList, { id: JSON.parse(reminderID) }, true))[0];
             } else {
-                notificationByID = null;
+                reminderByID = null;
             }
             ////NR:TODO:  Mock  ////
 
-            deferredFetch.resolve(notificationByID);
+            deferredFetch.resolve(reminderByID);
             return deferredFetch.promise;
         },
-        save: function (notification) {
+        save: function (reminder) {
             // execute deferred / return promise
             var deferredSave = $q.defer();
 
-            if (notification) {
-                if (!notification.id || notification.id <= 0) {
+            if (reminder) {
+                if (!reminder.id || reminder.id <= 0) {
                     // Insert data & get the id of inserted patient along with complete inserted data
 
                     ////NR:TODO:  Mock  ////
 
                     console.log("Mock Insert : setting id=4");
-                    var newnotification = notification;
-                    notification.id = 4;
-                    notificationList.push(newnotification);
+                    var newReminder = reminder;
+                    reminder.id = 4;
+                    remindersList.push(newReminder);
                     ////NR:TODO:  Mock  ////
 
-                    deferredSave.resolve(newnotification);
+                    deferredSave.resolve(newReminder);
                 } else {
                     // update data
 
                     console.log("Mock Update : return as it is");
-                    deferredSave.resolve(notification);
+                    deferredSave.resolve(reminder);
                 }
             } else {
 

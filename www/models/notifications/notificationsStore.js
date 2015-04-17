@@ -3,7 +3,7 @@ angular.module('notificationsStore.services', [])
 /**
 * A Patient Store service that returns notification data.
 */
-.factory('notificationsStore', function ($q, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
+.factory('NotificationsStore', function ($q, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
     // Will call phonegap api for storing/retriving patient data and returns a JSON array
     var enums = {
         notificationType: {
@@ -36,24 +36,24 @@ angular.module('notificationsStore.services', [])
             deferredCount.resolve(count);
             return deferredCount.promise;
         },
-        getAllnotificationsForPatient: function (patientID) {
+        getAllNotificationsForPatient: function (patientID) {
             var deferredFetchAll = $q.defer();
 
             ////NR:TODO:  Mock  ////
-            var allnotifications = $filter('filter')(notificationList, { patientID: patientID }, true);
+            var allNotifications = $filter('filter')(notificationList, { patientID: patientID }, true);
             ////NR:TODO:  Mock  ////
 
-            deferredFetchAll.resolve(allnotifications);
+            deferredFetchAll.resolve(allNotifications);
             return deferredFetchAll.promise;
         },
         getActiveNotificationsForPatient: function (patientID) {
             var deferredFetchAll = $q.defer();
 
             ////NR:TODO:  Mock  ////
-            var allnotifications = $filter('filter')(notificationList, { patientID: patientID, status:'active'}, true);
+            var allNotifications = $filter('filter')(notificationList, { patientID: patientID, status:'active'}, true);
             ////NR:TODO:  Mock  ////
 
-            deferredFetchAll.resolve(allnotifications);
+            deferredFetchAll.resolve(allNotifications);
             return deferredFetchAll.promise;
         },
         getNotificationByID: function (notificationID) {
