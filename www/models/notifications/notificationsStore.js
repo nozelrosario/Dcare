@@ -46,7 +46,7 @@ angular.module('notificationsStore.services', [])
             deferredFetchAll.resolve(allnotifications);
             return deferredFetchAll.promise;
         },
-        getActivenotificationsForPatient: function (patientID) {
+        getActiveNotificationsForPatient: function (patientID) {
             var deferredFetchAll = $q.defer();
 
             ////NR:TODO:  Mock  ////
@@ -56,7 +56,7 @@ angular.module('notificationsStore.services', [])
             deferredFetchAll.resolve(allnotifications);
             return deferredFetchAll.promise;
         },
-        getnotificationByID: function (notificationID) {
+        getNotificationByID: function (notificationID) {
             // Search on patients
             var deferredFetch = $q.defer();
 

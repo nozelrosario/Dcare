@@ -97,15 +97,15 @@
                     
                 </div>
      <!--Notifications Info Card-->
-                <div class="list card">
+                <div class="list card" ng-show="notificationsList.length">
+                    <div class="item item-divider">  Notifications   </div>
                     <div class="item item-body">
-                        <div class="item item-divider">  Notifications   </div>
                         <md-list>
-                            <md-item ng-repeat="notification in notificationsList">
+                            <md-item ng-repeat="notification in notificationsList | limitTo:3">
                                 <md-item-content>
-                                    <md-button menu-close ng-click="editMedication(medication.id)" class="button-full menu-button">
+                                    <md-button menu-close ng-click="" class="button-full menu-button">
                                         <div layout="row" class="list-row">
-                                            <img ng-src="{{enums.notificationType[notification.notificationType].image}} style height:50px;width:50px;margin:10px">
+                                            <img ng-src="{{enums.notificationType[notification.notificationType].image}}" style="height:50px;width:50px;margin:5px">
                                             <div layout="column" layout-align="center start">
                                                 <div class="menu-title">{{notification.title}}</div>
                                                 <div class="menu-sub-title">{{notification.text}} </div>

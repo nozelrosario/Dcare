@@ -10,7 +10,7 @@ angular.module('starter.controllers', ['ionic', 'patientsStore.services'])
             $state.go("registration", {isFirstRun:true});
             //$state.go("registration", { isFirstRun:false, patientID: 2 });   // in case need to call for existing patient
         } else {
-            $state.go("dashboard");
+            $state.go("dashboard", {patientID:1});
         }
     };
 

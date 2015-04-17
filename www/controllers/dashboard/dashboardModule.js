@@ -6,7 +6,7 @@ var dashboardModule = angular.module('dCare.dashboard', ['ionic',
 //Controllers
 dashboardModule.controller('DashboardController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams,
                                                             allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData,notificationsData,
-                                                            PatientsStore, VitalsStore, GlucoseStore) {
+                                                            PatientsStore, VitalsStore, GlucoseStore, notificationsStore) {
     $ionicLoading.show({
         template: 'Loading...'
     });
@@ -24,7 +24,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
-    $scope.enums = GlucoseStore.enums;
+    $scope.enums = angular.extend({}, GlucoseStore.enums, notificationsStore.enums);
 
     // Init Data
     $scope.patients = allPatients;
@@ -139,7 +139,7 @@ dashboardModule.config(function ($stateProvider, $urlRouterProvider) {
                 latestVitals: function (VitalsStore, $stateParams) { return VitalsStore.getLatestVitalsForPatient($stateParams.patientID); },
                 latestGlucose: function (GlucoseStore, $stateParams) { return GlucoseStore.getLatestGlucoseForPatient($stateParams.patientID); },
                 glucoseSparklineData: function (GlucoseStore, $stateParams) { return GlucoseStore.glucoseSparklineData($stateParams.patientID); },
-                notificationsData: function (notificationsStore, $stateParams) { return notificationsStore.getActivenotificationsForPatient($stateParams.patientID); }
+                notificationsData: function (notificationsStore, $stateParams) { return notificationsStore.getActiveNotificationsForPatient($stateParams.patientID); }
             },
             //url: '/identificationInfo',  // cannot use as using params[]
             templateUrl: 'views/dashboard/dashboard.html',
