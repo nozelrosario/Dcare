@@ -122,7 +122,7 @@ remindersModule.config(function ($stateProvider, $urlRouterProvider) {
           })
           .state('reminderForm', {
               resolve: {
-                  glucose: function (RemindersStore, $stateParams) { return RemindersStore.getReminderByID($stateParams.reminderID); },
+                  reminder: function (RemindersStore, $stateParams) { return RemindersStore.getReminderByID($stateParams.reminderID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
               //url: '/identificationInfo',  // cannot use as using params[]

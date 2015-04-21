@@ -7,13 +7,13 @@ angular.module('notificationsStore.services', [])
     // Will call phonegap api for storing/retriving patient data and returns a JSON array
     var enums = {
         notificationType: {
-            1: { label: 'Medicine', short_label: 'Medicine', image: 'img/extra/pill11.png', value: 1 },
-            2: { label: 'Insulin', short_label: 'Insulin', image: 'img/extra/pill11.png', value: 2 },
-            3: { label: 'Dr. Appointment', short_label: 'Dr. Appointment', image: 'img/extra/pill11.png', value: 3 },
-            4: { label: 'Glucose test', short_label: 'Glucose test', image: 'img/extra/pill11.png', value: 4 },
-            5: { label: 'BP check', short_label: 'BP check', image: 'img/extra/pill11.png', value: 5 },
-            6: { label: 'Recommendation', short_label: 'Recommendation', image: 'img/extra/pill11.png', value: 6 },
-            7: { label: 'Other', short_label: 'Other', image: 'img/extra/pill11.png', value: 7 }
+            1: { label: 'Medicine', short_label: 'Medicine', image: 'img/no-image.png', value: 1 },
+            2: { label: 'Insulin', short_label: 'Insulin', image: 'img/no-image.png', value: 2 },
+            3: { label: 'Dr. Appointment', short_label: 'Dr. Appointment', image: 'img/no-image.png', value: 3 },
+            4: { label: 'Glucose test', short_label: 'Glucose test', image: 'img/no-image.png', value: 4 },
+            5: { label: 'BP check', short_label: 'BP check', image: 'img/no-image.png', value: 5 },
+            6: { label: 'Recommendation', short_label: 'Recommendation', image: 'img/no-image.png', value: 6 },
+            7: { label: 'Other', short_label: 'Other', image: 'img/no-image.png', value: 7 }
         }
     };
     // Some fake testing data
