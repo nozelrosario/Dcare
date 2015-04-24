@@ -3,8 +3,9 @@ angular.module('patientsStore.services', [])
 /**
 * A Patient Store service that returns patient data.
 */
-.factory('PatientsStore', function ($q, $filter) {
-    // Will call phonegap api for storing/retriving patient data and returns a JSON array
+.factory('PatientsStore', function ($q, $filter, pouchDB) {
+    // Will call phonegap api for storing/retriving patient data and returns a JSON 
+    var patients_DB = pouchDB('Patients');
 
     // Some fake testing data
     var patients = [
