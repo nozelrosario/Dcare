@@ -1,21 +1,23 @@
 "use strict";
-var pouchCollate = require('pouchdb-collate');
+var pouchCollate = window.pouchCollate; //require('pouchdb-collate');
 
-exports.gql = function (fun, opts, callback) {
-  if (typeof opts === 'function') {
-    callback = opts;
-    opts = {};
-  }
+var GQLPLUGIN = {
+    gql: function (fun, opts, callback) {
+        if (typeof opts === 'function') {
+            callback = opts;
+            opts = {};
+        }
 
-  if (callback) {
-    opts.complete = callback;
-  }
+        if (callback) {
+            opts.complete = callback;
+        }
 
-  if (typeof fun === 'object') {
-    return viewQuery(this, fun, opts);
-  }
+        if (typeof fun === 'object') {
+            return viewQuery(this, fun, opts);
+        }
 
-  return opts.complete(GQL.Errors.UNRECOGNIZED_QUERY);
+        return opts.complete(GQL.Errors.UNRECOGNIZED_QUERY);
+    }
 };
 function viewQuery(db, query, options) {
   if (!options.complete) {
@@ -1007,5 +1009,5 @@ GQL.Errors = {
 
 
 if (typeof window !== 'undefined' && window.PouchDB) {
-  window.PouchDB.plugin(exports);
+    window.PouchDB.plugin(GQLPLUGIN);
 }

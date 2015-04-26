@@ -1,11 +1,11 @@
-angular.module('patientsStore.services', [])
+angular.module('patientsStore.services', ['dataStore.services'])
 
 /**
 * A Patient Store service that returns patient data.
 */
-.factory('PatientsStore', function ($q, $filter, pouchDB) {
+.factory('PatientsStore', function ($q, $filter, DataStore) {
     // Will call phonegap api for storing/retriving patient data and returns a JSON 
-    var patients_DB = pouchDB('Patients');
+    DataStore.initDataStore('Patients');   // Initialize Patients DataStore
 
     // Some fake testing data
     var patients = [
@@ -53,34 +53,7 @@ angular.module('patientsStore.services', [])
             return deferredFetch.promise;
         },
         save: function (patient) {
-            // execute deferred / return promise
-            var deferredSave = $q.defer();
-
-            if (patient) {
-                if (!patient.id || patient.id <= 0) {
-                    // Insert data & get the id of inserted patient along with complete inserted data
-
-                    ////NR:TODO:  Mock  ////
-
-                    console.log("Mock Insert : setting id=4");
-                    var newPatient = patient;
-                    newPatient.id = 4;
-                    patients.push(newPatient);
-                    ////NR:TODO:  Mock  ////
-
-                    deferredSave.resolve(newPatient);
-                } else {
-                    // update data
-
-                    console.log("Mock Update : return as it is");
-                    deferredSave.resolve(patient);
-                }
-            } else {
-
-                deferredSave.reject("Error Code 00001");
-
-            }
-            return deferredSave.promise;
+            return DataStore.save(patient);
         }
 
     }
