@@ -4,7 +4,7 @@ angular.module('patientsStore.services', ['dataStore.services'])
 * A Patient Store service that returns patient data.
 */
 .factory('PatientsStore', function ($q, $filter, DataStore) {
-    // Will call phonegap api for storing/retriving patient data and returns a JSON 
+    // Will call data store api for storing/retriving patient data and returns a JSON 
     DataStore.initDataStore('Patients');   // Initialize Patients DataStore
 
     // Some fake testing data
@@ -17,14 +17,7 @@ angular.module('patientsStore.services', ['dataStore.services'])
 
     return {
         getCount: function () {
-            var deferredCount = $q.defer();
-
-            ////NR:TODO:  Mock  ////
-            var count = 4; // fire query for count
-            ////NR:TODO:  Mock  ////
-
-            deferredCount.resolve(count);
-            return deferredCount.promise;
+            return DataStore.getRowsCount();
         },
         getAllPatients: function () {
             var deferredFetchAll = $q.defer();
@@ -37,22 +30,12 @@ angular.module('patientsStore.services', ['dataStore.services'])
             return deferredFetchAll.promise;
         },
         getPatientByID: function (patientID) {
-            // Search on patients
-            var deferredFetch = $q.defer();
-            var patientByID;
-            ////NR:TODO:  Mock  ////
-            if (patientID && patientID !== "") {
-                patientByID = ($filter('filter')(patients, { id: JSON.parse(patientID) }, true))[0];
-            } else {
-                patientByID = null;
-            }
-            // return null if not found
-            ////NR:TODO:  Mock  ////
-
-            deferredFetch.resolve(patientByID);
-            return deferredFetch.promise;
+            return DataStore.getDataByID(patientID);
         },
         save: function (patient) {
+            // Before Save dat manupulation
+            patient.name = patient.firstname + " " + patient.lastname;
+            patient.photo = "img/ionic.png";
             return DataStore.save(patient);
         }
 
