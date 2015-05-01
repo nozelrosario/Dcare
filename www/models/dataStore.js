@@ -38,7 +38,7 @@
     /* Generates a new unique ID based on existing records in DB
      * [Similar to auto increment / Identity column]
     */
-    this.generateNewID = function () {
+    this.__generateNewID = function () {
         var deferredQuery = $q.defer();
         var maxID,newID;
         this.getDataStore().gql({ select: "max(id)" }, function (err,data) {
@@ -66,7 +66,7 @@
         var deferredSave = $q.defer();
         if (!data.id) {
             var me = this;
-            this.generateNewID().then(function (id) {
+            this.__generateNewID().then(function (id) {
                 data._id = id.toString();   // maintain _id as String
                 data.id = id;              // maintain _id as Integer
                 me.getDataStore().put(data).then(function (response) {
@@ -131,14 +131,31 @@
         return deferredCount.promise;
     };
 
+    this.__extractDataFromBulk = function (data) {
+        var cleanedData = [];
+        for (row in data.rows) {
+            cleanedData.push(data.rows[row].doc);
+        }
+        return cleanedData;
+    };
+
+    /* Gets all rows from DB
+    */
     this.getAllRows = function () {
         var deferredFetch = $q.defer();
-        this.getDataStore().allDocs({ include_docs: true, attachments: true }).then(function (result) {
-            // handle result
+        var me = this;
+        this.getDataStore().allDocs({ include_docs: true, attachments: true }).then(function (data) {
+            if (data.total_rows) {
+                deferredFetch.resolve(me.__extractDataFromBulk(data));
+            } else {
+                $log.debug("DataStore.getAllRows : row count not available in response data, returning []");
+                deferredFetch.resolve([]);
+            }
         }).catch(function (err) {
-            console.log(err);
+            $log.error("DataStore.getAllRows : error occured while querying" + this.dataStoreName + "[Error: " + err + "]");
+            deferredFetch.resolve([]);
         });
-        return deferredFetch;
+        return deferredFetch.promise;
     };
 
 })
