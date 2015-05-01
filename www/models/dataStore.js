@@ -126,9 +126,19 @@
             }
         }).catch(function (err) {
             $log.error("DataStore.getRowsCount : error occured while querying" + this.dataStoreName + "[Error: " + err + "]");
-            deferredCount.resolve(data.total_rows);
+            deferredCount.resolve(0);
         });
         return deferredCount.promise;
+    };
+
+    this.getAllRows = function () {
+        var deferredFetch = $q.defer();
+        this.getDataStore().allDocs({ include_docs: true, attachments: true }).then(function (result) {
+            // handle result
+        }).catch(function (err) {
+            console.log(err);
+        });
+        return deferredFetch;
     };
 
 })
