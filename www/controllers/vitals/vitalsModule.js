@@ -159,7 +159,7 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
     if (vitals) {
         $scope.vitals = vitals;
     } else {
-        $scope.vitals = { patientID: $scope.currentPatient.id };  // New entry : make any default values here if any
+        $scope.vitals = { patientID: $scope.currentPatient.id, heightunit: "Cm", weightunit: "Kg" };  // New entry : make any default values here if any
     }
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'vitalsSummary';
 

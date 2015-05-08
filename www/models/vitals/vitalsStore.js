@@ -1,159 +1,111 @@
-angular.module('vitalsStore.services', [])
+angular.module('vitalsStore.services', ['dataStore.services'])
 
 /**
 * A Patient Store service that returns patient data.
 */
-.factory('VitalsStore', function ($q, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
-    // Will call phonegap api for storing/retriving patient data and returns a JSON array
-
+.factory('VitalsStore', function ($q, $log, $filter, DataStore) {  //NR: $filter is used for MOCK, remove it if not required later
+    // Will call data store api for storing/retriving patient data and returns a JSON 
+    DataStore.initDataStore('Vitals');   // Initialize Patients DataStore
     // Some fake testing data
-    var vitalsList = [
-	                { id: 0, patientID: '1', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145", datetime: '1288323623006' },
-	                { id: 1, patientID: '1', height: '150', heightunit: "Cm", weight: "70", weightunit: "Kg", bmi: "175", bpsystolic: "155", bpdiastolic: "129", datetime: '1091246400000' },
-	                { id: 2, patientID: '2', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145", datetime: '1288323623006' },
-	                { id: 3, patientID: '4', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145", datetime: '1091246400000' }
-	                ];
+    //var vitalsList = [
+	//                { id: 0, patientID: '1', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145", datetime: '1288323623006' },
+	//                { id: 1, patientID: '1', height: '150', heightunit: "Cm", weight: "70", weightunit: "Kg", bmi: "175", bpsystolic: "155", bpdiastolic: "129", datetime: '1091246400000' },
+	//                { id: 2, patientID: '2', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145", datetime: '1288323623006' },
+	//                { id: 3, patientID: '4', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145", datetime: '1091246400000' }
+	//                ];
+
+    var prepareLineGraphData = function (data, xFieldName, yFieldName, label) {
+        var lineGraphData = {};
+        
+        if (angular.isArray(xFieldName) && angular.isArray(yFieldName) && angular.isArray(label)) {
+            if ((xFieldName.length == yFieldName.length) && (xFieldName.length == label.length)) {
+                for (var i = 0; i < xFieldName.length; i++) {
+                    lineGraphData[i] = {
+                        name: label[i],
+                        data: prepareLineGraphSeriesData(data,xFieldName[i],yFieldName[i])
+                    }
+                }
+            } else {
+                $log.error("VitalsStore.prepareLineGraphData : Function parameters invalid, all array[] should have same size");
+            }
+            
+        } else if (angular.isString(xFieldName) && angular.isString(yFieldName)) {
+            lineGraphData.name = (label) ? label : "Graph";
+            lineGraphData.data = prepareLineGraphSeriesData(data, xFieldName, yFieldName);
+        } else {
+            $log.error("VitalsStore.prepareLineGraphData : Function parameters mismatch, either all should be array[] or all should be string");
+        }
+        return lineGraphData;
+    };
+    var prepareLineGraphSeriesData = function (data, xFieldName, yFieldName) {
+        var dataSeries=[];
+                
+        if (data && xFieldName && yFieldName) {
+            for(row in data){
+                dataSeries.push([(((row[xFieldName]) ? row[xFieldName] : "")), (((row[yFieldName]) ? row[yFieldName] : ""))]);
+            }
+        } else {
+            dataSeries.push([]);
+        }
+        return (dataSeries);
+    };
 
     return {
-        getCount: function () {
-            var deferredCount = $q.defer();
-
-            ////NR:TODO:  Mock  ////
-            var count = 4; // fire query for count
-            ////NR:TODO:  Mock  ////
-
-            deferredCount.resolve(count);
-            return deferredCount.promise;
+        getCount: function (patientID) {
+            return DataStore.query({
+                select: 'count(id)',
+                where: 'patientID=' + patientID
+            });
         },
         getAllVitalsForPatient: function (patientID) {
-            var deferredFetchAll = $q.defer();
-
-            ////NR:TODO:  Mock  ////
-            var allVitals = $filter('filter')(vitalsList, { patientID: patientID }, true);
-            ////NR:TODO:  Mock  ////
-
-            deferredFetchAll.resolve(allVitals);
-            return deferredFetchAll.promise;
+            return DataStore.query({
+                select: '*',
+                where: 'patientID=' + patientID
+            });
         },
         getVitalByID: function (vitalsID) {
-            // Search on patients
-            var deferredFetch = $q.defer();
-
-            ////NR:TODO:  Mock  ////
-            var vitalsByID = vitalsList[vitalsID];
-            ////NR:TODO:  Mock  ////
-
-            deferredFetch.resolve(vitalsByID);
-            return deferredFetch.promise;
+            return DataStore.getDataByID(vitalsID);
         },
         getGraphDataForHeight: function (patientID) {
-            // Search on patients
             var deferredFetch = $q.defer();
-
-            ////NR:TODO:  Mock  ////
-            var lineGraphData = [
-                                    {
-                                        name: "Height",
-                                        data: [[1083297600000, 130], [1085976000000, 126], [1088568000000, 150], [1091246400000, 180]]
-                                    }
-            ];
-            ////NR:TODO:  Mock  ////
-
-            deferredFetch.resolve(lineGraphData);
+            this.getAllVitalsForPatient(patientID).then(function (data) {
+                deferredFetch.resolve(prepareLineGraphData(data, "datetime", "height", "Height"));
+            });
             return deferredFetch.promise;
         },
         getGraphDataForWeight: function (patientID) {
-            // Search on patients
             var deferredFetch = $q.defer();
-
-            ////NR:TODO:  Mock  ////
-            var lineGraphData = [
-                                    {
-                                        name: "Weight",
-                                        data: [[1083297600000, 150], [1085976000000, 186], [1088568000000, 200], [1091246400000, 150]]
-                                    }
-            ];
-            ////NR:TODO:  Mock  ////
-
-            deferredFetch.resolve(lineGraphData);
+            this.getAllVitalsForPatient(patientID).then(function (data) {
+                deferredFetch.resolve(prepareLineGraphData(data, "datetime", "weight", "Weight"));
+            });
             return deferredFetch.promise;
         },
         getGraphDataForBP: function (patientID) {
             // Search on patients
             var deferredFetch = $q.defer();
 
-            ////NR:TODO:  Mock  ////
-            var lineGraphData = [
-                                    {
-                                        name: "BP - Systolic",
-                                        data: [[1083297600000, 180], [1085976000000, 156], [1088568000000, 300], [1091246400000, 150]]
-                                    },
-                                    {
-                                        name: "BP - Diastolic",
-                                        data: [[1083297600000, 140], [1085976000000, 126], [1088568000000, 280], [1091246400000, 140]]
-                                    }
-            ];
-            ////NR:TODO:  Mock  ////
-
-            deferredFetch.resolve(lineGraphData);
+            this.getAllVitalsForPatient(patientID).then(function (data) {
+                deferredFetch.resolve(prepareLineGraphData(data, ["datetime", "datetime"], ["bpsystolic", "bpdiastolic"], ["BP - Systolic", "BP - Diastolic"]));
+            });
             return deferredFetch.promise;
         },
         getGraphDataForBMI: function (patientID) {
-            // Search on patients
             var deferredFetch = $q.defer();
-
-            ////NR:TODO:  Mock  ////
-            var lineGraphData = [
-                                    {
-                                        name: "BMI",
-                                        data: [[1083297600000, 170], [1085976000000, 140], [1088568000000, 400], [1091246400000, 250]]
-                                    }
-            ];
-            ////NR:TODO:  Mock  ////
-
-            deferredFetch.resolve(lineGraphData);
+            this.getAllVitalsForPatient(patientID).then(function (data) {
+                deferredFetch.resolve(prepareLineGraphData(data, "datetime", "bmi", "BMI"));
+            });
             return deferredFetch.promise;
         },
         getLatestVitalsForPatient: function (patientID) {
-            // Search on patients
-            var deferredFetch = $q.defer();
-
-            ////NR:TODO:  Mock  ////
-            var latestVitals = vitalsList[1];
-            ////NR:TODO:  Mock  ////
-
-            deferredFetch.resolve(latestVitals);
-            return deferredFetch.promise;
+            return DataStore.find({
+                fields: ['datetime'],
+                selector: { datetime: { '$exists': true }, patientID: patientID },
+                sort: [{ 'datetime': 'desc' }],
+                limit: 1
+            });
         },
         save: function (vitals) {
-            // execute deferred / return promise
-            var deferredSave = $q.defer();
-
-            if (vitals) {
-                if (!vitals.id || vitals.id <= 0) {
-                    // Insert data & get the id of inserted patient along with complete inserted data
-
-                    ////NR:TODO:  Mock  ////
-
-                    console.log("Mock Insert : setting id=4");
-                    var newVitals = vitals;
-                    newVitals.id = 4;
-                    vitalsList.push(newVitals);
-                    ////NR:TODO:  Mock  ////
-
-                    deferredSave.resolve(newVitals);
-                } else {
-                    // update data
-
-                    console.log("Mock Update : return as it is");
-                    deferredSave.resolve(vitals);
-                }
-            } else {
-
-                deferredSave.reject("Error Code 00001");
-
-            }
-            return deferredSave.promise;
+            return DataStore.save(patient);
         }
 
     }
