@@ -1,4 +1,28 @@
 ﻿angular.module('dataStore.services', ['pouchdb'])
+
+/* 
+    DataStoreFactory  -> Factory    [ setAdapter(), create(store name) : will create store instance of adapter based on configured adapter(puch, http, etc.) ]
+                                    [ getStoreName()  |  {[ DataStore Factory will provide Adapter Instance ]}   
+     ________________                                 V
+    | AdapterFactory | --> Factory [ register(adptr), create(storename,adapter): will init & instantiate adapter out of registered Adapters  ]
+    +----------------+                                  |  {[ Will provide Instantiated Adapter ready to interact with Actual storage ]}
+          |                                             |
+          V                                             V
+     PouchAdapter -> [implements DataAdaptor] -> [initialize(storename), save(), query(), Delete()...other data store Methods] -> AdapterFactory.register(PouchAdapter)
+     HttpAdapter -> [implements DataAdaptor] -> [Initialize(storename), save(), query(), Delete()...other data store Methods] -> AdapterFactory.Register(HttpAdapter)
+
+*/
+
+
+
+
+
+
+
+
+
+
+
 /**
 * A Data Store service service that interacts with pouch DB for providing Data.
 * Phonegap api to be plugged in for sqlite support
