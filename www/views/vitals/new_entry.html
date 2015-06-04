@@ -30,7 +30,7 @@
             <div flex layout="column" layout-phone="column" layout-align="center center" class="padding " style="height:350px;">
                 <div class="padding"><center><h1> What is your Weight ? </h1></center></div>
                 <div layout="row" class="padding">
-                    <input id="age" type="text" ng-model="vitals.weight" data-displayinput="true" jquery-knob jquery-knob-config="{width:200, angleArc:250, step:1, angleOffset:-125, lineCap:'round', min:20, max:200, displayInput:false, cursor:true }" />
+                    <input id="weight" type="text" ng-model="vitals.weight" ng-change="calculateBMI()" data-displayinput="true" jquery-knob jquery-knob-config="{width:200, angleArc:250, step:1, angleOffset:-125, lineCap:'round', min:20, max:200, displayInput:false, cursor:true }" />
                 </div>
                 <h1>
                     <b><input ng-model="vitals.weight" add-clear add-clear-config="{returnFocus:false, showOnLoad:true, hidOnBlur:false }" style="border-bottom: 1px solid rgb(163, 157, 157) !important; width: 150px; background-color:#ffffff; border:none; text-align:center;font-weight:bold;" /></b>

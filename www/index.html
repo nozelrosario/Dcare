@@ -41,6 +41,8 @@
     <script src="lib/jquery/jquery-1.11.1.min.js"></script>
 <!-- JQuery -->
 
+      <script src="lib/logForJavascript/log4javascript.js"></script>
+
 <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
     <!--<script src="lib/ionic/js/angular/angular-animate.js"></script>-->
@@ -52,6 +54,13 @@
 <!-- cordova script (this will be a 404 during development) Uncomment when deploying-->
     <!--script src="cordova.js"></script-->
 
+<!-- Js Class Library-->
+      <script>JSCLASS_PATH = 'lib/JS.Class 4.0.5/min';</script>
+      <script src="lib/JS.Class 4.0.5/min/core.js"></script>
+      <script src="lib/JS.Class 4.0.5/min/loader-browser.js"></script>
+      
+<!-- JQ Class Library-->
+
 <!-- Pouch DB -->
       <script src="lib/pouchDB/pouchdb-3.4.0.js"></script>
       <script src="lib/pouchDB/plugins/GQL/pouchdb-collate.js"></script>
@@ -60,7 +69,7 @@
       <script src="lib/pouchDB/adapters/pouchdb.memory.js"></script>
       <script src="lib/pouchDB/plugins/GQL/pouchdb.gql.js"></script>
       <script src="lib/pouchDB/plugins/find/pouchdb.find.js"></script>
-      <script src="lib/pouchDB/angular-service/angular-pouchdb.js"></script>
+      <!--<script src="lib/pouchDB/angular-service/angular-pouchdb.js"></script>-->   <!--Not used currently remove corresponding file too when delete final-->
       <!--script src="lib/pouchDB/adapters/phonegap-adapter-to-be-added-later"></!--script-->
 <!-- Pouch DB -->
 
@@ -103,6 +112,7 @@
     <script src="lib/jquery-sparkline/jquery.sparkline.min.js"></script>  
 <!-- JQ Sparkline Library-->
 
+   
 
     <!-- App's Directives -->
     <script src="directives/mobiscroll.js"></script>
@@ -116,9 +126,10 @@
 
 
     <!-- App's js -->
+    <script src="js/applicationLog.js"></script>
     <script src="js/app.js"></script>
     <script src="js/stateRoutings.js"></script>
-
+    <script src="js/classInitializer.js"></script>
     
     <!-- Controllers -->
 
@@ -130,8 +141,14 @@
     <script src="controllers/vitals/vitalsModule.js"></script>
     <script src="controllers/reminders/remindersModule.js"></script>
 
-    <!-- Models -->
-    <script src="models/dataStore/dataStore.js"></script>
+<!-- Data Store -->
+      <script src="models/dataStore/adapters/dataAdapterFactory.js"></script>
+      <script src="models/dataStore/adapters/pouchDbAdapter.js"></script>
+      <script src="models/dataStore/dataStore.js"></script>
+
+<!-- Data Store -->
+
+    <!-- Models -->   
     <script src="models/patients/patientsStore.js"></script>
     <script src="models/vitals/vitalsStore.js"></script> 
     <script src="models/glucose/glucoseStore.js"></script>  

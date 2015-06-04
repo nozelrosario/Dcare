@@ -156,10 +156,10 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
 
     // Init Data
     $scope.currentPatient = currentPatient;
-    if (vitals) {
+    if (vitals && vitals.id > 0) {
         $scope.vitals = vitals;
     } else {
-        $scope.vitals = { patientID: $scope.currentPatient.id, heightunit: "Cm", weightunit: "Kg" };  // New entry : make any default values here if any
+        $scope.vitals = { patientID: $scope.currentPatient.id, heightunit: "Cm", weightunit: "Kg", datetime: (new Date()) };  // New entry : make any default values here if any
     }
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'vitalsSummary';
 
@@ -168,11 +168,10 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
         //English Units: BMI = Weight (lb) / (Height (in) x Height (in)) x 703
         //http://www.freebmicalculator.net/healthy-bmi.php
         if ($scope.vitals.weight > 0 && $scope.vitals.height > 0) {
-            $scope.vitals.bmi = ($scope.vitals.height / $scope.vitals.weight) * $scope.vitals.height;
+            $scope.vitals.bmi = parseInt(($scope.vitals.height / $scope.vitals.weight) * $scope.vitals.height);
         } else {
             $scope.vitals.bmi = 0;
         }
-
     };
 
     $scope.validate = function () {
@@ -195,7 +194,8 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
     };
 
     $scope.save = function () {
-        $scope.vitals.datetime = ($scope.vitals.datetime) ? Date.parse($scope.vitals.datetime) : null; // Parse date to long format
+        $scope.vitals.datetime = (angular.isDate($scope.vitals.datetime)) ? Date.parse($scope.vitals.datetime) : ((typeof $scope.vitals.datetime) == "number" ) ? $scope.vitals.datetime : ""; // Parse date to long format
+        $scope.vitals.height = parseInt($scope.vitals.height);
         var saveVitalsDataPromise = VitalsStore.save($scope.vitals);
         saveVitalsDataPromise.then($scope.changeState, $scope.saveFailed);
 

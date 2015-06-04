@@ -82,8 +82,8 @@ remindersModule.controller('ReminderFormController', function ($scope, $ionicLoa
     };
 
     $scope.save = function () {
-        $scope.reminder.startdate = ($scope.reminder.startdate) ? Date.parse($scope.reminder.startdate) : null; // Parse date to long format
-        $scope.reminder.enddate = ($scope.reminder.enddate) ? Date.parse($scope.reminder.enddate) : null; // Parse date to long format
+        $scope.reminder.startdate = (angular.isDate($scope.reminder.startdate)) ? Date.parse($scope.reminder.startdate) : ((typeof $scope.reminder.startdate) == "number") ? $scope.reminder.startdate : ""; // Parse date to long format
+        $scope.reminder.enddate = (angular.isDate($scope.reminder.enddate)) ? Date.parse($scope.reminder.enddate) : ((typeof $scope.reminder.enddate) == "number") ? $scope.reminder.enddate : ""; // Parse date to long format
         var saveReminderDataPromise = RemindersStore.save($scope.reminder);
         saveReminderDataPromise.then($scope.changeState, $scope.saveFailed);
 

@@ -218,7 +218,7 @@ registrationModule.controller('BodySizeInfoController', function ($scope, $mdDia
         } else {
             if($stateParams.patientID && $stateParams.patientID != "") {
                 // create new record for vitals with current patient
-                $scope.vitals = { patientID:$stateParams.patientID };
+                $scope.vitals = { patientID: parseInt($stateParams.patientID), heightunit: "Cm", weightunit: "Kg", datetime: Date.parse(new Date())};
             } else {
                 $mdDialog.show($mdDialog.alert()
                                .title('Something went wrong :(')
@@ -233,16 +233,15 @@ registrationModule.controller('BodySizeInfoController', function ($scope, $mdDia
 
     }
 
-    $scope.calculateBMI = function() {
+    $scope.calculateBMI = function () {
         // Metric Units: BMI = Weight (kg) / (Height (m) x Height (m))
         //English Units: BMI = Weight (lb) / (Height (in) x Height (in)) x 703
         //http://www.freebmicalculator.net/healthy-bmi.php
-        if($scope.vitals.weight > 0 && $scope.vitals.height > 0) {
-            $scope.vitals.bmi = ($scope.vitals.height / $scope.vitals.weight) * $scope.vitals.height;
+        if ($scope.vitals.weight > 0 && $scope.vitals.height > 0) {
+            $scope.vitals.bmi = parseInt(($scope.vitals.height / $scope.vitals.weight) * $scope.vitals.height);
         } else {
             $scope.vitals.bmi = 0;
         }
-        
     };
 
     $scope.changeState = function (vitals) {
@@ -267,6 +266,7 @@ registrationModule.controller('BodySizeInfoController', function ($scope, $mdDia
     };
 
     $scope.saveAndProceed = function () {
+        $scope.vitals.height = parseInt($scope.vitals.height);
         var saveVitalsDataPromise = VitalsStore.save($scope.vitals);
         saveVitalsDataPromise.then($scope.changeState, $scope.saveFailed);
     };
@@ -311,7 +311,7 @@ registrationModule.controller('BloodPressureInfoController', function ($scope, $
         } else {
             if($stateParams.patientID && $stateParams.patientID != "") {
                 // create new record for vitals with current patient
-                $scope.vitals = { patientID:$stateParams.patientID };
+                $scope.vitals = { patientID:parseInt($stateParams.patientID) };
             } else {
                 $mdDialog.show($mdDialog.alert()
                                .title('Something went wrong :(')

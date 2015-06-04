@@ -37,7 +37,7 @@
 					options = this.options;
 
 			$this.wrap("<span style='position:relative;' class='add-clear-span'></span>");
-			$this.after($("<a href='#clear' style='display: block;'>" + options.closeSymbol + "</a>"));
+			$this.after($("<a name='#clear' style='display: block;'>" + options.closeSymbol + "</a>"));
 			$this.next().css({
 				color: options.color,
 				'text-decoration': 'none',
@@ -50,12 +50,12 @@
 			}, this);
 
 			if ($this.val().length >= 1 && options.showOnLoad === true) {
-				$this.siblings("a[href='#clear']").show();
+				$this.siblings("a[name='#clear']").show();
 			}
 
 			$this.focus(function() {
 				if ($(this).val().length >= 1) {
-					$(this).siblings("a[href='#clear']").show();
+					$(this).siblings("a[name='#clear']").show();
 				}
 			});
 
@@ -71,14 +71,14 @@
 
 			$this.keyup(function() {
 				if ($(this).val().length >= 1) {
-					$(this).siblings("a[href='#clear']").show();
+					$(this).siblings("a[name='#clear']").show();
 				} else {
 					//$(this).siblings("a[href='#clear']").hide();
 				}
 			});
 
 
-			$("a[href='#clear']").click(function(e) {
+			$("a[name='#clear']").click(function(e) {
 				$(this).siblings(me.element).val("");
 				//$(this).hide();
 				if (options.returnFocus === true) {

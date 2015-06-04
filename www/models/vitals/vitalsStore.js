@@ -1,11 +1,15 @@
-angular.module('vitalsStore.services', ['dataStore.services'])
+angular.module('vitalsStore.services', [])
 
 /**
 * A Patient Store service that returns patient data.
 */
-.factory('VitalsStore', function ($q, $log, $filter, DataStore) {  //NR: $filter is used for MOCK, remove it if not required later
+.factory('VitalsStore', function ($q, $log, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
     // Will call data store api for storing/retriving patient data and returns a JSON 
-    DataStore.initDataStore('Vitals');   // Initialize Patients DataStore
+    vitalsDataStore = new DataStore({
+        dataStoreName: 'Vitals',
+        dataAdapter: 'pouchDB',
+        adapterConfig: { auto_compaction: true }
+    });  // Initialize Patients DataStore
     // Some fake testing data
     //var vitalsList = [
 	//                { id: 0, patientID: '1', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145", datetime: '1288323623006' },
@@ -15,7 +19,7 @@ angular.module('vitalsStore.services', ['dataStore.services'])
 	//                ];
 
     var prepareLineGraphData = function (data, xFieldName, yFieldName, label) {
-        var lineGraphData = {};
+        var lineGraphData = [];
         
         if (angular.isArray(xFieldName) && angular.isArray(yFieldName) && angular.isArray(label)) {
             if ((xFieldName.length == yFieldName.length) && (xFieldName.length == label.length)) {
@@ -30,8 +34,10 @@ angular.module('vitalsStore.services', ['dataStore.services'])
             }
             
         } else if (angular.isString(xFieldName) && angular.isString(yFieldName)) {
-            lineGraphData.name = (label) ? label : "Graph";
-            lineGraphData.data = prepareLineGraphSeriesData(data, xFieldName, yFieldName);
+            lineGraphData.push({
+                name: (label) ? label : "Graph",
+                data: prepareLineGraphSeriesData(data, xFieldName, yFieldName)
+            });
         } else {
             $log.error("VitalsStore.prepareLineGraphData : Function parameters mismatch, either all should be array[] or all should be string");
         }
@@ -41,7 +47,8 @@ angular.module('vitalsStore.services', ['dataStore.services'])
         var dataSeries=[];
                 
         if (data && xFieldName && yFieldName) {
-            for(row in data){
+            for(var i=0 ; i<data.length ; i++){
+                var row = data[i];
                 dataSeries.push([(((row[xFieldName]) ? row[xFieldName] : "")), (((row[yFieldName]) ? row[yFieldName] : ""))]);
             }
         } else {
@@ -50,21 +57,22 @@ angular.module('vitalsStore.services', ['dataStore.services'])
         return (dataSeries);
     };
 
+
     return {
         getCount: function (patientID) {
-            return DataStore.query({
+            return vitalsDataStore.search({
                 select: 'count(id)',
-                where: 'patientID=' + patientID
+                where: "patientID = " + patientID
             });
         },
         getAllVitalsForPatient: function (patientID) {
-            return DataStore.query({
+            return vitalsDataStore.search({
                 select: '*',
-                where: 'patientID=' + patientID
+                where: "patientID=" + patientID + ""
             });
         },
         getVitalByID: function (vitalsID) {
-            return DataStore.getDataByID(vitalsID);
+            return vitalsDataStore.getDataByID(vitalsID);
         },
         getGraphDataForHeight: function (patientID) {
             var deferredFetch = $q.defer();
@@ -97,15 +105,19 @@ angular.module('vitalsStore.services', ['dataStore.services'])
             return deferredFetch.promise;
         },
         getLatestVitalsForPatient: function (patientID) {
-            return DataStore.find({
-                fields: ['datetime'],
-                selector: { datetime: { '$exists': true }, patientID: patientID },
+            var deferredFetch = $q.defer();
+            vitalsDataStore.find({
+                fields: ['datetime', 'patientID'],
+                selector: { datetime: { '$exists': true }, patientID: {"$eq" : parseInt(patientID)} },
                 sort: [{ 'datetime': 'desc' }],
                 limit: 1
+            }).then(function (data) {
+                deferredFetch.resolve(data[0]);
             });
+            return deferredFetch.promise;
         },
         save: function (vitals) {
-            return DataStore.save(patient);
+            return vitalsDataStore.save(vitals);
         }
 
     }

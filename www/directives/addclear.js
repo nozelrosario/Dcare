@@ -7,7 +7,9 @@ mobiscrollDirectives.directive('addClear', function ($parse) {
                 var config = scope.$eval(attrs.addClearConfig);
                 var modelAccessor = $parse(attrs.ngModel);
                 config.onClear = function() {
-                    modelAccessor.assign(scope, "");
+                    scope.$apply(function (scope) {
+                        modelAccessor.assign(scope, "");
+                    });
                 };
                 $(element).addClear(config);
             }

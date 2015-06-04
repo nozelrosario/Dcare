@@ -1,0 +1,1 @@
+var QueryEngine ="Currently depending upon GQL & Find plugin, May be in future HTTP adapter might require this";

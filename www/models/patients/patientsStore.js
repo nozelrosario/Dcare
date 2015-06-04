@@ -1,11 +1,15 @@
-angular.module('patientsStore.services', ['dataStore.services'])
+angular.module('patientsStore.services', [])
 
 /**
 * A Patient Store service that returns patient data.
 */
-.factory('PatientsStore', function ($q, $filter, DataStore) {
+.factory('PatientsStore', function ($q, $filter) {
     // Will call data store api for storing/retriving patient data and returns a JSON 
-    DataStore.initDataStore('Patients');   // Initialize Patients DataStore
+    patientDataStore = new DataStore({
+        dataStoreName: 'Patients',
+        dataAdapter: 'pouchDB',
+        adapterConfig: { auto_compaction: true }
+    });   // Initialize Patients DataStore
 
     // Some fake testing data
     //var patients = [
@@ -17,19 +21,19 @@ angular.module('patientsStore.services', ['dataStore.services'])
 
     return {
         getCount: function () {
-            return DataStore.getRowsCount();
+            return patientDataStore.getRowsCount();
         },
         getAllPatients: function () {
-            return DataStore.getAllRows();
+            return patientDataStore.getAllRows();
         },
         getPatientByID: function (patientID) {
-            return DataStore.getDataByID(patientID);
+            return patientDataStore.getDataByID(patientID);
         },
         save: function (patient) {
             // Before Save dat manupulation
             patient.name = patient.firstname + " " + patient.lastname;
             patient.photo = "img/ionic.png";
-            return DataStore.save(patient);
+            return patientDataStore.save(patient);
         }
 
     }
