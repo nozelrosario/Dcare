@@ -4,7 +4,7 @@ var dashboardModule = angular.module('dCare.dashboard', ['ionic',
                                                          'dCare.dateTimeBoxDirectives', 'dCare.jqSparklineDirectives']);
 
 //Controllers
-dashboardModule.controller('DashboardController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams,
+dashboardModule.controller('DashboardController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams,
                                                             allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData,notificationsData,
                                                             PatientsStore, VitalsStore, GlucoseStore, NotificationsStore) {
     $ionicLoading.show({
@@ -32,6 +32,8 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
     $scope.glucose = latestGlucose;
     $scope.glucoseTrend = glucoseSparklineData; // glucoseSparklineData = {data:[], options:{}}
     $scope.notificationsList = notificationsData;
+    $scope.isNextGlucoseAvailable = false;
+    $scope.isPreviousGlucoseAvailable = true;
 
     if (!defaultPatient) {
         $scope.currentPatient = allPatients[0];
@@ -98,14 +100,35 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
     $scope.getNextGlucose = function () {
         var glucoseNextDataPromise = GlucoseStore.getNextGlucoseForPatient($scope.currentPatient.id, $scope.glucose.datetime);
         glucoseNextDataPromise.then(function (glucose) {
-            $scope.glucose = glucose;
+            if (glucose) {
+                $scope.glucose = glucose;
+                $scope.isPreviousGlucoseAvailable = true;
+            } else {
+                $mdDialog.show($mdDialog.alert()
+                               .title('Glucose data unavailable')
+                               .content('This is latest glucose value available')
+                               .ariaLabel('This is last glucose value available')
+                               .ok('OK!'));
+                $scope.isNextGlucoseAvailable = false;
+            }
         });
     };
 
     $scope.getPreviousGlucose = function (patientID, datetime) {
         var glucosePreviousDataPromise = GlucoseStore.getPreviousGlucoseForPatient($scope.currentPatient.id, $scope.glucose.datetime);
         glucosePreviousDataPromise.then(function (glucose) {
-            $scope.glucose = glucose;
+            if (glucose) {
+                $scope.glucose = glucose;
+                $scope.isNextGlucoseAvailable = true;
+            } else {
+                $mdDialog.show($mdDialog.alert()
+                               .title('Glucose entry unavailable')
+                               .content('This is oldest glucose value available')
+                               .ariaLabel('This is oldest glucose value available')
+                               .ok('OK!'));
+                $scope.isPreviousGlucoseAvailable = false;
+            }
+            
         });
     };
 

@@ -80,11 +80,11 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
                 deferredFetch.resolve(data);
             }).catch(function (err) {
                 logger.error("DataStore.getDataByID : error occured while querying " + me.dataStoreName + "[Error: " + err + "]");
-                deferredFetch.resolve([]);
+                deferredFetch.resolve(null);
             });
         } else {
             logger.warn("DataStore.getDataByID : empty id not valid returning null data");
-            deferredFetch.resolve([]);
+            deferredFetch.resolve(null);
         }
         return deferredFetch;
     },

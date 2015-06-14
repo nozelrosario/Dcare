@@ -5,11 +5,11 @@ angular.module('vitalsStore.services', [])
 */
 .factory('VitalsStore', function ($q, $log, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
     // Will call data store api for storing/retriving patient data and returns a JSON 
-    vitalsDataStore = new DataStore({
+    var vitalsDataStore = new DataStore({
         dataStoreName: 'Vitals',
         dataAdapter: 'pouchDB',
         adapterConfig: { auto_compaction: true }
-    });  // Initialize Patients DataStore
+    });  // Initialize Vitals  DataStore
     // Some fake testing data
     //var vitalsList = [
 	//                { id: 0, patientID: '1', height: '250', heightunit: "Cm", weight: "50", weightunit: "Kg", bmi: "125", bpsystolic: "125", bpdiastolic: "145", datetime: '1288323623006' },

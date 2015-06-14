@@ -71,13 +71,13 @@
                                 </div>
                                 <div class="item tabs " style="height:100px">
                         <div layout="row" layout-align="center center" class="tab-item">
-                            <md-button class="md-fab ion-ios-arrow-left SmallFab " aria-label="Previous" ng-click="" ng-disabled="glucose.isFirstEntry"></md-button>
+                            <md-button class="md-fab ion-ios-arrow-left SmallFab " aria-label="Previous" ng-disabled="!isPreviousGlucoseAvailable" ng-click="getPreviousGlucose()" ng-disabled="glucose.isFirstEntry"></md-button>
                         </div>
                         <div layout="row" layout-align="center center" class="tab-item">
                             <md-button class="md-fab ion-ios-plus-outline MediumFab" aria-label="Add" ng-click="addNewGlucoseEntry()"></md-button>
                         </div>
                         <div layout="row" layout-align="center center" class="tab-item">
-                            <md-button class="md-fab ion-ios-arrow-right SmallFab" aria-label="Next" ng-click="" ng-disabled="glucose.isLastEntry"></md-button>
+                            <md-button class="md-fab ion-ios-arrow-right SmallFab" aria-label="Next" ng-disabled="!isNextGlucoseAvailable" ng-click="getNextGlucose()" ng-disabled="glucose.isLastEntry"></md-button>
                         </div>
                     </div>
                             </div>

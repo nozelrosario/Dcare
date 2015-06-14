@@ -5,7 +5,7 @@ angular.module('patientsStore.services', [])
 */
 .factory('PatientsStore', function ($q, $filter) {
     // Will call data store api for storing/retriving patient data and returns a JSON 
-    patientDataStore = new DataStore({
+    var patientDataStore = new DataStore({
         dataStoreName: 'Patients',
         dataAdapter: 'pouchDB',
         adapterConfig: { auto_compaction: true }

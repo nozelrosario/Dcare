@@ -5,6 +5,12 @@ angular.module('remindersStore.services', [])
 */
 .factory('RemindersStore', function ($q, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
     // Will call phonegap api for storing/retriving patient data and returns a JSON array
+    var remindersDataStore = new DataStore({
+        dataStoreName: 'Reminders',
+        dataAdapter: 'pouchDB',
+        adapterConfig: { auto_compaction: true }
+    });  // Initialize Reminders  DataStore
+
     var enums = {
         reminderType: {
             1: { label: 'Medicine', short_label: 'Medicine', image: 'img/no-image.png', value: 1 },
@@ -23,91 +29,39 @@ angular.module('remindersStore.services', [])
             5: { label: 'Minutes', short_label: 'Minutes', image: '', value: 5 }
         }
     };
-    // Some fake testing data
-    var remindersList = [
-	                { id: 0, patientID: '1', text: 'Reminder 1', title: 'Reminder 1', reminderType: 1, startdate: '1288323623006', enddate: '1288323623006', isRecursive: true, frequencyUnit: 1, frequency: 1, status: 'active' },
-	                { id: 1, patientID: '1', text: 'Reminder 2', title: 'Reminder 2', reminderType: 3, startdate: '1289323623006', enddate: '1288323623006', isRecursive: false, frequencyUnit: null, frequency: null, status: 'active' },
-	                { id: 2, patientID: '2', text: 'Reminder 3', title: 'Reminder 3', reminderType: 2, startdate: '1298323623006', enddate: '1288323623006', isRecursive: false, frequencyUnit: null, frequency: null, status: 'active' },
-	                { id: 3, patientID: '4', text: 'Reminder 4', title: 'Reminder 4', reminderType: 1, startdate: '1288523623006', enddate: '1288323623006', isRecursive: true, frequencyUnit: 3, frequency: 1, status: 'active' }
-	                ];
+    //// Some fake testing data
+    //var remindersList = [
+	//                { id: 0, patientID: '1', text: 'Reminder 1', title: 'Reminder 1', reminderType: 1, startdate: '1288323623006', enddate: '1288323623006', isRecursive: true, frequencyUnit: 1, frequency: 1, status: 'active' },
+	//                { id: 1, patientID: '1', text: 'Reminder 2', title: 'Reminder 2', reminderType: 3, startdate: '1289323623006', enddate: '1288323623006', isRecursive: false, frequencyUnit: null, frequency: null, status: 'active' },
+	//                { id: 2, patientID: '2', text: 'Reminder 3', title: 'Reminder 3', reminderType: 2, startdate: '1298323623006', enddate: '1288323623006', isRecursive: false, frequencyUnit: null, frequency: null, status: 'active' },
+	//                { id: 3, patientID: '4', text: 'Reminder 4', title: 'Reminder 4', reminderType: 1, startdate: '1288523623006', enddate: '1288323623006', isRecursive: true, frequencyUnit: 3, frequency: 1, status: 'active' }
+	//                ];
 
     return {
         enums: enums,
-        getCount: function () {
-            var deferredCount = $q.defer();
-
-            ////NR:TODO:  Mock  ////
-            var count = 4; // fire query for count
-            ////NR:TODO:  Mock  ////
-
-            deferredCount.resolve(count);
-            return deferredCount.promise;
+        getCount: function (patientID) {
+            return remindersDataStore.search({
+                select: 'count(id)',
+                where: "patientID = " + patientID
+            });
         },
         getAllRemindersForPatient: function (patientID) {
-            var deferredFetchAll = $q.defer();
-
-            ////NR:TODO:  Mock  ////
-            var allReminders = $filter('filter')(remindersList, { patientID: patientID }, true);
-            ////NR:TODO:  Mock  ////
-
-            deferredFetchAll.resolve(allReminders);
-            return deferredFetchAll.promise;
+            return remindersDataStore.search({
+                select: '*',
+                where: "patientID=" + patientID + ""
+            });
         },
         getActiveRemindersForPatient: function (patientID) {
-            var deferredFetchAll = $q.defer();
-
-            ////NR:TODO:  Mock  ////
-            var allReminders = $filter('filter')(remindersList, { patientID: patientID, status: 'active' }, true);
-            ////NR:TODO:  Mock  ////
-
-            deferredFetchAll.resolve(allReminders);
-            return deferredFetchAll.promise;
+            return remindersDataStore.search({
+                select: '*',
+                where: "patientID=" + patientID + " and status= 'active'"
+            });
         },
         getReminderByID: function (reminderID) {
-            // Search on patients
-            var deferredFetch = $q.defer();
-
-            ////NR:TODO:  Mock  ////
-            var reminderByID;
-            if (reminderID && reminderID !== "") {
-                reminderByID = ($filter('filter')(remindersList, { id: JSON.parse(reminderID) }, true))[0];
-            } else {
-                reminderByID = null;
-            }
-            ////NR:TODO:  Mock  ////
-
-            deferredFetch.resolve(reminderByID);
-            return deferredFetch.promise;
+            return remindersDataStore.getDataByID(reminderID);
         },
         save: function (reminder) {
-            // execute deferred / return promise
-            var deferredSave = $q.defer();
-
-            if (reminder) {
-                if (!reminder.id || reminder.id <= 0) {
-                    // Insert data & get the id of inserted patient along with complete inserted data
-
-                    ////NR:TODO:  Mock  ////
-
-                    console.log("Mock Insert : setting id=4");
-                    var newReminder = reminder;
-                    reminder.id = 4;
-                    remindersList.push(newReminder);
-                    ////NR:TODO:  Mock  ////
-
-                    deferredSave.resolve(newReminder);
-                } else {
-                    // update data
-
-                    console.log("Mock Update : return as it is");
-                    deferredSave.resolve(reminder);
-                }
-            } else {
-
-                deferredSave.reject("Error Code 00001");
-
-            }
-            return deferredSave.promise;
+            return remindersDataStore.save(reminder);
         }
 
     }

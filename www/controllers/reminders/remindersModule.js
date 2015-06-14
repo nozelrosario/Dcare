@@ -70,20 +70,19 @@ remindersModule.controller('ReminderFormController', function ($scope, $ionicLoa
     if (reminder) {
         $scope.reminder = reminder;
     } else {
-        $scope.reminder = { patientID: $scope.currentPatient.id };  // New entry : make any default values here if any
+        $scope.reminder = { patientID: $scope.currentPatient.id, status:'active' };  // New entry : make any default values here if any
     }
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'reminderslist';
 
     // Action Methods
     $scope.changeState = function (reminder) {
-        //$scope.glucose = glucose;
         // transition to next state
         $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
     };
 
     $scope.save = function () {
-        $scope.reminder.startdate = (angular.isDate($scope.reminder.startdate)) ? Date.parse($scope.reminder.startdate) : ((typeof $scope.reminder.startdate) == "number") ? $scope.reminder.startdate : ""; // Parse date to long format
-        $scope.reminder.enddate = (angular.isDate($scope.reminder.enddate)) ? Date.parse($scope.reminder.enddate) : ((typeof $scope.reminder.enddate) == "number") ? $scope.reminder.enddate : ""; // Parse date to long format
+        $scope.reminder.startdate = castToLongDate($scope.reminder.startdate);
+        $scope.reminder.enddate = castToLongDate($scope.reminder.enddate);;
         var saveReminderDataPromise = RemindersStore.save($scope.reminder);
         saveReminderDataPromise.then($scope.changeState, $scope.saveFailed);
 
@@ -115,7 +114,6 @@ remindersModule.config(function ($stateProvider, $urlRouterProvider) {
                   remindersList: function (RemindersStore, $stateParams) { return RemindersStore.getActiveRemindersForPatient($stateParams.patientID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
-              //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/reminders/list.html',
               controller: 'RemindersListController',
               params: ['patientID']
@@ -125,7 +123,6 @@ remindersModule.config(function ($stateProvider, $urlRouterProvider) {
                   reminder: function (RemindersStore, $stateParams) { return RemindersStore.getReminderByID($stateParams.reminderID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
-              //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/reminders/new_entry.html',
               controller: 'ReminderFormController',
               params: ['patientID', 'reminderID', 'parentState']

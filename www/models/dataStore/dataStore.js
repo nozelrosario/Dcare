@@ -1,3 +1,8 @@
+/* Responsible for interfacing Models With configured Physical Data Store & performing common data preprocessing operations
+* NR: TODO => Add provision for Triggers/Event-Listeners[Before/After(Save,insert,Delete, etc)]
+*     TODO => Implement Delete.
+*/
+
 app.classes.data.DataStore = new Class({
     initialize: function(config) {
         this.dataStoreName = (config.dataStoreName)? config.dataStoreName: logger.error("DataStore Name cannot be empty"),

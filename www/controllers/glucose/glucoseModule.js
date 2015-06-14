@@ -65,7 +65,7 @@ glucoseModule.controller('GlucoseListController', function ($scope, $ionicLoadin
 
 
 
-glucoseModule.controller('GlucoseFormController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, glucose, currentPatient, GlucoseStore) {
+glucoseModule.controller('GlucoseFormController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, glucose, currentPatient, GlucoseStore) {
     $ionicLoading.show({
         template: 'Loading...'
     });
@@ -90,7 +90,7 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicLoadin
     };
 
     $scope.save = function () {
-        $scope.glucose.datetime = (angular.isDate($scope.glucose.datetime)) ? Date.parse($scope.glucose.datetime) : ((typeof $scope.glucose.datetime) == "number") ? $scope.glucose.datetime : ""; // Parse date to long format
+        $scope.glucose.datetime = castToLongDate($scope.glucose.datetime)
         var saveGlucoseDataPromise = GlucoseStore.save($scope.glucose);
         saveGlucoseDataPromise.then($scope.changeState, $scope.saveFailed);
 

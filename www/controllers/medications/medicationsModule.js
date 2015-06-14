@@ -90,8 +90,8 @@ medicationsModule.controller('MedicationFormController', function ($scope, $ioni
     };
 
     $scope.save = function () {
-        $scope.medication.startdate = (angular.isDate($scope.medication.startdate)) ? Date.parse($scope.medication.startdate) : ((typeof $scope.medication.startdate) == "number") ? $scope.medication.startdate : ""; // Parse date to long format
-        $scope.medication.enddate = (angular.isDate($scope.medication.enddate)) ? Date.parse($scope.medication.enddate) : ((typeof $scope.medication.enddate) == "number") ? $scope.medication.enddate : ""; // Parse date to long format
+        $scope.medication.startdate = castToLongDate($scope.medication.startdate);
+        $scope.medication.enddate = castToLongDate($scope.medication.enddate);
         var saveMedicationDataPromise = MedicationsStore.save($scope.medication);
         saveMedicationDataPromise.then($scope.changeState, $scope.saveFailed);
 
