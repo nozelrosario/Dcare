@@ -1,4 +1,4 @@
-angular.module('patientsStore.services', [])
+angular.module('dCare.Services.PatientsStore', [])
 
 /**
 * A Patient Store service that returns patient data.

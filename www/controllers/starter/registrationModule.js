@@ -1,5 +1,5 @@
 var registrationModule = angular.module('dCare.registration', ['ionic',
-                                                                'patientsStore.services', 'vitalsStore.services',
+                                                                'dCare.Services.PatientsStore', 'dCare.Services.VitalsStore',
                                                                 'dCare.jqueryDynameterDirectives', 'dCare.mobiscrollDirectives', 'dCare.jqueryKnobDirectives', 'dCare.addclearDirectives']);
 
 // Controllers
@@ -218,7 +218,7 @@ registrationModule.controller('BodySizeInfoController', function ($scope, $mdDia
         } else {
             if($stateParams.patientID && $stateParams.patientID != "") {
                 // create new record for vitals with current patient
-                $scope.vitals = { patientID: parseInt($stateParams.patientID), heightunit: "Cm", weightunit: "Kg", datetime: Date.parse(new Date())};
+                $scope.vitals = { patientID: parseInt($stateParams.patientID), heightunit: "Cm", weightunit: "Kg", datetime: castToLongDate(new Date()) };
             } else {
                 $mdDialog.show($mdDialog.alert()
                                .title('Something went wrong :(')

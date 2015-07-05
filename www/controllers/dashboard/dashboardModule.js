@@ -1,5 +1,5 @@
 var dashboardModule = angular.module('dCare.dashboard', ['ionic',
-                                                         'patientsStore.services', 'vitalsStore.services', 'glucoseStore.services', 'notificationsStore.services',
+                                                         'dCare.Services.PatientsStore', 'dCare.Services.VitalsStore', 'dCare.Services.GlucoseStore', 'dCare.Services.NotificationsStore',
                                                          'dCare.glucose', 'dCare.medications','dCare.vitals','dCare.reminders',
                                                          'dCare.dateTimeBoxDirectives', 'dCare.jqSparklineDirectives']);
 

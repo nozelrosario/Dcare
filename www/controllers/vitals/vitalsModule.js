@@ -1,5 +1,5 @@
 var vitalsModule = angular.module('dCare.vitals', ['ionic',
-                                                     'patientsStore.services', 'vitalsStore.services',
+                                                     'dCare.Services.PatientsStore', 'dCare.Services.VitalsStore',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng', 'dCare.jqueryDynameterDirectives', 'dCare.mobiscrollDirectives', 'dCare.jqueryKnobDirectives', 'dCare.addclearDirectives']);
 
 //Controllers

@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['ionic', 'patientsStore.services'])
+angular.module('starter.controllers', ['ionic', 'dCare.Services.PatientsStore'])
 
 .controller('StarterController', function ($scope, $ionicLoading, PatientsStore, $state) {
     $ionicLoading.show({

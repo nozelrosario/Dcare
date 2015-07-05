@@ -1,5 +1,5 @@
 var remindersModule = angular.module('dCare.reminders', ['ionic',
-                                                     'patientsStore.services', 'remindersStore.services',
+                                                     'dCare.Services.PatientsStore', 'dCare.Services.RemindersStore',
                                                      'dCare.dateTimeBoxDirectives']);
 
 //Controllers

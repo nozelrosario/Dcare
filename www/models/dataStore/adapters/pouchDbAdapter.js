@@ -1,4 +1,5 @@
 app.classes.data.adapters.PouchDbAdapter = new Class({
+    include: app.classes.data.eventTriggers,
 	initialize: function(config) {
         var defaultConfig = {};
 		this.adapterConfig = $.extend(defaultConfig,config);
@@ -34,14 +35,18 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
         return deferredGenerate;
 	},
 	save : function (data) {
-        var deferredSave = $.Deferred();
-        if (!data.id) {
-            var me = this;
+	    var deferredSave = $.Deferred();
+	    this.trigger("before-save", { data: data });                                 // Trigger Before-Save Event
+	    var me = this;
+        if (!data.id) {            
             this.__generateNewID().then(function (id) {
                 data._id = id.toString();   // maintain _id as String
                 data.id = parseInt(id);              // maintain _id as Integer
+                me.trigger("before-insert", { data: data });                        // Trigger Before-Insert Event
                 me.getDataStore().put(data).then(function (response) {
                     if (response.ok) {
+                        me.trigger("after-insert", { data: data });                 // Trigger After-Insert Event
+                        me.trigger("after-save", { data: data });                   // Trigger After-Save Event
                         deferredSave.resolve(data);
                     } else {
                         logger.error(err);
@@ -58,9 +63,12 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
             });
         } else {
             data._id = data.id.toString();      // maintain _id as String
+            this.trigger("before-update", { data: data });                          // Trigger Before-Update Event
             this.getDataStore().put(data).then(function (response) {
                 if (response.ok) {
-                    deferredSave.resolve(data);
+                    me.trigger("after-insert", { data: data });                     // Trigger After-Insert Event
+                    me.trigger("after-save", { data: data });                       // Trigger After-Save Event
+                    deferredSave.resolve(data);                    
                 } else {
                     logger.error(err);
                     deferredSave.reject(response);
@@ -72,14 +80,14 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
         }
         return deferredSave;
     },
-	    getDataByID : function (id) {
+	getDataByID : function (id) {
         var deferredFetch = $.Deferred();
         var me = this;
         if (id && id > 0) {
             this.getDataStore().get(id.toString()).then(function (data) {
                 deferredFetch.resolve(data);
             }).catch(function (err) {
-                logger.error("DataStore.getDataByID : error occured while querying " + me.dataStoreName + "[Error: " + err + "]");
+                logger.error("DataStore.getDataByID : error occured while querying " + me.dataStoreName + " [Error: " + err + "]");
                 deferredFetch.resolve(null);
             });
         } else {
@@ -87,7 +95,27 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
             deferredFetch.resolve(null);
         }
         return deferredFetch;
-    },
+	},
+	deleteByID: function (id) {
+	    var deferredDelete = $.Deferred(),
+	        me = this;
+	    this.getDataByID(id).then(function (data) {
+	        me.trigger("before-delete", { data: data });                     // Trigger Before-Delete Event
+	        me.getDataStore().remove(data, function (err, response) {
+	            if (err) {
+	                logger.error("DataStore.deleteByID : failed to delete data from" + me.dataStoreName + " [Error: " + err + "]");
+	                deferredDelete.reject(err);
+	            } else {
+	                me.trigger("after-delete", { data: data });              // Trigger After-Detele Event
+	                deferredDelete.resolve(data);
+	            }
+	        });	        
+	    }).catch(function (err) {
+	        logger.error("DataStore.deleteByID : failed to delete data, Unable to find specified record");
+	        deferredDelete.reject(err);
+	    });
+	    return deferredDelete;
+	},
 	getRowsCount : function () {
         var deferredCount = $.Deferred();
         this.getDataStore().allDocs({ include_docs: false,attachments: false }).then(function (data) {

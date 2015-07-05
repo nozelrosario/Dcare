@@ -1,4 +1,4 @@
-angular.module('remindersStore.services', [])
+angular.module('dCare.Services.RemindersStore', [])
 
 /**
 * A Patient Store service that returns reminders data.

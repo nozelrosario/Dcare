@@ -1,5 +1,5 @@
 var glucoseModule = angular.module('dCare.glucose', ['ionic',
-                                                     'patientsStore.services', 'glucoseStore.services',
+                                                     'dCare.Services.PatientsStore', 'dCare.Services.GlucoseStore',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng']);
 
 //Controllers
