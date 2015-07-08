@@ -1,7 +1,8 @@
 var dashboardModule = angular.module('dCare.dashboard', ['ionic',
                                                          'dCare.Services.PatientsStore', 'dCare.Services.VitalsStore', 'dCare.Services.GlucoseStore', 'dCare.Services.NotificationsStore',
                                                          'dCare.glucose', 'dCare.medications','dCare.vitals','dCare.reminders',
-                                                         'dCare.dateTimeBoxDirectives', 'dCare.jqSparklineDirectives']);
+                                                         'dCare.dateTimeBoxDirectives', 'dCare.jqSparklineDirectives',
+                                                         'dCare.datePrettify']);
 
 //Controllers
 dashboardModule.controller('DashboardController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams,
