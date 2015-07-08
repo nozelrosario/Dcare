@@ -1,9 +1,9 @@
-angular.module('dCare.Services.RemindersStore', [])
+angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsStore'])
 
 /**
 * A Patient Store service that returns reminders data.
 */
-.factory('RemindersStore', function ($q, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
+.factory('RemindersStore', function ($q, $filter, NotificationsStore) {  //NR: $filter is used for MOCK, remove it if not required later
     // Will call phonegap api for storing/retriving patient data and returns a JSON array
     var remindersDataStore = new DataStore({
         dataStoreName: 'Reminders',
@@ -37,6 +37,59 @@ angular.module('dCare.Services.RemindersStore', [])
 	//                { id: 3, patientID: '4', text: 'Reminder 4', title: 'Reminder 4', reminderType: 1, startdate: '1288523623006', enddate: '1288323623006', isRecursive: true, frequencyUnit: 3, frequency: 1, status: 'active' }
 	//                ];
 
+    // ===== TRIGGERS ======
+    // Trigger new notification upon insert
+    remindersDataStore.addTrigger("after-insert", "trigger_new_notification", function (evtData) {
+        var reminderData = evtData.data;
+        var notification = { 
+            patientID: reminderData.patientID,
+            text: reminderData.text,
+            title: reminderData.title,
+            notificationType: reminderData.reminderType,
+            startdate: reminderData.startdate,
+            enddate: reminderData.enddate,
+            frequencyUnit: reminderData.frequencyUnit,
+            frequency: reminderData.frequency,
+            status: ((reminderData.status) ? reminderData.status : "active"),
+            data: {},
+            reminderID: reminderData.id
+        };
+        NotificationsStore.save(notification);
+    });
+
+    // Trigger update notification upon reminder Update/re-configure
+    remindersDataStore.addTrigger("after-update", "trigger_update_notification", function (evtData) {
+        var reminderData = evtData.data;
+        NotificationsStore.getNotificationForReminder(reminderData.id).then(function (existing_Notification) {
+            var new_Notification = {                
+                patientID: reminderData.patientID,
+                text: reminderData.text,
+                title: reminderData.title,
+                notificationType: reminderData.reminderType,
+                startdate: reminderData.startdate,
+                enddate: reminderData.enddate,
+                frequencyUnit: reminderData.frequencyUnit,
+                frequency: reminderData.frequency,
+                status: ((reminderData.status) ? reminderData.status : "active") ,
+                data: {},
+                reminderID: reminderData.id
+            };
+            // Fill in id for update
+            if (existing_Notification.id > 0) new_Notification.id = xisting_Notification.id;
+
+            NotificationsStore.save(notification);
+        });        
+    });
+
+    // Trigger remove notification upon Delete
+    remindersDataStore.addTrigger("after-delete", "trigger_remove_notification", function (evtData) {
+        var reminderData = evtData.data;
+        NotificationsStore.getNotificationForReminder(reminderData.id).then(function (existing_Notification) {
+            if (existing_Notification.id > 0) NotificationsStore.remove(existing_Notification.id);
+        });        
+    });
+
+
     return {
         enums: enums,
         getCount: function (patientID) {
@@ -62,6 +115,9 @@ angular.module('dCare.Services.RemindersStore', [])
         },
         save: function (reminder) {
             return remindersDataStore.save(reminder);
+        },
+        remove: function (reminderID) {
+            return remindersDataStore.remove(reminderID);
         }
 
     }

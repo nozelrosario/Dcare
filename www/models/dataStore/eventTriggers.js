@@ -4,7 +4,7 @@
  */
 
 app.classes.data.eventTriggers = new Module({
-    triggers: {
+    supportedTriggers: {
         "before-save": true,
         "after-save": true,
         "before-insert": true,
@@ -26,10 +26,13 @@ app.classes.data.eventTriggers = new Module({
     addTrigger: function (trigger, triggerName, action) {
         "use strict";
         var registeredActions;
-        if (this.triggers[trigger]) {
-            registeredActions = (this.triggers[trigger].length > 0) ? this.triggers[trigger] : [];
+        if (!this.triggers) this.triggers = {}; //Create an empty Dynamic Object to hold Trigger Actions
+        if (this.supportedTriggers[trigger]) {
+            registeredActions = (this.triggers[trigger] && this.triggers[trigger].length > 0) ? this.triggers[trigger] : [];
             registeredActions.push({ name: triggerName, action: action });
             this.triggers[trigger] = registeredActions;
+        } else {
+            logger.error("Trigger : " + trigger + " not supported!!");
         }
     },
     /* Removes a trigger
@@ -39,8 +42,9 @@ app.classes.data.eventTriggers = new Module({
      */
     removeTrigger: function (trigger, triggerName) {
         "use strict";
-        if (triggerName && triggerName !== "") {
-            var registeredActions;
+        if (!this.triggers) this.triggers = {};     //Create an empty Dynamic Object to hold Trigger Actions
+        if (triggerName && triggerName !== "") {    // NR: Remove specific Trigger
+            var registeredActions;            
             if (this.triggers[trigger] && this.triggers[trigger].length > 0) {
                 registeredActions = this.triggers[trigger];
                 for (var i = 0; i < registeredActions.length; i++) {
@@ -49,7 +53,7 @@ app.classes.data.eventTriggers = new Module({
                     }
                 }
             }
-        } else {
+        } else {                                    // Remove all Triggers
             if (this.triggers[trigger]) {
                 this.triggers[trigger] = true;
             }
@@ -63,9 +67,10 @@ app.classes.data.eventTriggers = new Module({
     trigger: function (trigger, eventData) {
         "use strict";
         var registeredActions;
+        if (!this.triggers) this.triggers = {}; //Create an empty Dynamic Object to hold Trigger Actions
         if (!eventData) eventData = {};     // create Event Data object if its null
         eventData.trigger = trigger;
-        if (this.triggers[trigger].length > 0) {
+        if (this.triggers[trigger] && this.triggers[trigger].length > 0) {
             registeredActions = this.triggers[trigger];
             for (var i = 0; i < registeredActions.length; i++) {
                 eventData.triggerName = (registeredActions[i]).name;

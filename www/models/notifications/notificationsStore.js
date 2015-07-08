@@ -120,10 +120,16 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
                 where: "patientID=" + patientID + " and status= 'active'"
             });
         },
+        getNotificationForReminder: function (reminderID) {
+            return notificationsDataStore.search({
+                select: '*',
+                where: "patientID=" + patientID + " and status= 'active' and reminderID=" + reminderID + ""
+            });
+        },
         getNotificationByID: function (notificationID) {
             return notificationsDataStore.getDataByID(notificationID);
         },
-        deleteNotification: function (notificationID) {
+        remove: function (notificationID) {
             // Just delete the notification & its native counter-part
             var deferredDelete = $q.defer();
             var me = this; 

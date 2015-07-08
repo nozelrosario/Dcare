@@ -66,7 +66,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
             this.trigger("before-update", { data: data });                          // Trigger Before-Update Event
             this.getDataStore().put(data).then(function (response) {
                 if (response.ok) {
-                    me.trigger("after-insert", { data: data });                     // Trigger After-Insert Event
+                    me.trigger("after-update", { data: data });                     // Trigger After-Update Event
                     me.trigger("after-save", { data: data });                       // Trigger After-Save Event
                     deferredSave.resolve(data);                    
                 } else {
