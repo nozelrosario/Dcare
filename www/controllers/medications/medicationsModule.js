@@ -65,7 +65,7 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
 
 
 
-medicationsModule.controller('MedicationFormController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, medication, currentPatient, MedicationsStore) {
+medicationsModule.controller('MedicationFormController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, medication, currentPatient, MedicationsStore) {
     $ionicLoading.show({
         template: 'Loading...'
     });
@@ -78,24 +78,45 @@ medicationsModule.controller('MedicationFormController', function ($scope, $ioni
     if (medication) {
         $scope.medication = medication;
     } else {
-        $scope.medication = { patientID: $scope.currentPatient.id, startdate: Date.parse(new Date()) };  // New entry : make any default values here if any
+        $scope.medication = { patientID: $scope.currentPatient.id, startdate: castToLongDate(new Date()) };  // New entry : make any default values here if any
     }
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'medicationslist';
 
     // Action Methods
-    $scope.changeState = function (glucose) {
-        //$scope.glucose = glucose;
-        // transition to next state
+
+    $scope.setReminder = function (medication) {
+        var confirmReminder = $mdDialog.confirm()
+                  //.parent(angular.element(document.body))
+                  .title('Would you like to set reminder?')
+                  .content('Would you like to set a reminder for this medication')
+                  .ariaLabel('Would you like to set reminder?')
+                  .ok('Yes')
+                  .cancel('Not Now');
+                  //.targetEvent(ev);
+        $mdDialog.show(confirmReminder).then(function () {
+                // User clicked Yes, set reminder
+            MedicationsStore.setMedicationReminder(medication.id).then(function (reminder_status) {
+                logger.info(reminder_status);
+                $scope.changeState(medication);
+            });
+            }, function () {
+                // User clicked No, do not set reminder
+                $scope.changeState(medication);
+            });
+    };
+
+    $scope.changeState = function (medication) {
+        $scope.medication = medication;
         $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
     };
 
     $scope.save = function () {
         $scope.medication.startdate = castToLongDate($scope.medication.startdate);
         $scope.medication.enddate = castToLongDate($scope.medication.enddate);
-        var saveMedicationDataPromise = MedicationsStore.save($scope.medication);
-        saveMedicationDataPromise.then($scope.changeState, $scope.saveFailed);
+        MedicationsStore.save($scope.medication).then($scope.setReminder).fail($scope.saveFailed);
 
     };
+
 
     $scope.cancel = function () {
         // If required ask for confirmation

@@ -21,7 +21,7 @@
                                     <img  ng-src="{{enums.reminderType[reminder.reminderType].image}}" style="height:50px;width:50px;margin:10px">
                                     <div layout="column" layout-align="center start">
                                         <div class="menu-title">{{reminder.title}}</div>
-                                        <div class="menu-sub-title">{{reminder.startdate | date:'medium'}} : {{reminder.text}}</div>
+                                        <div class="menu-sub-title">{{reminder.startdate | prettifyDate:'calendar'}} : {{reminder.text}}</div>
                                     </div>
                                 </div>
                             </md-button>

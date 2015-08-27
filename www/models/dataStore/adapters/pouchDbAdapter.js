@@ -34,11 +34,88 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
         });
         return deferredGenerate;
 	},
-	save : function (data) {
+
+    /** 
+    * @public
+    * Save : Saved Data to Data Store.
+    *  @params: data: {object} json data to be saved
+    *           config : {Object} Save config. Eg.{ fields : [field1, field2], saveEmptyValues: true,...  } }
+                         optional parameter that control the data save process w.r.t insert/update , persist empty values etc.
+                                fields : {Array} specifies an array of fieldnames that will be matched to decide whether to insert new record or update.
+                                saveEmptyValues : {bool} Specifies if to save/overwrite null/empty values while updating record. Eg.
+                                    when set false & oldData = {'a': 1, 'b': 2, 'c': 3 } newData = {'a': 4, 'b': 5, 'd':6 } => resultantData = {'a': 4, 'b': 5, 'd':6, 'c': 3 }
+                                    when set  true & oldData = {'a': 1, 'b': 2, 'c': 3 } newData = {'a': 4, 'b': 5, 'd':6 } => resultantData = {'a': 4, 'b': 5, 'd':6 } 
+    */
+	save: function (data, config) {
+	    var deferredSave = $.Deferred();
+	    if (config && config.keyFields) {
+	        var fieldName, fieldValue, queryCondition = "";
+	        var me = this, newDataToBeSaved=null;
+	        if (config.keyFields.length > 0) {
+                //NR: Query builder
+	            for (var i = 0 ; i < config.keyFields.length ; i++) {
+	                fieldName = config.keyFields[i]
+	                fieldValue = data[fieldName];
+	                if (fieldValue && fieldValue != "") {
+	                    if (typeof (fieldValue) === "string") fieldValue = "'" + fieldValue + "'";      //NR: format value for string comparison in query
+	                    if (i > 0 && queryCondition != "") queryCondition = queryCondition + ' and ';
+	                    queryCondition = queryCondition + fieldName + '=' + fieldValue;
+	                }
+	            }
+	            me.search({ select: "*", where: queryCondition }).then(function (matchedDataItem) {
+	                var matchedData;
+                    //NR: Check records that match against query
+	                if ((matchedDataItem instanceof Array) && matchedDataItem.length > 0) {
+	                    matchedData = matchedDataItem[0];   //NR: ignore records other than 1st one
+	                } else {
+	                    matchedData = matchedDataItem;      //NR: will be null or empty array, so assign as is
+	                }
+                    //NR: If data matching composite keys exists, fill required data from previous copy.
+	                if (matchedData && matchedData.id) {	                    
+	                    if (config && config.saveEmptyValues) {
+	                        //NR: do not fill empty properties with exixting data
+	                        newDataToBeSaved = data;
+	                    } else {
+	                        $.extend(matchedData, data);    //NR: merge data properties of existing data with new data.
+	                        newDataToBeSaved = matchedData;
+	                    }
+	                    //NR: push ID to the data object. Overwrite id & rev in order to force update.
+	                    newDataToBeSaved.id = matchedData.id;           
+	                    newDataToBeSaved._rev = matchedData._rev;
+	                } else {
+	                    //NR: If no data matching composite keys exists, Save data as is.
+	                    newDataToBeSaved = data;
+	                }
+
+                    //NR: Save Data
+	                me.insertOrUpdate(newDataToBeSaved).then(function (savedData) {
+	                    deferredSave.resolve(savedData);
+	                }).fail(function (err) {
+	                    deferredSave.reject(err);
+	                });
+	            });
+
+	        }
+	    } else {
+	        //NR: Save Data
+	        this.insertOrUpdate(data).then(function (savedData) {
+	            deferredSave.resolve(savedData);
+	        }).fail(function (err) {
+	            deferredSave.reject(err);
+	        });
+	    }
+	    return deferredSave;
+	},
+    /** 
+    * @private
+    * insertOrUpdate : insert Or Update Data to Data Store based on if ID exists in data object.
+    *  @params: data: json data to be saved
+    */
+	insertOrUpdate : function (data) {
 	    var deferredSave = $.Deferred();
 	    this.trigger("before-save", { data: data });                                 // Trigger Before-Save Event
 	    var me = this;
-        if (!data.id) {            
+	    if (!data.id) {	        
             this.__generateNewID().then(function (id) {
                 data._id = id.toString();   // maintain _id as String
                 data.id = parseInt(id);              // maintain _id as Integer
@@ -53,7 +130,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
                         deferredSave.reject(response);
                     }
                     
-                }).catch(function (err) {
+                }).fail(function (err) {
                     logger.error(err);
                     deferredSave.reject(err);
                 });
@@ -110,7 +187,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 	                deferredDelete.resolve(data);
 	            }
 	        });	        
-	    }).catch(function (err) {
+	    }).fail(function (err) {
 	        logger.error("DataStore.deleteByID : failed to delete data, Unable to find specified record");
 	        deferredDelete.reject(err);
 	    });

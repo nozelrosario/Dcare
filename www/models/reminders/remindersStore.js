@@ -31,10 +31,10 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
     };
     //// Some fake testing data
     //var remindersList = [
-	//                { id: 0, patientID: '1', text: 'Reminder 1', title: 'Reminder 1', reminderType: 1, startdate: '1288323623006', enddate: '1288323623006', isRecursive: true, frequencyUnit: 1, frequency: 1, status: 'active' },
+    //                { id: 0, patientID: '1', text: 'Reminder 1', title: 'Reminder 1', reminderType: 1, startdate: '1288323623006', enddate: '1288323623006', isRecursive: true, frequencyUnit: 1, frequency: 1, status: 'active' sourceID:'Medication_13'},
 	//                { id: 1, patientID: '1', text: 'Reminder 2', title: 'Reminder 2', reminderType: 3, startdate: '1289323623006', enddate: '1288323623006', isRecursive: false, frequencyUnit: null, frequency: null, status: 'active' },
 	//                { id: 2, patientID: '2', text: 'Reminder 3', title: 'Reminder 3', reminderType: 2, startdate: '1298323623006', enddate: '1288323623006', isRecursive: false, frequencyUnit: null, frequency: null, status: 'active' },
-	//                { id: 3, patientID: '4', text: 'Reminder 4', title: 'Reminder 4', reminderType: 1, startdate: '1288523623006', enddate: '1288323623006', isRecursive: true, frequencyUnit: 3, frequency: 1, status: 'active' }
+	//                { id: 3, patientID: '4', text: 'Reminder 4', title: 'Reminder 4', reminderType: 1, startdate: '1288523623006', enddate: '1288323623006', isRecursive: true, frequencyUnit: 3, frequency: 1, status: 'active' sourceID:'Medication_12' }
 	//                ];
 
     // ===== TRIGGERS ======
@@ -107,14 +107,20 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
         getActiveRemindersForPatient: function (patientID) {
             return remindersDataStore.search({
                 select: '*',
-                where: "patientID=" + patientID + " and status= 'active'"
+                where: "patientID=" + patientID + " and status= 'active'" + " and enddate >=" + castToLongDate(new Date())
+            });
+        },
+        getReminderBySourceID: function (sourceID) {
+            return remindersDataStore.search({
+                select: '*',
+                where: "patientID=" + patientID + " and status= 'active'" + " and sourceID =" + sourceID
             });
         },
         getReminderByID: function (reminderID) {
             return remindersDataStore.getDataByID(reminderID);
         },
-        save: function (reminder) {
-            return remindersDataStore.save(reminder);
+        save: function (reminder,config) {
+            return remindersDataStore.save(reminder,config);
         },
         remove: function (reminderID) {
             return remindersDataStore.remove(reminderID);

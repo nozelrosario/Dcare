@@ -90,6 +90,11 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
         glucoseDataPromise.then(function (glucose) {
             $scope.glucose = glucose;
         });
+
+        var notificationsDataPromise = NotificationsStore.getActiveNotificationsForPatient(patientID);
+        notificationsDataPromise.then(function (notificationsData) {
+            $scope.notificationsList = notificationsData;
+        });
     };
 
     $scope.addNewGlucoseEntry = function () {
@@ -143,6 +148,39 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
 
     $scope.openTrend = function () {
         $state.go("glucosetrend", { patientID: $scope.currentPatient.id, parentState: 'dashboard' });
+    };
+
+    $scope.showNotificationDetails = function (notification, $event) {
+
+        //NR : Workaround due to issue with Ang. Material
+        $mdDialog.show($mdDialog.alert()
+                               .title(notification.title)
+                               .content(notification.text)
+                               .ariaLabel(notification.text)
+                               .ok('OK!')).finally(function () {
+                                   
+                               });
+
+        //NR : due to issue with angular Material following doesnot work. revert after migrating to Material v0.10
+        //$scope.selected_notification = notification
+        //$mdDialog.show({
+        //    scope: $scope,
+        //    templateUrl: 'views/dashboard/notification_details.html',
+        //    disableParentScroll: false,
+        //    preserveScope: true,
+        //    controllerAs: 'dialog',
+        //    bindToController: true,
+        //    parent: angular.element(document.body),
+        //    targetEvent: $event,
+        //    controller: function ($scope, $mdDialog) {
+        //        $scope.closeNotification = function () {
+        //            $mdDialog.hide(true);
+        //        };
+        //        $scope.deleteNotification = function (notificationID) {
+        //            alert(notificationID);
+        //        };
+        //    }
+        //});
     };
 
     $ionicLoading.hide();

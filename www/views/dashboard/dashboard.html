@@ -101,9 +101,9 @@
                     <div class="item item-divider">  Notifications   </div>
                     <div class="item item-body">
                         <md-list>
-                            <md-item ng-repeat="notification in notificationsList | limitTo:3">
+                            <md-item ng-repeat="notification in notificationsList | limitTo:3" ng-click="showNotificationDetails(notification,$event)">
                                 <md-item-content>
-                                    <md-button menu-close ng-click="" class="button-full menu-button">
+                                    <md-button class="button-full menu-button">
                                         <div layout="row" class="list-row">
                                             <img ng-src="{{enums.notificationType[notification.notificationType].image}}" style="height:50px;width:50px;margin:5px">
                                             <div layout="column" layout-align="center start">
@@ -117,8 +117,8 @@
                             </md-item>
                         </md-list>
                     </div>
-
                 </div>
+
 			</ion-content>
         </ion-side-menu-content>
 

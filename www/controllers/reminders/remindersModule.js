@@ -1,6 +1,7 @@
 var remindersModule = angular.module('dCare.reminders', ['ionic',
                                                      'dCare.Services.PatientsStore', 'dCare.Services.RemindersStore',
-                                                     'dCare.dateTimeBoxDirectives']);
+                                                     'dCare.dateTimeBoxDirectives',
+                                                     'dCare.datePrettify']);
 
 //Controllers
 remindersModule.controller('RemindersListController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, currentPatient, RemindersStore, remindersList) {

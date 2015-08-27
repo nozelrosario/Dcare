@@ -117,13 +117,13 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
         getActiveNotificationsForPatient: function (patientID) {
             return notificationsDataStore.search({
                 select: '*',
-                where: "patientID=" + patientID + " and status= 'active'"
+                where: "patientID=" + patientID + " and status= 'active'" + " and enddate >=" + castToLongDate(new Date())
             });
         },
         getNotificationForReminder: function (reminderID) {
             return notificationsDataStore.search({
                 select: '*',
-                where: "patientID=" + patientID + " and status= 'active' and reminderID=" + reminderID + ""
+                where: "status= 'active' and reminderID=" + reminderID + ""
             });
         },
         getNotificationByID: function (notificationID) {
@@ -200,6 +200,11 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
             var deferredSave = $q.defer();
             if (notification.status && notification.status === "expired") {
                 notificationsDataStore.save(notification).then(function (notificationSavedData) {
+                    if (notificationSavedData.id > 0) {
+                        if (NotificationService.isNotificationServiceAvailable()) {                     // Delete native counter-part
+                            NotificationService.removeNotification(notificationSavedData.id);
+                        }
+                    }
                     deferredSave.resolve(notificationSavedData);
                 });
             } else {

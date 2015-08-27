@@ -102,9 +102,17 @@
         removeNotification: function (notificationID) {
             var deferredCancel = $q.defer();
             if (notificationID > 0) {
-                cordova.plugins.notification.local.cancel(notificationID, function () {
-                    deferredCancel.resolve();
+                cordova.plugins.notification.local.isPresent(notificationID, function (exists) {
+                    if (exists) {
+                        cordova.plugins.notification.local.cancel(notificationID, function () {
+                            deferredCancel.resolve();
+                        });
+                    } else {
+                        logger.warn("Notification doesnot exist");
+                        deferredCancel.resolve();
+                    }
                 });
+                
             } else {
                 logger.error("Error while removing notification, notificationID cannot be empty!!");
                 deferredCancel.reject();
