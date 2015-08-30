@@ -60,7 +60,7 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
     // Trigger update notification upon reminder Update/re-configure
     remindersDataStore.addTrigger("after-update", "trigger_update_notification", function (evtData) {
         var reminderData = evtData.data;
-        NotificationsStore.getNotificationForReminder(reminderData.id).then(function (existing_Notification) {
+        NotificationsStore.getNotificationForReminder(reminderData.id).then(function (matching_Notifications) {            
             var new_Notification = {                
                 patientID: reminderData.patientID,
                 text: reminderData.text,
@@ -74,10 +74,16 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
                 data: {},
                 reminderID: reminderData.id
             };
-            // Fill in id for update
-            if (existing_Notification.id > 0) new_Notification.id = xisting_Notification.id;
+            if (matching_Notifications.length > 0) {
+                var existing_Notification = matching_Notifications[0];  //NR: Take the first match by default
+                // Fill in id & _rev to force for update
+                if (existing_Notification.id > 0) {
+                    new_Notification.id = existing_Notification.id;
+                    new_Notification._rev = existing_Notification._rev;
+                }
+            }            
 
-            NotificationsStore.save(notification);
+            NotificationsStore.save(new_Notification);
         });        
     });
 

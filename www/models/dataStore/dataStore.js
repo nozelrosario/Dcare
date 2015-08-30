@@ -4,7 +4,7 @@
 
 app.classes.data.DataStore = new Class({    
     initialize: function (config) {
-        this.dataStoreName = (config.dataStoreName)? config.dataStoreName: logger.error("DataStore Name cannot be empty"),
+        this.dataStoreName = (config.dataStoreName)? config.dataStoreName: app.log.error("DataStore Name cannot be empty"),
 		this.dataAdapter = (config.dataAdapter)? config.dataAdapter: "pouchDB",
 		this.adapterConfig = (config.adapterConfig)? config.adapterConfig: "";
 		this.dataStoreAdapter = null;

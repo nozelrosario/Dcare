@@ -49,7 +49,8 @@
 
 .MediumFab:before
 {
-    font-size:70px !important;        
+    font-size: 75px !important;
+    margin-top: 3px;       
 }
 
 .SmallFab 
@@ -61,7 +62,7 @@
 .SmallFab:before
 {
     font-size:50px !important;  
-    margin-top: -5px;  
+    font-weight: bold; 
 }
 
 .menu-button .menu-title

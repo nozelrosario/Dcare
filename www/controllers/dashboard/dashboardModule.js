@@ -206,7 +206,7 @@ dashboardModule.config(function ($stateProvider, $urlRouterProvider) {
             //url: '/identificationInfo',  // cannot use as using params[]
             templateUrl: 'views/dashboard/dashboard.html',
             controller: 'DashboardController',
-            params: ['patientID']
+            params: { 'patientID': null }
         });
 
 });

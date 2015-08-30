@@ -1,27 +1,27 @@
-    <ion-side-menus>
+    <ion-side-menus md-theme="amber">
     <ion-header-bar class="bar bar-header bar-energized">
-                <div class="buttons">
-                    <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
-                </div>
-                <h1 class="title">{{currentPatient.name}}</h1>
-                <div class="buttons">
-                    <button class="button " ng-click="togglePatientsList()"><i class="icon ion-person-stalker"></i></button>
-                </div>
-            </ion-header-bar>
-        <!-- Center content -->
-	    <ion-side-menu-content>
-            
-			<!--Dashboard content will go here-->
-            <ion-nav-view name="homePageContent" class="has-header"></ion-nav-view>
-        </ion-side-menu-content>
+        <div class="buttons">
+            <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
+        </div>
+        <h1 class="title">{{currentPatient.name}}</h1>
+        <div class="buttons">
+            <button class="button " ng-click="togglePatientsList()"><i class="icon ion-person-stalker"></i></button>
+        </div>
+    </ion-header-bar>
+    <!-- Center content -->
+    <ion-side-menu-content>
 
-<!-- Left menu -->
-        <ion-side-menu side="left">
-            <!--Dashboard left menu containing patient specific actions [Add medical data, appointments, medications e.t.c]-->
-            <ion-content>
-                <md-list>
-                    <md-item ng-repeat="menuItem in menuItems" >
-                        <md-item-content >
+        <!--Dashboard content will go here-->
+        <ion-nav-view name="homePageContent" class="has-header"></ion-nav-view>
+    </ion-side-menu-content>
+
+    <!-- Left menu -->
+    <ion-side-menu side="left">
+        <!--Dashboard left menu containing patient specific actions [Add medical data, appointments, medications e.t.c]-->
+        <ion-content>
+            <md-list>
+                <md-item ng-repeat="menuItem in menuItems">
+                    <md-item-content>
                         <md-button menu-close ng-click="activateMenuItem(menuItem.id)" class="button-full menu-button">
                             <div layout="row">
                                 <i class="menu-icon" ng-class="menuItem.icon"></i>
@@ -31,12 +31,12 @@
                                 </div>
                             </div>
                         </md-button>
-                        </md-item-content>
-                    </md-item>
-                </md-list>
-            </ion-content>
-        </ion-side-menu>
-    </ion-side-menus>
+                    </md-item-content>
+                </md-item>
+            </md-list>
+        </ion-content>
+    </ion-side-menu>
+</ion-side-menus>
 <!--Patient Info Card -->
 <ion-content>
 	<div class="list card">

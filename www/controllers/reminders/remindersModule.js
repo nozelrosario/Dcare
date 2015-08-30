@@ -117,7 +117,7 @@ remindersModule.config(function ($stateProvider, $urlRouterProvider) {
               },
               templateUrl: 'views/reminders/list.html',
               controller: 'RemindersListController',
-              params: ['patientID']
+              params: { 'patientID': null }
           })
           .state('reminderForm', {
               resolve: {
@@ -126,7 +126,7 @@ remindersModule.config(function ($stateProvider, $urlRouterProvider) {
               },
               templateUrl: 'views/reminders/new_entry.html',
               controller: 'ReminderFormController',
-              params: ['patientID', 'reminderID', 'parentState']
+              params: { 'patientID': null, 'reminderID': null, 'parentState': null }
           });
 
 });

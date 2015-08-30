@@ -141,11 +141,11 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
                             }
                             deferredDelete.resolve();
                         }).catch(function (err) {
-                            logger.error("Could not delete notification." + " [Error: " + err + "]");
+                            app.log.error("Could not delete notification." + " [Error: " + err + "]");
                             deferredDelete.reject(err);
                         });
                 } else {
-                    logger.error("Could not find notification with ID: " + notificationID);
+                    app.log.error("Could not find notification with ID: " + notificationID);
                     deferredDelete.resolve();
                 }
             }).catch(function (err) {
@@ -169,11 +169,11 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
                             me.notificationsDataStore.save(nextOccurance).then(function () {              // Attempt re-schedule recursive notification
                                 deferredSnooze.resolve();
                             }).catch(function (err) {              // re-scheduling notification fails
-                                logger.error("Could not set next recurring notification." + " [Error: " + err + "]");
+                                app.log.error("Could not set next recurring notification." + " [Error: " + err + "]");
                                 deferredSnooze.resolve();
                             });
                         }).catch(function (err) {                  // delete failed 
-                            logger.error("Could not snooze notification." + " [Error: " + err + "]");
+                            app.log.error("Could not snooze notification." + " [Error: " + err + "]");
                             deferredSnooze.reject(err);
                         });
                     } else {                                                                                // Non-Recursive, one-Time
@@ -183,12 +183,12 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
                             }
                             deferredSnooze.resolve();
                         }).catch(function (err) {
-                            logger.error("Could not snooze notification." + " [Error: " + err + "]");
+                            app.log.error("Could not snooze notification." + " [Error: " + err + "]");
                             deferredSnooze.reject(err);
                         });                       
                     }
                 } else {
-                    logger.error("Could not find notification with ID: " + notificationID);
+                    app.log.error("Could not find notification with ID: " + notificationID);
                     deferredSnooze.resolve();
                 }
             }).catch(function (err) {
@@ -213,7 +213,7 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
                     scheduleNotification(notificationSavedData).then(function () {      
                         deferredSave.resolve(notificationSavedData);
                     }).catch(function (err) {
-                        logger.error("Failed to set Local Notification: " + err);
+                        app.log.error("Failed to set Local Notification: " + err);
                         deferredSave.resolve(notificationSavedData);
                     });
                 });

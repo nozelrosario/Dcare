@@ -9,32 +9,32 @@
     </div>-->
 </ion-header-bar>
     <ion-scroll direction="y" style="height:90%">
-    <md-content class="content has-header " layout-align="center center" layout="row" layout-phone="column" style="height:auto;" >
-        
-        <div layout="column" layout-phone="column"  layout-align="center center" class="padding " >
-            <div>
-                <div ><h1> Date Time ? </h1></div>
-                <input label="Date & Time" ng-model="glucose.datetime" class="large-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', timeFormat:'hh:ii A', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
-            </div>
-            <div>
-                <div ><h1> Type ? </h1></div>
+    <md-content class="content has-header " layout-align="center center" layout="column" layout-sm="column" style="height:auto;" >
+        <div class="padding">
+            <div><center><h1> Date Time ? </h1></center></div>
+            <input label="Date & Time" ng-model="glucose.datetime" class="large-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', timeFormat:'hh:ii A', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
+        </div>
+        <div layout="row" layout-sm="column"  layout-align="center start" class="padding " >            
+            <div style="padding-top:15px;padding-left:20px;">
+                <div ><center><h1> Type ? </h1></center></div>
                 <md-radio-group ng-model="glucose.glucoseType">
                     <md-radio-button ng-repeat="option in enums.glucoseTypes" ng-value="option.value" aria-label="{{ option.label }}">
                         {{ option.label }}
                     </md-radio-button>
                 </md-radio-group>
             </div>
-        </div>
-        <div layout="column" layout-phone="column"  layout-align="center center" class="padding " >
-            <div ><h1> Glucose Value ? </h1></div>
-            <div id="glucosevalue" ng-model="glucose.glucosevalue" jquery-dynameter  jquery-dynameter-config="{ label:'Glucose', unit:'mg/dL', min:20, max:500, regions:{ 150:'normal', 180:'warn', 250:'error' } }" ></div>
-            <div layout="row" layout-phone="row"  layout-align="center center" class="padding range" style="width:300px">
-                <i class="icon ion-minus-circled"></i>
-                <!--<input type="range" name="height" min="40" max="140" ng-change="validate()" ng-model="vitals.bpdiastolic" >-->
-                <md-slider name="height" aria-label="BP-Diastolic"  min="20" max="500" ng-change="validate()" ng-model="glucose.glucosevalue" style="width:100%"> </md-slider>
-                <i class="icon ion-plus-circled"></i>
+            <div layout="column" layout-sm="column" layout-align="center center" class="padding ">
+                <div><center><h1> Glucose Value ? </h1></center></div>
+                <div id="glucosevalue" ng-model="glucose.glucosevalue" jquery-dynameter jquery-dynameter-config="{ label:'Glucose', unit:'mg/dL', min:20, max:500, regions:{ 150:'normal', 180:'warn', 250:'error' } }"></div>
+                <div layout="row" layout-sm="row" layout-align="center center" class="padding range" style="width:300px">
+                    <i class="icon ion-minus-circled"></i>
+                    <!--<input type="range" name="height" min="40" max="140" ng-change="validate()" ng-model="vitals.bpdiastolic" >-->
+                    <md-slider name="height" aria-label="BP-Diastolic" min="20" max="500" ng-change="validate()" ng-model="glucose.glucosevalue" style="width:100%"> </md-slider>
+                    <i class="icon ion-plus-circled"></i>
+                </div>
             </div>
-        </div>        
+        </div>
+                
     </md-content>
     </ion-scroll>
     <div class="bar bar-footer" style="height:70px" layout >

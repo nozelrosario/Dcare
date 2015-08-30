@@ -14,7 +14,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 	},
 	getDataStore: function () {
 	    if (!this.dataStore) {
-	        logger.error("Data store on open, please open datastore before use.");
+	        app.log.error("Data store on open, please open datastore before use.");
 	    }
 	    return (this.dataStore);
 	},
@@ -126,16 +126,16 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
                         me.trigger("after-save", { data: data });                   // Trigger After-Save Event
                         deferredSave.resolve(data);
                     } else {
-                        logger.error(err);
+                        app.log.error(err);
                         deferredSave.reject(response);
                     }
                     
                 }).fail(function (err) {
-                    logger.error(err);
+                    app.log.error(err);
                     deferredSave.reject(err);
                 });
             }).fail(function (err) {
-                logger.error(err);
+                app.log.error(err);
                 deferredSave.reject(err);
             });
         } else {
@@ -147,11 +147,11 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
                     me.trigger("after-save", { data: data });                       // Trigger After-Save Event
                     deferredSave.resolve(data);                    
                 } else {
-                    logger.error(err);
+                    app.log.error(err);
                     deferredSave.reject(response);
                 }
             }).catch(function (err) {
-                logger.error(err);
+                app.log.error(err);
                 deferredSave.reject(err);
             });
         }
@@ -164,11 +164,11 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
             this.getDataStore().get(id.toString()).then(function (data) {
                 deferredFetch.resolve(data);
             }).catch(function (err) {
-                logger.error("DataStore.getDataByID : error occured while querying " + me.dataStoreName + " [Error: " + err + "]");
+                app.log.error("DataStore.getDataByID : error occured while querying " + me.dataStoreName + " [Error: " + err + "]");
                 deferredFetch.resolve(null);
             });
         } else {
-            logger.warn("DataStore.getDataByID : empty id not valid returning null data");
+            app.log.warn("DataStore.getDataByID : empty id not valid returning null data");
             deferredFetch.resolve(null);
         }
         return deferredFetch;
@@ -180,7 +180,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 	        me.trigger("before-delete", { data: data });                     // Trigger Before-Delete Event
 	        me.getDataStore().remove(data, function (err, response) {
 	            if (err) {
-	                logger.error("DataStore.deleteByID : failed to delete data from" + me.dataStoreName + " [Error: " + err + "]");
+	                app.log.error("DataStore.deleteByID : failed to delete data from" + me.dataStoreName + " [Error: " + err + "]");
 	                deferredDelete.reject(err);
 	            } else {
 	                me.trigger("after-delete", { data: data });              // Trigger After-Detele Event
@@ -188,7 +188,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 	            }
 	        });	        
 	    }).fail(function (err) {
-	        logger.error("DataStore.deleteByID : failed to delete data, Unable to find specified record");
+	        app.log.error("DataStore.deleteByID : failed to delete data, Unable to find specified record");
 	        deferredDelete.reject(err);
 	    });
 	    return deferredDelete;
@@ -199,11 +199,11 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
             if (data.total_rows) {
                 deferredCount.resolve(data.total_rows);
             } else {
-                logger.debug("DataStore.getRowsCount : total_rows not available in response data, returning 0");
+                app.log.debug("DataStore.getRowsCount : total_rows not available in response data, returning 0");
                 deferredCount.resolve(0);
             }
         }).catch(function (err) {
-            logger.error("DataStore.getRowsCount : error occured while querying" + this.dataStoreName + "[Error: " + err + "]");
+            app.log.error("DataStore.getRowsCount : error occured while querying" + this.dataStoreName + "[Error: " + err + "]");
             deferredCount.resolve(0);
         });
         return deferredCount;
@@ -225,11 +225,11 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
             if (data.total_rows) {
                 deferredFetch.resolve(me.__extractDataFromBulk(data));
             } else {
-                logger.debug("DataStore.getAllRows : row count not available in response data, returning []");
+                app.log.debug("DataStore.getAllRows : row count not available in response data, returning []");
                 deferredFetch.resolve([]);
             }
         }).catch(function (err) {
-            logger.error("DataStore.getAllRows : error occured while querying" + this.dataStoreName + "[Error: " + err + "]");
+            app.log.error("DataStore.getAllRows : error occured while querying" + this.dataStoreName + "[Error: " + err + "]");
             deferredFetch.resolve([]);
         });
         return deferredFetch;
@@ -249,7 +249,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
                 }
 
             } else {
-                logger.error("DataStore.query : error occured while querying" + this.dataStoreName + "[Error: " + err + "]");
+                app.log.error("DataStore.query : error occured while querying" + this.dataStoreName + "[Error: " + err + "]");
                 deferredQuery.resolve(null);
             }
         });
@@ -271,11 +271,11 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
             }).then(function (result) {
                 deferredQuery.resolve(result.docs);
             }).catch(function (err) {
-                logger.error("DataStore.find : error occured while querying " + me.dataStoreName + "[Error: " + err + "]");
+                app.log.error("DataStore.find : error occured while querying " + me.dataStoreName + "[Error: " + err + "]");
                 deferredQuery.resolve(null);
             });
         }).catch(function (err) {
-            logger.error("DataStore.find : error occured while creating Index " + me.dataStoreName + "[Error: " + err + "]");
+            app.log.error("DataStore.find : error occured while creating Index " + me.dataStoreName + "[Error: " + err + "]");
             deferredQuery.resolve(null);
         });
         return deferredQuery;
@@ -284,3 +284,10 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 });
 
 DataAdapterFactory.register("pouchDB", app.classes.data.adapters.PouchDbAdapter);
+
+// POUCH DB Logging
+if (app.LOGGING_LEVEL === "off") {
+    PouchDB.debug.disable("*");
+} else {
+    PouchDB.debug.enable('*'); // "pouchdb:find","pouchdb:api"
+}

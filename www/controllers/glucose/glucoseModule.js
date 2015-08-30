@@ -235,7 +235,7 @@ glucoseModule.config(function ($stateProvider, $urlRouterProvider) {
               //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/glucose/list.html',
               controller: 'GlucoseListController',
-              params: ['patientID']
+              params: { 'patientID': null }
           })
           .state('glucoseForm', {
               resolve: {
@@ -245,7 +245,7 @@ glucoseModule.config(function ($stateProvider, $urlRouterProvider) {
               //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/glucose/new_entry.html',
               controller: 'GlucoseFormController',
-              params: ['patientID','glucoseID','parentState']
+              params: { 'patientID': null ,'glucoseID': null, 'parentState': null }
           })
           .state('glucosetrend', {
               resolve: {
@@ -255,7 +255,7 @@ glucoseModule.config(function ($stateProvider, $urlRouterProvider) {
               //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/glucose/trend.html',
               controller: 'GlucoseTrendController',
-              params: ['patientID', 'parentState']
+              params: { 'patientID': null, 'parentState': null }
           });
 
 });

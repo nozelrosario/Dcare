@@ -9,14 +9,22 @@
         </div>-->
     </ion-header-bar>
     <ion-scroll direction="y" style="height:80%" class="content has-header ">
-        <md-content class="content" layout="column" layout-phone="column" style="height:auto;" layout-align="start center">
+        <md-content class="content" layout="column" layout-sm="column" style="height:auto;" layout-align="start center">
 
-            <div layout="column" layout-phone="column" class="padding ">
+            <div layout="column" layout-sm="column" class="padding ">
                 <div>
-                    <md-text-float label="Note" ng-model="reminder.text" class="large-input" style="margin-left: 10px;"> </md-text-float>
+                    <!--<md-text-float label="Note" ng-model="reminder.text" class="large-input" style="margin-left: 10px;"> </md-text-float>-->
+                    <md-input-container>
+                        <label>Note</label>
+                        <input name="text" ng-model="reminder.text">
+                    </md-input-container>
                 </div>
                 <div>
-                    <md-text-float label="Title" ng-model="reminder.title" class="large-input" style="margin-left: 10px;"> </md-text-float>
+                    <!--<md-text-float label="Title" ng-model="reminder.title" class="large-input" style="margin-left: 10px;"> </md-text-float>-->
+                    <md-input-container>
+                        <label>Title</label>
+                        <input name="title" ng-model="reminder.title">
+                    </md-input-container>
                 </div>
                 <div class="padding">
                     <div><h2> Reminder Type : </h2></div>
@@ -36,7 +44,7 @@
                         <md-slider md-discrete aira-label="Reminder Type" ng-model="reminder.reminderType" step="1" min="1" max="7"></md-slider>
                     </div>
                 </div>
-                <div layout="row" layout-phone="column">
+                <div layout="row" layout-sm="column">
                     <div class="padding">
                         <div><h2> Start Date ? </h2></div>
                         <center>
@@ -51,7 +59,7 @@
                         </center>
                     </div>
                 </div>
-                <div layout="row" layout-phone="column">
+                <div layout="row" layout-sm="column">
                     <div class="padding" flex>
                         <div style="margin-top:25px;">
                             <md-switch ng-model="reminder.isRecursive" aria-label="Repeat" style="margin-left: -10px;width:100%" class="large-input"> <label>Repeat reminder ? </label></md-switch>

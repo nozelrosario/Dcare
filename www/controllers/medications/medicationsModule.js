@@ -96,7 +96,7 @@ medicationsModule.controller('MedicationFormController', function ($scope, $ioni
         $mdDialog.show(confirmReminder).then(function () {
                 // User clicked Yes, set reminder
             MedicationsStore.setMedicationReminder(medication.id).then(function (reminder_status) {
-                logger.info(reminder_status);
+                app.log.info(reminder_status);
                 $scope.changeState(medication);
             });
             }, function () {
@@ -146,7 +146,7 @@ medicationsModule.config(function ($stateProvider, $urlRouterProvider) {
               },
               templateUrl: 'views/medications/list.html',
               controller: 'MedicationsListController',
-              params: ['patientID']
+              params: {'patientID': null }
           })
           .state('medicationForm', {
               resolve: {
@@ -155,7 +155,7 @@ medicationsModule.config(function ($stateProvider, $urlRouterProvider) {
               },
               templateUrl: 'views/medications/new_entry.html',
               controller: 'MedicationFormController',
-              params: ['patientID','medicationID','parentState']
+              params: { 'patientID': null ,'medicationID': null, 'parentState': null }
           });
 
 });

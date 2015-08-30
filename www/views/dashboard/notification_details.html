@@ -1,0 +1,28 @@
+﻿<md-dialog aria-label="{{selected_notification.title}}">
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>{{selected_notification.title}}</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="closeNotification()">
+                    <i class="icon ion-close-circled"></i>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <b>
+                {{selected_notification.startdate | prettifyDate:'calendar'}}
+            </b>
+            <br />
+            {{selected_notification.text}}
+        </md-dialog-content>
+        <div class="md-actions" layout="row">
+            <md-button ng-click="deleteNotification(selected_notification.id)" class="md-primary">
+                Dismiss!!
+            </md-button>
+            <md-button ng-click="closeNotification()" class="md-primary">
+                Close
+            </md-button>
+        </div>
+    </form>
+</md-dialog>

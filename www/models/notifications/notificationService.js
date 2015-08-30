@@ -16,7 +16,7 @@
         var deferredSchedule = $q.defer();
         
         var notificationSuccess = function() {
-            logger.info("Done adding Notification via. Cordova plugin");
+            app.log.info("Done adding Notification via. Cordova plugin");
         };
         notificationPermissionCheck().then(function (permisionExists) {
             if (!permisionExists) { 
@@ -36,7 +36,7 @@
                 }).catch(function (permissionGranted) {
                     // Permission Rejected
                     var err = "Notification Permission does not exists. Application will not be able to show Notifications";
-                    logger.error(err);
+                    app.log.error(err);
                     deferredSchedule.reject(err);
                 });
             } else {
@@ -108,13 +108,13 @@
                             deferredCancel.resolve();
                         });
                     } else {
-                        logger.warn("Notification doesnot exist");
+                        app.log.warn("Notification doesnot exist");
                         deferredCancel.resolve();
                     }
                 });
                 
             } else {
-                logger.error("Error while removing notification, notificationID cannot be empty!!");
+                app.log.error("Error while removing notification, notificationID cannot be empty!!");
                 deferredCancel.reject();
             }
             

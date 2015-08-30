@@ -1,7 +1,14 @@
-﻿.bold-label 
+﻿/*Overriden Defaults*/
+
+.md-char-counter {
+    display:none;
+}
+
+
+.bold-label 
 {
     font-weight: bolder;
-    font-size: 25px;
+    font-size: 100%;
     padding: 5px;
 }
 

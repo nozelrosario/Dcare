@@ -30,19 +30,12 @@ registrationModule.controller('RegistrationController', function ($scope, $state
 * Identification Information
 * [FirstName, Last Name, email, Phone ]
 */
-registrationModule.controller('IdentificationInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore) {
-    if (!$stateParams.patientID || $stateParams.patientID == "") {
+registrationModule.controller('IdentificationInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore, patient) {
+    if (!patient) {
         // new patient
         $scope.patient = {};
     } else {
-
-    // TODO : Implement this via resolve on state provider : https://github.com/angular-ui/ui-router/wiki#resolve
-        //alert("id = " + $stateParams.patientID);
-        // existing patient , load data first
-        var getPatientDataPromise = PatientsStore.getPatientByID($stateParams.patientID);
-        getPatientDataPromise.then(function (patientData) {
-            $scope.patient = patientData;
-        });
+        $scope.patient = patient;
     }
 
     $scope.changeState = function (patient) {
@@ -69,9 +62,9 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
 * Gender Information
 * [FirstName, Last Name, email, Phone ]
 */
-registrationModule.controller('GenderInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore) {
-    if (!$stateParams.patientID || $stateParams.patientID == "") {
-        // Empty Patient Id , shouls never come at this stage, redirect to default page
+registrationModule.controller('GenderInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore, patient) {
+    if (!patient) {
+        // Empty Patient , should never come at this stage, redirect to default page
         $scope.patient = {};
         $mdDialog.show($mdDialog.alert()
                                .title('Something went wrong :(')
@@ -82,14 +75,7 @@ registrationModule.controller('GenderInfoController', function ($scope, $mdDialo
                                });
         
     } else {
-
-    // TODO : Implement this via resolve on state provider : https://github.com/angular-ui/ui-router/wiki#resolve
-        //alert("id = " + $stateParams.patientID);
-        // existing patient , load data first
-        var getPatientDataPromise = PatientsStore.getPatientByID($stateParams.patientID);
-        getPatientDataPromise.then(function (patientData) {
-            $scope.patient = patientData;
-        });
+        $scope.patient = patient;
     }
 
     $scope.changeState = function (patient) {
@@ -123,27 +109,20 @@ registrationModule.controller('GenderInfoController', function ($scope, $mdDialo
 * Age Information
 * [Birthdate & Age ]
 */
-registrationModule.controller('AgeInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore) {
-    if (!$stateParams.patientID || $stateParams.patientID == "") {
-        // Empty Patient Id , shouls never come at this stage, redirect to default page
+registrationModule.controller('AgeInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore, patient) {
+    if (!patient) {
+        // Empty Patient , should never come at this stage, redirect to default page
         $scope.patient = {};
         $mdDialog.show($mdDialog.alert()
                                .title('Something went wrong :(')
-                               .content('This is embarassing!!. Operation responded with ' + 'Error Code 00003')
-                               .ariaLabel('Error Code 00003')
-                               .ok('OK!')).finally(function() {
-                                    $state.go("identificationInfo", { patientID: "" });
+                               .content('This is embarassing!!. Operation responded with ' + 'Error Code 00002')
+                               .ariaLabel('Error Code 00002')
+                               .ok('OK!')).finally(function () {
+                                   $state.go("identificationInfo", { patientID: "" });
                                });
-        
-    } else {
 
-    // TODO : Implement this via resolve on state provider : https://github.com/angular-ui/ui-router/wiki#resolve
-        //alert("id = " + $stateParams.patientID);
-        // existing patient , load data first
-        var getPatientDataPromise = PatientsStore.getPatientByID($stateParams.patientID);
-        getPatientDataPromise.then(function (patientData) {
-            $scope.patient = patientData;
-        });
+    } else {
+        $scope.patient = patient;
     }
 
     $scope.calculateAge = function() {
@@ -186,7 +165,7 @@ registrationModule.controller('AgeInfoController', function ($scope, $mdDialog, 
 * Body Size Information
 * [Height & Weight ]
 */
-registrationModule.controller('BodySizeInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore, VitalsStore) {
+registrationModule.controller('BodySizeInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore, VitalsStore, vitals) {
     if ((!$stateParams.patientID || $stateParams.patientID == "") && (!$stateParams.vitalsID || $stateParams.vitalsID == "")) {
         // Empty Patient Id , shouls never come at this stage, redirect to default page
         $scope.patient = {};
@@ -199,22 +178,9 @@ registrationModule.controller('BodySizeInfoController', function ($scope, $mdDia
                                });
         
     } else {
-        //alert("id = " + $stateParams.patientID);
-        // existing patient , load data first : Currently not required to load patient data here, as only dealing with Vitals
-//        if($stateParams.patientID && $stateParams.patientID != "") {
-//            var getPatientDataPromise = PatientsStore.getPatientByID($stateParams.patientID);
-//            getPatientDataPromise.then(function (patientData) {
-//                $scope.patient = patientData;
-//            });
-//        }
 
-// TODO : Implement this via resolve on state provider : https://github.com/angular-ui/ui-router/wiki#resolve
-        //If vitals id passed, load existing data for vitals
-        if($stateParams.vitalsID && $stateParams.vitalsID != "") {
-            var getvitalsDataPromise = VitalsStore.getVitalByID($stateParams.vitalsID);
-            getvitalsDataPromise.then(function (vitalsData) {
-                $scope.vitals = vitalsData;
-            });
+        if (vitals) {
+            $scope.vitals = vitals;
         } else {
             if($stateParams.patientID && $stateParams.patientID != "") {
                 // create new record for vitals with current patient
@@ -278,7 +244,7 @@ registrationModule.controller('BodySizeInfoController', function ($scope, $mdDia
 * Bloodpressure Information
 * [Systolic & Diastolic ]
 */
-registrationModule.controller('BloodPressureInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore, VitalsStore) {
+registrationModule.controller('BloodPressureInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore, VitalsStore, vitals) {
     if ((!$stateParams.patientID || $stateParams.patientID == "") && (!$stateParams.vitalsID || $stateParams.vitalsID == "")) {
         // Empty Patient Id , shouls never come at this stage, redirect to default page
         $scope.patient = {};
@@ -291,23 +257,10 @@ registrationModule.controller('BloodPressureInfoController', function ($scope, $
                                });
         
     } else {
-        //alert("id = " + $stateParams.patientID);
-        // existing patient , load data first : Currently not required to load patient data here, as only dealing with Vitals
-//        if($stateParams.patientID && $stateParams.patientID != "") {
-//            var getPatientDataPromise = PatientsStore.getPatientByID($stateParams.patientID);
-//            getPatientDataPromise.then(function (patientData) {
-//                $scope.patient = patientData;
-//            });
-//        }
 
-
-        // TODO : Implement this via resolve on state provider : https://github.com/angular-ui/ui-router/wiki#resolve
         //If vitals id passed, load existing data for vitals
-        if($stateParams.vitalsID && $stateParams.vitalsID != "") {
-            var getvitalsDataPromise = VitalsStore.getVitalByID($stateParams.vitalsID);
-            getvitalsDataPromise.then(function (vitalsData) {
-                $scope.vitals = vitalsData;
-            });
+        if (vitals) {
+            $scope.vitals = vitals;
         } else {
             if($stateParams.patientID && $stateParams.patientID != "") {
                 // create new record for vitals with current patient
@@ -370,32 +323,47 @@ registrationModule.config(function ($stateProvider, $urlRouterProvider) {
         .state('identificationInfo', {
             //url: '/identificationInfo',  // cannot use as using params[]
             templateUrl: 'views/registration/identification_info.html',
+            resolve: {
+                patient: function (PatientsStore, $stateParams) { return ($stateParams.patientID) ? PatientsStore.getPatientByID($stateParams.patientID) : null ; }
+            },
             controller: 'IdentificationInfoController',
-            params: ['patientID']
+            params: { 'patientID': null }
         })
         .state('genderInfo', {
             //url: '/genderInfo',  // cannot use as using params[]
             templateUrl: 'views/registration/gender_info.html',
+            resolve: {
+                patient: function (PatientsStore, $stateParams) { return ($stateParams.patientID) ? PatientsStore.getPatientByID($stateParams.patientID) : null; }
+            },
             controller: 'GenderInfoController',
-            params: ['patientID']
+            params: { 'patientID': null }
         })
         .state('ageInfo', {
             //url: '/genderInfo',  // cannot use as using params[]
             templateUrl: 'views/registration/age_info.html',
+            resolve: {
+                patient: function (PatientsStore, $stateParams) { return ($stateParams.patientID) ? PatientsStore.getPatientByID($stateParams.patientID) : null; }
+            },
             controller: 'AgeInfoController',
-            params: ['patientID']
+            params: { 'patientID': null }
         })
         .state('bodysizeInfo', {
             //url: '/genderInfo',  // cannot use as using params[]
             templateUrl: 'views/registration/body_size_info.html',
+            resolve : {
+                vitals : function(VitalsStore, $stateParams) { return ($stateParams.vitalsID) ? VitalsStore.getVitalByID($stateParams.vitalsID) : null; }
+            },
             controller: 'BodySizeInfoController',
-            params: ['patientID','vitalsID']
+            params: { 'patientID': null, 'vitalsID': null }
         })
         .state('bloodpressureInfo', {
             //url: '/genderInfo',  // cannot use as using params[]
             templateUrl: 'views/registration/bloodpressure_info.html',
+            resolve : {
+                vitals : function(VitalsStore, $stateParams) { return ($stateParams.vitalsID) ? VitalsStore.getVitalByID($stateParams.vitalsID) : null; }
+            },
             controller: 'BloodPressureInfoController',
-            params: ['patientID','vitalsID']
+            params: { 'patientID': null, 'vitalsID': null }
         });
 
 });

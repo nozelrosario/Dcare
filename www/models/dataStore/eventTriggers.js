@@ -32,7 +32,7 @@ app.classes.data.eventTriggers = new Module({
             registeredActions.push({ name: triggerName, action: action });
             this.triggers[trigger] = registeredActions;
         } else {
-            logger.error("Trigger : " + trigger + " not supported!!");
+            app.log.error("Trigger : " + trigger + " not supported!!");
         }
     },
     /* Removes a trigger

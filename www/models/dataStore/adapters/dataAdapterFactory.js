@@ -10,7 +10,7 @@ app.classes.data.DataAdapterFactory = new Singleton({
 		if(this.registeredAdapters[adapterName]) {
 			adapter = new (this.registeredAdapters[adapterName])(adapterConfig);
 		} else {
-			logger.error("Data Adapter '" + adapterName +"' unavailable !! ");
+			app.log.error("Data Adapter '" + adapterName +"' unavailable !! ");
 			adapter = null;
 		}
 		return adapter;

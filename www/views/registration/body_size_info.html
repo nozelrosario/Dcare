@@ -5,11 +5,11 @@
 
 <!--    <form style="padding: 20px;" md-theme="amber">-->
     <ion-scroll direction="y" style="height:90%">
-    <md-content class="content has-header has-footer" layout-align="center center" layout="row" layout-phone="column" style="height:auto;" >
+    <md-content class="content has-header has-footer" layout-align="center center" layout-lg="row" layout-md="column" style="height:auto;" >
         
-        <div flex layout="column" layout-phone="column"  layout-align="center center" class="padding " style="height:220px; width:310px" >
-            <div class="padding"><center><h1> What is your Height ? </h1></center></div>
-            <div layout="row" layout-phone="row"  layout-align="center center" class="padding range" style="width:300px">
+        <div layout="column" layout-sm="column"  layout-align="center center" class="padding " style="height:220px; width:auto" >
+            <div class="padding"><center><h2> What is your Height ? </h2></center></div>
+            <div layout="row" layout-sm="row"  layout-align="center center" class="padding range" style="width:300px">
                 <i class="icon ion-minus-circled"></i>
                 <input type="range" name="height" min="145" max="230" ng-change="calculateBMI()" ng-model="vitals.height" >
                 <i class="icon ion-plus-circled"></i>
@@ -22,7 +22,7 @@
             </select>
             </h1>
         </div>
-        <div flex layout="column" layout-phone="column"  layout-align="center center" class="padding " style="height:350px;"  >
+        <div flex layout="column" layout-sm="column"  layout-align="center center" class="padding " style="height:350px;"  >
             <div class="padding"><center><h1> What is your Weight ? </h1></center></div>
             <div layout="row" class="padding"  >
                 <input id="age" type="text" ng-model="vitals.weight" data-displayInput="true"  jquery-knob jquery-knob-config="{width:200, angleArc:250, step:1, angleOffset:-125, lineCap:'round', min:20, max:200, displayInput:false, cursor:true }"/>

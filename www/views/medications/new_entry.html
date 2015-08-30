@@ -11,11 +11,14 @@
     <ion-scroll direction="y" style="height:80%" class="content has-header ">
     <md-content class="content" layout="column" layout-phone="column" style="height:auto;" layout-align="center center" >
         
-        <div layout="column" layout-phone="column"  class="padding ">
-            <div>
-                <md-text-float label="Medication" ng-model="medication.name" class="large-input"> </md-text-float>
+        <div layout="column" layout-sm="column"  class="padding ">
+            <div>                
+                <md-input-container>
+                    <label>Medication</label>
+                    <input name="name" ng-model="medication.name">
+                </md-input-container>
             </div>
-            <div layout="row" layout-phone="column" > 
+            <div layout="row" layout-sm="column" > 
                 <div class="padding">
                     <div ><h2> Route ? </h2></div>
                     <center>
@@ -53,16 +56,16 @@
                     </div>
                 </div>
              </div>
-            <div layout="row" layout-phone="column" > 
+            <div layout="row" layout-sm="column" > 
                 <div class="padding">
-                    <div ><h2> Start Date ? </h2></div>
+                    <div ><h2> Start Date &Aacute; Time ? </h2></div>
                     <center>
                         <input label="Start Date" ng-model="medication.startdate" class="datetime-input" mobiscroll-date mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
                     </center>
                 </div>
 
                 <div class="padding">
-                    <div ><h2> End Date ? </h2></div>
+                    <div ><h2> End Date & Time ? </h2></div>
                     <center>
                         <input label="End Date" ng-model="medication.enddate" class="datetime-input" mobiscroll-date mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
                     </center>

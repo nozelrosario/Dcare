@@ -2,16 +2,36 @@
 	  <ion-header-bar class="bar bar-header bar-energized">
 		<h1 class="title">D-Care</h1>
 	  </ion-header-bar>
-<form style="padding: 20px;" md-theme="amber">
+<form style="padding: 20px;" md-theme="amber" name="identification_info">
 <br />
 <div layout="column">
 	<div layout="column" >
-		<md-text-float label="First Name" ng-model="patient.firstname" class="large-input"> </md-text-float>
-		<md-text-float label="Last Name" ng-model="patient.lastname" class="large-input"> </md-text-float>
+        <md-input-container>
+            <label>First Name</label>
+            <input md-maxlength="30" required name="firstname" ng-model="patient.firstname" >
+            <div ng-messages="identification_info.firstname.$error">
+                <div ng-message="required">This is required.</div>
+                <div ng-message="md-maxlength">The name has to be less than 30 characters long.</div>
+            </div>
+        </md-input-container>
+        <md-input-container>
+            <label>Last Name</label>
+            <input md-maxlength="30" required name="lastname" ng-model="patient.lastname">
+            <div ng-messages="identification_info.lastname.$error">
+                <div ng-message="required">This is required.</div>
+                <div ng-message="md-maxlength">The name has to be less than 30 characters long.</div>
+            </div>
+        </md-input-container>
 	</div>
 	<div layout="column">
-		<md-text-float label="Phone" ng-model="patient.phone" class="large-input"> </md-text-float>
-		<md-text-float label="Email" ng-model="patient.email" type="email" class="large-input"> </md-text-float>
+        <md-input-container>
+            <label>Phone</label>
+            <input name="phone" type="tel" ng-model="patient.phone">
+        </md-input-container>
+        <md-input-container>
+            <label>Email</label>
+            <input type="email" name="email" ng-model="patient.email">
+        </md-input-container>
 	</div>
 </div>
 </form>

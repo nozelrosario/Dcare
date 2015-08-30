@@ -2,7 +2,7 @@
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
 
-var dCare = angular.module('dCare', ['ionic', 'starter.controllers', 'dCare.registration','dCare.dashboard', 'ngMaterial']);
+var dCare = angular.module('dCare', ['ionic', 'starter.controllers', 'dCare.registration', 'dCare.dashboard', 'ngMaterial', 'ngMessages']);
 
 dCare.run(function ($ionicPlatform) {
     $ionicPlatform.ready(function () {
@@ -22,8 +22,11 @@ dCare.run(function ($ionicPlatform) {
 /*
 * App Config 
 */
-dCare.config(function ($logProvider) {
-    $logProvider.debugEnabled(true);
+dCare.config(function ($logProvider, $mdThemingProvider) {
+    $logProvider.debugEnabled((app.LOGGINGLEVEL !== "off"));
+    $mdThemingProvider.theme('amber')
+    .primaryPalette('amber')
+    .accentPalette('grey');
 });
 
 /*

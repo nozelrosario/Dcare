@@ -307,7 +307,7 @@ vitalsModule.config(function ($stateProvider, $urlRouterProvider) {
                 //url: '/identificationInfo',  // cannot use as using params[]
                 templateUrl: 'views/vitals/vitals_summary.html',
                 controller: 'VitalsSummaryController',
-                params: ['patientID', 'parentState']
+                params: { 'patientID': null, 'parentState': null }
             })
           .state('vitalslist', {
               resolve: {
@@ -317,7 +317,7 @@ vitalsModule.config(function ($stateProvider, $urlRouterProvider) {
               //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/vitals/list.html',
               controller: 'VitalsListController',
-              params: ['patientID', 'parentState']
+              params: { 'patientID': null, 'parentState': null }
           })
           .state('vitalsForm', {
               resolve: {
@@ -327,7 +327,7 @@ vitalsModule.config(function ($stateProvider, $urlRouterProvider) {
               //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/vitals/new_entry.html',
               controller: 'VitalsFormController',
-              params: ['patientID','vitalsID','parentState']
+              params: { 'patientID': null, 'vitalsID': null, 'parentState': null }
           })
           .state('vitalstrend', {
               resolve: {
@@ -349,7 +349,7 @@ vitalsModule.config(function ($stateProvider, $urlRouterProvider) {
               //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/vitals/trend.html',
               controller: 'VitalsTrendController',
-              params: ['patientID', 'parentState','trendType', 'unit']
+              params: { 'patientID': null, 'parentState': null, 'trendType': null, 'unit': null }
           });
 
 });

@@ -1,9 +1,13 @@
 ﻿.large-input
 {
-    margin-left: 25px;
-    margin-right: 25px;
-    margin-top: 25px;
+    margin:10px;
+    font-size: 1.5em;
 }
+
+.large-input[mobiscroll-date-time] {
+    text-align:center;
+}
+
 
 .large-input label
 {
