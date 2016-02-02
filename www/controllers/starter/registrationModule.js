@@ -204,7 +204,7 @@ registrationModule.controller('BodySizeInfoController', function ($scope, $mdDia
         //English Units: BMI = Weight (lb) / (Height (in) x Height (in)) x 703
         //http://www.freebmicalculator.net/healthy-bmi.php
         if ($scope.vitals.weight > 0 && $scope.vitals.height > 0) {
-            $scope.vitals.bmi = parseInt(($scope.vitals.height / $scope.vitals.weight) * $scope.vitals.height);
+            $scope.vitals.bmi = parseInt($scope.vitals.weight / (($scope.vitals.height / 100) * ($scope.vitals.height / 100)));   //NR: convert height to meter & calculate
         } else {
             $scope.vitals.bmi = 0;
         }

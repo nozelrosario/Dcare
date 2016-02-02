@@ -68,7 +68,11 @@
                         
                     </div>
                     <div ng-show="reminder.isRecursive" class="padding" flex>
-                        <md-text-float label="Repeat Every ?" ng-model="reminder.frequency" class="large-input" style="margin-left: 10px;"> </md-text-float>
+                        <!--<md-text-float label="Repeat Every ?" ng-model="reminder.frequency" class="large-input" style="margin-left: 10px;"> </md-text-float>-->
+                        <md-input-container>
+                            <label>Repeat Every ?</label>
+                            <input name="frequency" ng-model="reminder.frequency">
+                        </md-input-container>
                     </div>
                 </div>
                 <div class="padding" ng-show="reminder.isRecursive">

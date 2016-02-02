@@ -130,7 +130,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
                         deferredSave.reject(response);
                     }
                     
-                }).fail(function (err) {
+                }).catch(function (err) {
                     app.log.error(err);
                     deferredSave.reject(err);
                 });

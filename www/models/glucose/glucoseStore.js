@@ -18,7 +18,7 @@ angular.module('dCare.Services.GlucoseStore', [])
             'random': { label: 'Random / In between', short_label: 'Random', value: 'random' }
         }
     };
-    // Some fake testing data
+    // SAMPLE data
     //var glucoseList = [
 	//                { id: 0, patientID: '1', glucosevalue: 165, glucoseType: 'fasting', datetime: '1288323623006', trend: 'high' },
 	//                { id: 1, patientID: '1', glucosevalue: 125, glucoseType: 'fasting', datetime: '1289323623006', trend: 'low' },
@@ -84,9 +84,11 @@ angular.module('dCare.Services.GlucoseStore', [])
                 limit: 6
             }).then(function (data) {
                 var glucoseValues = [];
-                for (var i = 0 ; i < data.length ; i++) {
-                    glucoseValues.push(data[i].glucosevalue);
-                }
+                if (data) {
+                    for (var i = 0 ; i < data.length ; i++) {
+                        glucoseValues.push(data[i].glucosevalue);
+                    }
+                }                 
                 glucoseSparkline.data = glucoseValues;
                 deferredFetch.resolve(glucoseSparkline);  // glucoseSparkline.data = [130, 95, 126, 150, 180, 200];
             });
@@ -103,16 +105,14 @@ angular.module('dCare.Services.GlucoseStore', [])
                                     ];
                 deferredFetch.resolve(lineGraphData);
             });
-            //var lineGraphData = [
-            //                        {
+            //SAMPLE// lineGraphData = [ {
             //                            name: "Fasting",
             //                            data: [[1083297600000, 130], [1085976000000, 126], [1088568000000, 150], [1091246400000, 180]]
-            //                        },
-            //                        {
+            //                           },
+            //                           {
             //                            name: "Post Meal",
             //                            data: [[1083297600000, 150], [1085976000000, 186], [1088568000000, 200], [1091246400000, 150]]
-            //                        }
-            //                    ];
+            //                           } ];
             return deferredFetch.promise;
         },
         getLatestGlucoseForPatient: function (patientID) {
@@ -123,7 +123,11 @@ angular.module('dCare.Services.GlucoseStore', [])
                 sort: [{ 'datetime': 'desc' }],
                 limit: 1
             }).then(function (data) {
-                deferredFetch.resolve(data[0]);
+                if (data) {
+                    deferredFetch.resolve(data[0]);
+                } else {
+                    deferredFetch.resolve([]);
+                }
             });
             return deferredFetch.promise;
         },
@@ -135,7 +139,11 @@ angular.module('dCare.Services.GlucoseStore', [])
                 sort: [{ 'datetime': 'desc' }],
                 limit: 1
             }).then(function (data) {
-                deferredFetch.resolve(data[0]);
+                if (data) {
+                    deferredFetch.resolve(data[0]);
+                } else {
+                    deferredFetch.resolve([]);
+                }
             });
             return deferredFetch.promise;
         },
@@ -154,7 +162,11 @@ angular.module('dCare.Services.GlucoseStore', [])
                 sort: [{ 'datetime': 'desc' }],
                 limit: 1
             }).then(function (data) {
-                deferredFetch.resolve(data[0]);
+                if (data) {
+                    deferredFetch.resolve(data[0]);
+                } else {
+                    deferredFetch.resolve([]);
+                }
             });
             return deferredFetch.promise;
         },

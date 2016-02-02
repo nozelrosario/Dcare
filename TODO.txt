@@ -1,0 +1,35 @@
+################# Dcare Pending tasks ################
+======= General ============ 
+# Implement required validations & null checks on all data entry screens.
+# migrate to new angular-material version. Involves migrating the css code...tedious job :(
+# introduce busy indicators for all the long-going processes, like "save", "setReminder", "etc".
+	Try for a generic solution, like have the busyIndicator on model-provider-service OR on data-store level itself.
+# for all the modules, $scope.changeState() can be used to navigate to parent page.
+	Re-name this method on each controller to say "$scope.navigateBack().and also call this on click of back button of title bar.
+
+======= Dashboard ======= 
+when clicking ad new patient, the registration page that opes is missing back/close button.
+
+	
+======= Registration ======= 
+ ## field validations on registration screen
+ 
+======= Medication =========
+ ## Medication - add dose field on ui
+ ## All medications list implement.
+ 
+ 
+ @@ could implement a medicine stock tracking logic, which keeps track of remaining medicine stock and alert accordingly to refill the stock.
+
+======= Reminders ==========
+ ## Back button on new/edit form
+ ## Reminders : currently it is possible to set multiple  reminders for same medication/orignator. coz. there is no provision for maintaining 
+		reference of reminder <=> medication. Try to build up a generic relationship provision , and also filtering mechanism in reminders.
+		
+======= Glucose ============
+ ## Back button on new/edit form
+ 
+ ======= Vitals ============
+ ## BMI calculation not working for data entered while on registration page.
+ ## Scrolling is not functioning on vitals entry form
+ 

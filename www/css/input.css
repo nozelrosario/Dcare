@@ -1,23 +1,19 @@
-﻿.large-input
-{
-    margin:10px;
-    font-size: 1.5em;
+﻿.large-input{
+    margin-top:10px !important;
+    font-size: 2em;
 }
 
 .large-input[mobiscroll-date-time] {
     text-align:center;
 }
 
-
-.large-input label
-{
-    font-size: 1.8em;
-}
+.large-input label{ }
 
 .large-input input
 {
     border-bottom-style: solid;  /*workaround-- as ionic overides material theme css*/
-    font-size:1.3em;
+    font-size: .8em;
+    height:2.3em;
 }
 
 .datetime-input 

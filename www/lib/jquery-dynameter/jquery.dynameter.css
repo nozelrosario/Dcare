@@ -89,7 +89,8 @@ div.dm-wrapperDiv div.dm-innerDiv p.dm-valueP {
   line-height: .85;
 }
 div.dm-wrapperDiv div.dm-innerDiv p.dm-unitP {
-  margin-top: 0;
+  margin-top: 5px;
+  margin-bottom:5px;
   font-size: 75%;
   font-weight: normal;
 }

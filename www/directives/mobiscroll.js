@@ -9,7 +9,7 @@ mobiscrollDirectives.directive('mobiscrollDate', function () {
                 // Set model value on widget
                 var dateValue = scope.$eval(attrs.ngModel);
                 if (dateValue && dateValue != "") {
-                    $(element).mobiscroll('setDate', new Date(JSON.parse(scope.$eval(attrs.ngModel))), true);
+                    $(element).mobiscroll('setDate', new Date((scope.$eval(attrs.ngModel))), true);
                 }
 
             }
@@ -25,7 +25,7 @@ mobiscrollDirectives.directive('mobiscrollDate', function () {
                 // Set model value on widget
                 var dateValue = scope.$eval(attrs.ngModel);
                 if (dateValue && dateValue != "") {
-                    $(element).mobiscroll('setDate', new Date(JSON.parse(scope.$eval(attrs.ngModel))), true);
+                    $(element).mobiscroll('setDate', new Date((scope.$eval(attrs.ngModel))), true);
                 }
 
             }

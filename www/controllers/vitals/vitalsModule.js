@@ -146,7 +146,7 @@ vitalsModule.controller('VitalsListController', function ($scope, $ionicLoading,
 });
 
 
-vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, vitals, currentPatient, VitalsStore) {
+vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, vitals, latestVitals, currentPatient, VitalsStore) {
     $ionicLoading.show({
         template: 'Loading...'
     });
@@ -158,8 +158,10 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
     $scope.currentPatient = currentPatient;
     if (vitals && vitals.id > 0) {
         $scope.vitals = vitals;
+    } else if (latestVitals && latestVitals.id) {
+        $scope.vitals = { patientID: $scope.currentPatient.id, height: latestVitals.height, heightunit: "Cm", weight: latestVitals.weight, weightunit: "Kg", datetime: castToLongDate(new Date()) };  // New entry : pre-fill with latest recorded height & weight
     } else {
-        $scope.vitals = { patientID: $scope.currentPatient.id, heightunit: "Cm", weightunit: "Kg", datetime: (new Date()) };  // New entry : make any default values here if any
+        $scope.vitals = { patientID: $scope.currentPatient.id, heightunit: "Cm", weightunit: "Kg", datetime: castToLongDate(new Date()) };  // New entry : pre-fill only date
     }
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'vitalsSummary';
 
@@ -168,7 +170,7 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
         //English Units: BMI = Weight (lb) / (Height (in) x Height (in)) x 703
         //http://www.freebmicalculator.net/healthy-bmi.php
         if ($scope.vitals.weight > 0 && $scope.vitals.height > 0) {
-            $scope.vitals.bmi = parseInt(($scope.vitals.height / $scope.vitals.weight) * $scope.vitals.height);
+            $scope.vitals.bmi = parseInt($scope.vitals.weight / (($scope.vitals.height / 100) * ($scope.vitals.height / 100)));   //NR: convert height to meter & calculate
         } else {
             $scope.vitals.bmi = 0;
         }
@@ -196,6 +198,7 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
     $scope.save = function () {
         $scope.vitals.datetime = (angular.isDate($scope.vitals.datetime)) ? Date.parse($scope.vitals.datetime) : ((typeof $scope.vitals.datetime) == "number" ) ? $scope.vitals.datetime : ""; // Parse date to long format
         $scope.vitals.height = parseInt($scope.vitals.height);
+        $scope.calculateBMI();
         var saveVitalsDataPromise = VitalsStore.save($scope.vitals);
         saveVitalsDataPromise.then($scope.changeState, $scope.saveFailed);
 
@@ -322,6 +325,7 @@ vitalsModule.config(function ($stateProvider, $urlRouterProvider) {
           .state('vitalsForm', {
               resolve: {
                   vitals: function (VitalsStore, $stateParams) { return VitalsStore.getVitalByID($stateParams.vitalsID); },
+                  latestVitals: function (VitalsStore, $stateParams) { return VitalsStore.getLatestVitalsForPatient($stateParams.patientID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
               //url: '/identificationInfo',  // cannot use as using params[]

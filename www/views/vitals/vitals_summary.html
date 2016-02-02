@@ -27,8 +27,8 @@
                                             <div layout="row" class="padding" layout-phone="column" layout-align="center center"><div class="sub-label">BMI :</div><div class="bold-label">{{vitals.bmi}}</div></div>
 
                                             <div layout="row" layout-phone="column" layout-align="center center" ng-show="vitals.bmi < 18.5"><div class="sub-label"> Condition :</div><div class="bold-label">Underweight</div></div>
-                                            <div layout="row" layout-phone="column" layout-align="center center" ng-show="vitals.bmi > 18.5 && vitals.bmi < 25 "><div class="sub-label"> Condition :</div><div class="bold-label">Normal</div></div>
-                                            <div layout="row" layout-phone="column" layout-align="center center" ng-show="vitals.bmi > 25 && vitals.bmi < 30 "><div class="sub-label"> Condition :</div><div class="bold-label">Overweight</div></div>
+                                            <div layout="row" layout-phone="column" layout-align="center center" ng-show="vitals.bmi > 18.5 && vitals.bmi <= 25 "><div class="sub-label"> Condition :</div><div class="bold-label">Normal</div></div>
+                                            <div layout="row" layout-phone="column" layout-align="center center" ng-show="vitals.bmi > 25 && vitals.bmi <= 30 "><div class="sub-label"> Condition :</div><div class="bold-label">Overweight</div></div>
                                             <div layout="row" layout-phone="column" layout-align="center center" ng-show="vitals.bmi > 30"><div class="sub-label"> Condition :</div><div class="bold-label">Obese</div></div>
                                         </div>
                                     </div>
@@ -49,8 +49,8 @@
                             </div>
                         </div>
                     </md-content>
-                    <md-content class="content has-header " layout-align="center center" layout="row" layout-phone="column" style="height:auto;">
-                        <div layout="column" layout-phone="column" layout-align="center center" class="padding " ng-show="{{vitals.bpsystolic > 0}}">
+                    <md-content class="content has-header " layout-align="center center" layout="row" layout-sm="column" style="height:auto;">
+                        <div flex layout="column" layout-phone="column" layout-align="center center" class="padding " ng-show="{{vitals.bpsystolic > 0}}">
                             <div class=""><center><h1> Systolic BP  </h1></center></div>
                             <div ng-model="vitals.bpsystolic" jquery-dynameter jquery-dynameter-config="{ label:'Systolic BP', unit:'mm Hg', min:80, max:210, regions:{ 80:'normal', 120:'warn', 160:'error' } }"></div>
                             <div layout="row" layout-phone="row" layout-align="center center" class="padding range" style="width:300px" ng-show="false">
@@ -60,8 +60,8 @@
                                 <i class="icon ion-plus-circled"></i>
                             </div>
                         </div>
-                        <div layout="column" layout-phone="column" layout-align="center center" class="padding "><!--Padding--></div>
-                        <div layout="column" layout-phone="column" layout-align="center center" class="padding " ng-show="{{vitals.bpdiastolic > 0}}">
+                        <!--div flex layout="column" layout-phone="column" layout-align="center center" class="padding "--><!--Padding--><!--/div-->
+                        <div flex layout="column" layout-phone="column" layout-align="center center" class="padding " ng-show="{{vitals.bpdiastolic > 0}}">
                             <div class=" "><center><h1> Diastolic BP  </h1></center></div>
                             <div ng-model="vitals.bpdiastolic" jquery-dynameter jquery-dynameter-config="{ label:'Diastolic BP', unit:'mm Hg', min:40, max:140, regions:{ 40:'normal', 80:'warn', 99:'error' } }"></div>
                             <div layout="row" layout-phone="row" layout-align="center center" class="padding range" style="width:300px" ng-show="false">
