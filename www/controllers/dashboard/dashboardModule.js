@@ -50,13 +50,13 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
                 $state.go("registration", { isFirstRun: false });
                 break;
             case "editprofile":
-                $state.go("identificationInfo", { patientID: $scope.currentPatient.id });
+                $state.go("identificationInfo", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
                 break;
             case "vitals":
                 $state.go("vitalsSummary", { patientID: $scope.currentPatient.id });
                 break;
             case "glucose":
-                $state.go("glucoselist", { patientID: $scope.currentPatient.id });
+                $state.go("glucoselist", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
                 break;
             case "medications":
                 $state.go("medicationslist", { patientID: $scope.currentPatient.id });

@@ -118,7 +118,7 @@ glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicLoadi
         template: 'Loading...'
     });
 
-    // Init Menu
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'glucoselist';
 
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
@@ -215,8 +215,11 @@ glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicLoadi
     };
 
     
-
     // Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
+    };
 
     $ionicLoading.hide();
 });
@@ -235,7 +238,7 @@ glucoseModule.config(function ($stateProvider, $urlRouterProvider) {
               //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/glucose/list.html',
               controller: 'GlucoseListController',
-              params: { 'patientID': null }
+              params: { 'patientID': null, 'parentState': null }
           })
           .state('glucoseForm', {
               resolve: {

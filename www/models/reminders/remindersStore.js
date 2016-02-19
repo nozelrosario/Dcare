@@ -90,8 +90,14 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
     // Trigger remove notification upon Delete
     remindersDataStore.addTrigger("after-delete", "trigger_remove_notification", function (evtData) {
         var reminderData = evtData.data;
-        NotificationsStore.getNotificationForReminder(reminderData.id).then(function (existing_Notification) {
-            if (existing_Notification.id > 0) NotificationsStore.remove(existing_Notification.id);
+        NotificationsStore.getNotificationForReminder(reminderData.id).then(function (existing_Notifications) {
+            if (existing_Notifications) {
+                var existing_Notification;
+                for (var i = 0; i < existing_Notifications.length; i++) {
+                    existing_Notification = existing_Notifications[i];
+                    if (existing_Notification.id > 0) NotificationsStore.remove(existing_Notification.id);
+                }
+            }            
         });        
     });
 
@@ -119,7 +125,7 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
         getReminderBySourceID: function (sourceID) {
             return remindersDataStore.search({
                 select: '*',
-                where: "patientID=" + patientID + " and status= 'active'" + " and sourceID =" + sourceID
+                where: "status= 'active'" + " and sourceID ='" + sourceID + "'"       //TODO: check if PatientID constraint is required here for security reasons.
             });
         },
         getReminderByID: function (reminderID) {

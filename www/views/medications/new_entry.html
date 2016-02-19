@@ -11,9 +11,11 @@
     <ion-scroll direction="y" style="height:80%" class="content has-header ">
     <md-content class="content" layout="column" layout-phone="column" style="height:auto;" layout-align="center center" >
         
-        <div layout="column" layout-sm="column"  class="padding ">
+        <div layout="column" layout-sm="column"  class="padding " style="width:100%">
+            <md-button ng-show="medication.status == 'active'" class="md-raised md-warn" ng-click="toggleMedicationStatus()" style="width:98%">Discontinue This Medication</md-button>
+            <md-button ng-show="medication.status == 'inactive'" class="md-raised md-warn" ng-click="toggleMedicationStatus()" style="width:98%" >Resume This Medication</md-button>
             <div>                
-                <md-input-container>
+                <md-input-container class="large-input">
                     <label>Medication</label>
                     <input name="name" ng-model="medication.name">
                 </md-input-container>
@@ -74,14 +76,16 @@
         </div>
     </md-content>
     </ion-scroll>
-    <div class="bar bar-footer"  layout >
+    <div class="bar bar-footer" style="height:70px" layout>
         <div flex>
-            <md-button class="md-raised button-block "  ng-click="cancel()"> <b> Cancel </b>
+            <md-button class="md-raised button-block " ng-click="cancel()">
+                <b> Cancel </b>
                 <span class="ion-button-style next-arrow"></span>
-            </md-button> 
+            </md-button>
         </div>
         <div flex>
-            <md-button class="md-primary md-raised button-block "  ng-click="save()"> <b> Save </b> 
+            <md-button class="md-primary md-raised button-block " ng-click="save()">
+                <b> Save </b>
                 <span class="ion-button-style next-arrow"></span>
             </md-button>
         </div>

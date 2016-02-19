@@ -90,6 +90,9 @@
     };
 
     return {
+        /* Checks if native Notification Service available */
+        isNotificationServiceAvailable: isNotificationServiceAvailable,
+
         /* Schedules a Notification
         * @params: notificationConfig {object} : object.id - id for notification [blank for new & Int for edit]
         *                                       object.text - text for notification

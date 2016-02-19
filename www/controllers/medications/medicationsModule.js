@@ -85,6 +85,7 @@ medicationsModule.controller('MedicationFormController', function ($scope, $ioni
     // Action Methods
 
     $scope.setReminder = function (medication) {
+
         var confirmReminder = $mdDialog.confirm()
                   //.parent(angular.element(document.body))
                   .title('Would you like to set reminder?')
@@ -105,6 +106,51 @@ medicationsModule.controller('MedicationFormController', function ($scope, $ioni
             });
     };
 
+    $scope.removeReminder = function (medication) {
+        MedicationsStore.removeMedicationReminder(medication.id).then(function (reminder_status) {
+            app.log.info(reminder_status);
+            $scope.changeState(medication);
+        });
+    };
+
+    $scope.updateRespectiveReminder = function (medication) {
+        if (medication.status === "active") {
+            $scope.setReminder(medication);
+        } else if (medication.status === "inactive") {
+            $scope.removeReminder(medication);
+        }
+    };
+
+    $scope.toggleMedicationStatus = function () {
+        var newStatus, confirmToggle;
+        if ($scope.medication.status === "active") {
+            newStatus = "inactive";
+            confirmToggle = $mdDialog.confirm()
+                  .title('Discontinue this Medication?')
+                  .content('Would you like to discontinue this Medication?')
+                  .ariaLabel('Discontinue this Medication?')
+                  .ok('Yes')
+                  .cancel('No');
+        } else if ($scope.medication.status === "inactive") {
+            newStatus = "active";
+            confirmToggle = $mdDialog.confirm()
+                  .title('Resume this Medication?')
+                  .content('Would you like to resume this Medication?')
+                  .ariaLabel('Resume this Medication?')
+                  .ok('Yes')
+                  .cancel('No');
+        }
+                
+        $mdDialog.show(confirmToggle).then(function () {
+            // User clicked Yes, set reminder
+            $scope.medication.status = newStatus;
+            $scope.save();
+        }, function () {
+            // User clicked No, do not set reminder
+            // Do Nothing
+        });
+    };
+
     $scope.changeState = function (medication) {
         $scope.medication = medication;
         $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
@@ -113,7 +159,8 @@ medicationsModule.controller('MedicationFormController', function ($scope, $ioni
     $scope.save = function () {
         $scope.medication.startdate = castToLongDate($scope.medication.startdate);
         $scope.medication.enddate = castToLongDate($scope.medication.enddate);
-        MedicationsStore.save($scope.medication).then($scope.setReminder).fail($scope.saveFailed);
+        $scope.medication.status = ($scope.medication.status) ? $scope.medication.status : 'active';    // NR: Default Status To Active
+        MedicationsStore.save($scope.medication).then($scope.updateRespectiveReminder).fail($scope.saveFailed);
 
     };
 

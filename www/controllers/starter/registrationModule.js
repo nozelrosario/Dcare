@@ -37,11 +37,11 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
     } else {
         $scope.patient = patient;
     }
-
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'registration';
     $scope.changeState = function (patient) {
         $scope.patient = patient;
         // transition to next state
-        $state.go("genderInfo",{patientID: $scope.patient.id});
+        $state.go("genderInfo", { patientID: $scope.patient.id, parentState: $scope.parentState });
     };
     $scope.saveFailed = function (errorMessage) {
         $mdDialog.show($mdDialog.alert()
@@ -52,8 +52,10 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
     };
 
     $scope.proceed = function () {
-        var savePatientDataPromise = PatientsStore.save($scope.patient);
-        savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
+        if ($scope.identification_info.$valid) {
+            var savePatientDataPromise = PatientsStore.save($scope.patient);
+            savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
+        }        
     };
 
 });
@@ -77,11 +79,12 @@ registrationModule.controller('GenderInfoController', function ($scope, $mdDialo
     } else {
         $scope.patient = patient;
     }
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'registration';
 
     $scope.changeState = function (patient) {
         $scope.patient = patient;
         // transition to next state
-        $state.go("ageInfo",{patientID: $scope.patient.id});
+        $state.go("ageInfo", { patientID: $scope.patient.id, parentState: $scope.parentState });
     };
     $scope.saveFailed = function (errorMessage) {
         $mdDialog.show($mdDialog.alert()
@@ -124,6 +127,7 @@ registrationModule.controller('AgeInfoController', function ($scope, $mdDialog, 
     } else {
         $scope.patient = patient;
     }
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'registration';
 
     $scope.calculateAge = function() {
         var now = new Date(), birthdate="";
@@ -135,7 +139,11 @@ registrationModule.controller('AgeInfoController', function ($scope, $mdDialog, 
     $scope.changeState = function (patient) {
         $scope.patient = patient;
         // transition to next state
-        $state.go("bodysizeInfo",{patientID: $scope.patient.id});
+        if ($scope.parentState === "dashboard") {       //NR: in case of calling via. edid profile from dashboard skip the vitals part.
+            $state.go("dashboard", { patientID: $scope.patient.id });
+        } else {
+            $state.go("bodysizeInfo", { patientID: $scope.patient.id });
+        }        
     };
     $scope.saveFailed = function (errorMessage) {
         $mdDialog.show($mdDialog.alert()
@@ -327,7 +335,7 @@ registrationModule.config(function ($stateProvider, $urlRouterProvider) {
                 patient: function (PatientsStore, $stateParams) { return ($stateParams.patientID) ? PatientsStore.getPatientByID($stateParams.patientID) : null ; }
             },
             controller: 'IdentificationInfoController',
-            params: { 'patientID': null }
+            params: { 'patientID': null, 'parentState': null }
         })
         .state('genderInfo', {
             //url: '/genderInfo',  // cannot use as using params[]
@@ -336,7 +344,7 @@ registrationModule.config(function ($stateProvider, $urlRouterProvider) {
                 patient: function (PatientsStore, $stateParams) { return ($stateParams.patientID) ? PatientsStore.getPatientByID($stateParams.patientID) : null; }
             },
             controller: 'GenderInfoController',
-            params: { 'patientID': null }
+            params: { 'patientID': null, 'parentState': null }
         })
         .state('ageInfo', {
             //url: '/genderInfo',  // cannot use as using params[]
@@ -345,7 +353,7 @@ registrationModule.config(function ($stateProvider, $urlRouterProvider) {
                 patient: function (PatientsStore, $stateParams) { return ($stateParams.patientID) ? PatientsStore.getPatientByID($stateParams.patientID) : null; }
             },
             controller: 'AgeInfoController',
-            params: { 'patientID': null }
+            params: { 'patientID': null, 'parentState': null }
         })
         .state('bodysizeInfo', {
             //url: '/genderInfo',  // cannot use as using params[]
@@ -354,7 +362,7 @@ registrationModule.config(function ($stateProvider, $urlRouterProvider) {
                 vitals : function(VitalsStore, $stateParams) { return ($stateParams.vitalsID) ? VitalsStore.getVitalByID($stateParams.vitalsID) : null; }
             },
             controller: 'BodySizeInfoController',
-            params: { 'patientID': null, 'vitalsID': null }
+            params: { 'patientID': null, 'vitalsID': null, 'parentState': null }
         })
         .state('bloodpressureInfo', {
             //url: '/genderInfo',  // cannot use as using params[]
@@ -363,7 +371,7 @@ registrationModule.config(function ($stateProvider, $urlRouterProvider) {
                 vitals : function(VitalsStore, $stateParams) { return ($stateParams.vitalsID) ? VitalsStore.getVitalByID($stateParams.vitalsID) : null; }
             },
             controller: 'BloodPressureInfoController',
-            params: { 'patientID': null, 'vitalsID': null }
+            params: { 'patientID': null, 'vitalsID': null, 'parentState': null }
         });
 
 });

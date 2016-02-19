@@ -10,15 +10,15 @@ vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicLoadi
 
     // Init Menu
     $scope.menuItems = [
-                        { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
-                        { id: 2, title: 'Vitals List', subTitle: 'List of all recorded vitals', icon: 'ion-person-add' },
-                        { id: 3, title: 'Add New', subTitle: 'Add a new Vitals record', icon: 'ion-person-add' },
-                        { id: 4, title: 'See Height Trend', subTitle: 'Height values graph', icon: 'ion-android-chat' },
-                        { id: 5, title: 'See Weight Trend', subTitle: 'Weight values graph', icon: 'ion-android-chat' },
-                        { id: 6, title: 'See BMI Trend', subTitle: 'BMI values graph', icon: 'ion-android-chat' },
-                        { id: 7, title: 'See BP Trend', subTitle: 'Blood pressure values graph', icon: 'ion-android-chat' },
-                        { id: 8, title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
-                        { id: 9, title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' }
+                        { seq: 1, id:"dashboard", title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
+                        { seq: 2, id: "vitals_list", title: 'Vitals List', subTitle: 'List of all recorded vitals', icon: 'ion-person-add' },
+                        { seq: 3, id: "new_vitals", title: 'Add New', subTitle: 'Add a new Vitals record', icon: 'ion-person-add' },
+                        { seq: 4, id: "height_trend", title: 'See Height Trend', subTitle: 'Height values graph', icon: 'ion-android-chat' },
+                        { seq: 5, id: "weight_trend", title: 'See Weight Trend', subTitle: 'Weight values graph', icon: 'ion-android-chat' },
+                        { seq: 6, id: "bmi_trend", title: 'See BMI Trend', subTitle: 'BMI values graph', icon: 'ion-android-chat' },
+                        { seq: 7, id: "bp_trend", title: 'See BP Trend', subTitle: 'Blood pressure values graph', icon: 'ion-android-chat' },
+                        { seq: 8, id: "alerts", title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
+                        { seq: 9, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' }
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
@@ -41,31 +41,31 @@ vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicLoadi
 
     $scope.activateMenuItem = function (menuItemId) {
         switch (menuItemId) {
-            case 1:
+            case "dashboard":
                 $state.go("dashboard", { patientID: $stateParams.patientID });
                 break;
-            case 2:
+            case "vitals_list":
                 $scope.showVitalsList();
                 break;
-            case 3:
+            case "new_vitals":
                 $scope.newVitals();
                 break;
-            case 4:
+            case "height_trend":
                 $state.go("vitalstrend", { patientID: $scope.currentPatient.id, trendType: 'Height', unit: 'Cm', parentState: 'vitalsSummary' });
                 break;
-            case 5:
+            case "weight_trend":
                 $state.go("vitalstrend", { patientID: $scope.currentPatient.id, trendType: 'Weight', unit: 'Kg', parentState: 'vitalsSummary' });
                 break;
-            case 6:
+            case "bmi_trend":
                 $state.go("vitalstrend", { patientID: $scope.currentPatient.id, trendType: 'BMI', unit: '', parentState: 'vitalsSummary' });
                 break;
-            case 7:
+            case "bp_trend":
                 $state.go("vitalstrend", { patientID: $scope.currentPatient.id, trendType: 'BP', unit: 'Cm', parentState: 'vitalsSummary' });
                 break;
-            case 8:
+            case "alerts":
                 alert('Messages/Notificaions');
                 break;
-            case 9:
+            case "settings":
                 alert('Settings');
                 break;
             default:
@@ -87,28 +87,44 @@ vitalsModule.controller('VitalsListController', function ($scope, $ionicLoading,
 
     // Init Menu
     $scope.menuItems = [
-                        { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
-                        { id: 2, title: 'Vitals Summary', subTitle: 'Vitals summary page', icon: 'ion-home' },
-                        { id: 3, title: 'Add New', subTitle: 'Add a new glucose measurement', icon: 'ion-person-add' },
-                        { id: 4, title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
-                        { id: 5, title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' }
+                        { seq: 1, id:"dashboard", title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
+                        { seq: 2, id: "vitals_summary", title: 'Vitals Summary', subTitle: 'Vitals summary page', icon: 'ion-home' },
+                        { seq: 3, id: "new_vitals", title: 'Add New', subTitle: 'Add a new Vitals record', icon: 'ion-person-add' },
+                        { seq: 4, id: "height_trend", title: 'See Height Trend', subTitle: 'Height values graph', icon: 'ion-android-chat' },
+                        { seq: 5, id: "weight_trend", title: 'See Weight Trend', subTitle: 'Weight values graph', icon: 'ion-android-chat' },
+                        { seq: 6, id: "bmi_trend", title: 'See BMI Trend', subTitle: 'BMI values graph', icon: 'ion-android-chat' },
+                        { seq: 7, id: "bp_trend", title: 'See BP Trend', subTitle: 'Blood pressure values graph', icon: 'ion-android-chat' },
+                        { seq: 8, id: "alerts", title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
+                        { seq: 9, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' }
     ];
 
     $scope.activateMenuItem = function (menuItemId) {
         switch (menuItemId) {
-            case 1:
+            case "dashboard":
                 $state.go("dashboard", { patientID: $stateParams.patientID });
                 break;
-            case 2:
+            case "vitals_summary":
                 $scope.showVitalsSummary();
                 break;
-            case 3:
+            case "new_vitals":
                 $scope.newVitals();
                 break;
-            case 4:
+            case "height_trend":
+                $state.go("vitalstrend", { patientID: $scope.currentPatient.id, trendType: 'Height', unit: 'Cm', parentState: 'vitalsSummary' });
+                break;
+            case "weight_trend":
+                $state.go("vitalstrend", { patientID: $scope.currentPatient.id, trendType: 'Weight', unit: 'Kg', parentState: 'vitalsSummary' });
+                break;
+            case "bmi_trend":
+                $state.go("vitalstrend", { patientID: $scope.currentPatient.id, trendType: 'BMI', unit: '', parentState: 'vitalsSummary' });
+                break;
+            case "bp_trend":
+                $state.go("vitalstrend", { patientID: $scope.currentPatient.id, trendType: 'BP', unit: 'Cm', parentState: 'vitalsSummary' });
+                break;
+            case "alerts":
                 alert('Messages/Notificaions');
                 break;
-            case 5:
+            case "settings":
                 alert('Settings');
                 break;
             default:

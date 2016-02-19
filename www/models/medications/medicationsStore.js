@@ -137,7 +137,25 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
                });
             
             return deferredReminder.promise;
-        }
+        },
+        removeMedicationReminder: function (medicationID) {
+            var deferredReminder = $q.defer(),
+                sourceID = 'Medication_' + medicationID;
+            RemindersStore.getReminderBySourceID(sourceID).then(function (matchingReminders) {
+                if (matchingReminders && (matchingReminders.length > 0) && matchingReminders[0].id) {
+                    RemindersStore.remove(matchingReminders[0].id).then(function () {
+                        deferredReminder.resolve("Reminder removed successfully!");
+                    }).fail(function (err) {
+                        deferredReminder.resolve("Could not remove Reminder!! please try again.");
+                    });                    
+                } else {
+                    deferredReminder.resolve("Could not remove Reminder!! Reminder not found");
+                }
+            }).fail(function (err) {
+                deferredReminder.resolve("Could not remove Reminder!! please try again.");
+            });
 
+            return deferredReminder.promise;
+        }
     }
 });
