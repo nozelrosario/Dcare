@@ -8,6 +8,8 @@ vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicLoadi
         template: 'Loading...'
     });
 
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
+
     // Init Menu
     $scope.menuItems = [
                         { seq: 1, id:"dashboard", title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
@@ -77,6 +79,16 @@ vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicLoadi
         $ionicSideMenuDelegate.toggleLeft();
     };
 
+    //Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "VitalsSummaryController") $scope.navigateBack();
+    });
+
     $ionicLoading.hide();
 });
 
@@ -84,6 +96,8 @@ vitalsModule.controller('VitalsListController', function ($scope, $ionicLoading,
     $ionicLoading.show({
         template: 'Loading...'
     });
+
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'vitalsSummary';
 
     // Init Menu
     $scope.menuItems = [
@@ -141,7 +155,7 @@ vitalsModule.controller('VitalsListController', function ($scope, $ionicLoading,
 
     // Action Methods
     $scope.showVitalsSummary = function () {
-        //TODO : implement summary page
+        //TODO : implement summary page Fully
         $state.go("vitalsSummary", { patientID: $scope.currentPatient.id, parentState: 'dashboard' });
     };
 
@@ -157,6 +171,14 @@ vitalsModule.controller('VitalsListController', function ($scope, $ionicLoading,
         $ionicSideMenuDelegate.toggleLeft();
     };
 
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "VitalsListController") $scope.navigateBack();
+    });
 
     $ionicLoading.hide();
 });
@@ -233,6 +255,16 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
                                .ok('OK!'));
     };
 
+    //Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $scope.cancel();
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "VitalsFormController") $scope.navigateBack();
+    });
+
     $ionicLoading.hide();
 });
 
@@ -308,6 +340,10 @@ vitalsModule.controller('VitalsTrendController', function ($scope, $ionicLoading
         // transition to previous state
         $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
     };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "VitalsTrendController") $scope.navigateBack();
+    });
 
     $ionicLoading.hide();
 });

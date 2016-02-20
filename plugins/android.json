@@ -23,13 +23,13 @@
     },
     "installed_plugins": {
         "com.ionic.keyboard": {
-            "PACKAGE_NAME": "com.ionicframework.dcare766787"
+            "PACKAGE_NAME": "com.nozel.dcare"
         },
         "org.apache.cordova.console": {
-            "PACKAGE_NAME": "com.ionicframework.dcare766787"
+            "PACKAGE_NAME": "com.nozel.dcare"
         },
         "org.apache.cordova.device": {
-            "PACKAGE_NAME": "com.ionicframework.dcare766787"
+            "PACKAGE_NAME": "com.nozel.dcare"
         }
     },
     "dependent_plugins": {}

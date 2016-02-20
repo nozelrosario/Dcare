@@ -22,9 +22,10 @@
     border-width: 0 0 1px 0;
     padding-top: 2px;
     padding-bottom: 2px;
-    border-bottom-style: solid;
+    border-bottom-style: solid rgba(0,0,0,0.12);
     font-size: 1.3em;
     text-align: center;
-    width: 300px;
-    cursor: text;
+    min-width: 300px;
+    cursor: pointer !important;
+    background-color : transparent !important;
 }

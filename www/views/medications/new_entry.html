@@ -9,7 +9,7 @@
     </div>-->
 </ion-header-bar>
     <ion-scroll direction="y" style="height:80%" class="content has-header ">
-    <md-content class="content" layout="column" layout-phone="column" style="height:auto;" layout-align="center center" >
+    <md-content class="content" layout="column" layout-sm="column" style="height:auto;" layout-align="center center" >
         
         <div layout="column" layout-sm="column"  class="padding " style="width:100%">
             <md-button ng-show="medication.status == 'active'" class="md-raised md-warn" ng-click="toggleMedicationStatus()" style="width:98%">Discontinue This Medication</md-button>
@@ -20,31 +20,31 @@
                     <input name="name" ng-model="medication.name">
                 </md-input-container>
             </div>
-            <div layout="row" layout-sm="column" > 
-                <div class="padding">
-                    <div ><h2> Route ? </h2></div>
+            <div layout="row" layout-sm="column" layout-align="center center">
+                <div flex class="padding">
+                    <div><h2> Route ? </h2></div>
                     <center>
-                        <div layout="row"  style="background-image:url('img/infobox.png'); background-size:100% 100%;height:150px; min-width:300px; max-width:400px">
+                        <div layout="row" style="background-image:url('img/infobox.png'); background-size:100% 100%;height:150px; min-width:300px; max-width:400px">
                             <div flex="80" layout="column">
-                                <div style="margin-top: 10px;font-weight: bolder;margin-left: 15px;text-align: left;" layout="row"> 
+                                <div style="margin-top: 10px;font-weight: bolder;margin-left: 15px;text-align: left;" layout="row">
                                     <div style="border-radius: 12px; border:1px solid black;width: 20px;text-align: center;line-height: 18px;font-weight: bolder;margin: 3px;" ng-show="medication.route>0">{{medication.route}}</div>
                                     <div style="line-height: 26px;">{{(medication.route)? enums.medicationRoute[medication.route].label : 'Way you consume the medicine ?'}}</div>
                                 </div>
                                 <div style="font-weight: normal;margin-left: 20px;max-width: 200px;text-align: left;line-height: 16px;">{{(medication.route)? enums.medicationRoute[medication.route].short_label : 'Use the below slider to select a value'}}</div>
                             </div>
-                            <div flex="20" layout-align="center center"><img  ng-src="{{(medication.route)? enums.medicationRoute[medication.route].image : 'img/question.png'}}" style="height:50px;width:50px;margin:10px"></div>
+                            <div flex="20" layout-align="center center"><img ng-src="{{(medication.route)? enums.medicationRoute[medication.route].image : 'img/question.png'}}" style="height:50px;width:50px;margin:10px"></div>
                         </div>
                     </center>
                     <div style="margin-top:-20px;margin-bottom:20px">
                         <md-slider md-discrete aira-label="Route" ng-model="medication.route" step="1" min="1" max="8"></md-slider>
                     </div>
                 </div>
-                <div class="padding">
-                    <div ><h2> Frequency ? </h2></div>
+                <div flex class="padding">
+                    <div><h2> Frequency ? </h2></div>
                     <center>
-                        <div layout="row"  style="background-image:url('img/infobox.png'); background-size:100% 100%;height:150px; min-width:300px; max-width:400px">
+                        <div layout="row" style="background-image:url('img/infobox.png'); background-size:100% 100%;height:150px; min-width:300px; max-width:400px">
                             <div flex="80" layout="column">
-                                <div style="margin-top: 10px;font-weight: bolder;margin-left: 15px;text-align: left;" layout="row"> 
+                                <div style="margin-top: 10px;font-weight: bolder;margin-left: 15px;text-align: left;" layout="row">
                                     <div style="border-radius: 12px; border:1px solid black;width: 20px;text-align: center;line-height: 18px;font-weight: bolder;margin: 3px;" ng-show="medication.dosefrequency>0">{{medication.dosefrequency}}</div>
                                     <div style="line-height: 26px;">{{(medication.dosefrequency)? enums.doseFrequency[medication.dosefrequency].label : 'When to consume the medicine ?'}}</div>
                                 </div>
@@ -57,17 +57,17 @@
                         <md-slider md-discrete aira-label="Frequency" ng-model="medication.dosefrequency" step="1" min="1" max="7"></md-slider>
                     </div>
                 </div>
-             </div>
-            <div layout="row" layout-sm="column" > 
-                <div class="padding">
-                    <div ><h2> Start Date & Time ? </h2></div>
+            </div>
+            <div layout="row" layout-sm="column" layout-align="center center">
+                <div flex class="padding">
+                    <div><h2> Start Date & Time ? </h2></div>
                     <center>
                         <input label="Start Date" ng-model="medication.startdate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
                     </center>
                 </div>
 
-                <div class="padding">
-                    <div ><h2> End Date & Time ? </h2></div>
+                <div flex class="padding">
+                    <div><h2> End Date & Time ? </h2></div>
                     <center>
                         <input label="End Date" ng-model="medication.enddate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
                     </center>

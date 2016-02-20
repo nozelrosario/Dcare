@@ -8,6 +8,8 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
         template: 'Loading...'
     });
 
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
+
     // Init Menu
     $scope.menuItems = [
                         { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
@@ -59,6 +61,16 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
     $scope.toggleActionsMenu = function () {
         $ionicSideMenuDelegate.toggleLeft();
     };
+
+    //Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "MedicationsListController") $scope.navigateBack();
+    });
 
     $ionicLoading.hide();
 });
@@ -178,6 +190,16 @@ medicationsModule.controller('MedicationFormController', function ($scope, $ioni
                                .ok('OK!'));
     };
 
+    //Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $scope.cancel();
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "MedicationsListController") $scope.navigateBack();
+    });
+
     $ionicLoading.hide();
 });
 
@@ -193,7 +215,7 @@ medicationsModule.config(function ($stateProvider, $urlRouterProvider) {
               },
               templateUrl: 'views/medications/list.html',
               controller: 'MedicationsListController',
-              params: {'patientID': null }
+              params: { 'patientID': null, 'parentState': null }
           })
           .state('medicationForm', {
               resolve: {

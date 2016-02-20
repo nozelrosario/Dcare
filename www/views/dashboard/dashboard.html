@@ -24,7 +24,7 @@
                         <p class="sub-label">{{currentPatient.gender}} - {{currentPatient.age}} old</p>
                     </div>
                     <div class="item item-body">
-                        <div layout="row" layout-phone="row">
+                        <div layout="row" layout-sm="row">
                             <div flex layout="column" style="border-right: 1px solid rgb(180, 180, 180);">
                                 <!-- Weight & BMI-->
                                 <div flex layout="column" layout-align="center center" style="border-bottom: 1px solid rgb(180, 180, 180);">
@@ -32,12 +32,12 @@
                                     <div class="sub-label">Weight ({{latestVitals.weightunit}})</div>
                                 </div>
                                 <div flex layout="column" layout-align="center center">
-                                    <div layout="row" class="padding" layout-phone="column" layout-align="center center"><div class="sub-label">BMI :</div><div class="bold-label">{{latestVitals.bmi}}</div></div>
+                                    <div layout="row" class="padding" layout-sm="column" layout-align="center center"><div class="sub-label">BMI :</div><div class="bold-label">{{latestVitals.bmi}}</div></div>
 
-                                    <div layout="row" layout-phone="column" layout-align="center center" ng-show="latestVitals.bmi < 18.5"><div class="sub-label"> Condition :</div><div class="bold-label">Underweight</div></div>
-                                    <div layout="row" layout-phone="column" layout-align="center center" ng-show="latestVitals.bmi > 18.5 && latestVitals.bmi <= 25 "><div class="sub-label"> Condition :</div><div class="bold-label">Normal</div></div>
-                                    <div layout="row" layout-phone="column" layout-align="center center" ng-show="latestVitals.bmi > 25 && latestVitals.bmi <= 30 "><div class="sub-label"> Condition :</div><div class="bold-label">Overweight</div></div>
-                                    <div layout="row" layout-phone="column" layout-align="center center" ng-show="latestVitals.bmi > 30"><div class="sub-label"> Condition :</div><div class="bold-label">Obese</div></div>
+                                    <div layout="row" layout-sm="column" layout-align="center center" ng-show="latestVitals.bmi < 18.5"><div class="sub-label"> Condition :</div><div class="bold-label">Underweight</div></div>
+                                    <div layout="row" layout-sm="column" layout-align="center center" ng-show="latestVitals.bmi > 18.5 && latestVitals.bmi <= 25 "><div class="sub-label"> Condition :</div><div class="bold-label">Normal</div></div>
+                                    <div layout="row" layout-sm="column" layout-align="center center" ng-show="latestVitals.bmi > 25 && latestVitals.bmi <= 30 "><div class="sub-label"> Condition :</div><div class="bold-label">Overweight</div></div>
+                                    <div layout="row" layout-sm="column" layout-align="center center" ng-show="latestVitals.bmi > 30"><div class="sub-label"> Condition :</div><div class="bold-label">Obese</div></div>
                                 </div>
                             </div>
                             <div flex layout="row" layout-align="center center">
@@ -59,12 +59,12 @@
                 <!--Glucose Info Card-->
                 <div class="list card" ng-show="glucose">
                     <div class="item item-body">
-                        <div layout="row" layout-phone="row">
+                        <div layout="row" layout-sm="row">
                             <div flex="70" layout="column" style="">
                                 <!-- Glucose Reading-->
                                 <div layout="column" layout-align="center center" class="digital-display">
                                     <div style="height:55px; padding-top:5px;"><span class="secondary-label">{{enums.glucoseTypes[glucose.type].short_label}}</span></div>
-                                    <div layout="row" layout-phone="column" layout-align="center center">
+                                    <div layout="row" layout-sm="column" layout-align="center center">
                                         <span class="primary-label">{{glucose.glucosevalue}}</span>
                                         <span class="secondary-label">mg/dL</span>
                                     </div>

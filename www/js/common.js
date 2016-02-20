@@ -1,5 +1,4 @@
-﻿var cordova = false;
-
+﻿
 function castToLongDate(date) {
     var converted_date;
     if (date) {

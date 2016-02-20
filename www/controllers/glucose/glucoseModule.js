@@ -8,6 +8,8 @@ glucoseModule.controller('GlucoseListController', function ($scope, $ionicLoadin
         template: 'Loading...'
     });
 
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
+
     // Init Menu
     $scope.menuItems = [
                         { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
@@ -60,6 +62,17 @@ glucoseModule.controller('GlucoseListController', function ($scope, $ionicLoadin
         $ionicSideMenuDelegate.toggleLeft();
     };
 
+    //Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        app.log.info("State reached : "  + $scope.parentState);
+        $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "GlucoseListController") $scope.navigateBack();
+    });
+
     $ionicLoading.hide();
 });
 
@@ -108,6 +121,16 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicLoadin
                                .ariaLabel(errorMessage)
                                .ok('OK!'));
     };
+
+    //Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $scope.cancel();
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "GlucoseFormController") $scope.navigateBack();
+    });
 
     $ionicLoading.hide();
 });
@@ -220,6 +243,11 @@ glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicLoadi
         // transition to previous state
         $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
     };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "GlucoseTrendController") $scope.navigateBack();
+    });
+
 
     $ionicLoading.hide();
 });

@@ -39,10 +39,10 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
     //                { id: 3, patientID: '4', text: 'Notification 4', title: 'Notification 4', notificationType: 1, startdate: '1288523623006', enddate: '1288323623006', frequencyUnit: 1, frequency: 1, status: 'active' data: "some Data" reminderID:3}
 	//                ];
 
-    var scheduleNotification = function (notification) {
+    var scheduleNativeNotification = function (notification) {
         var deferredScheduleNotification = $q.defer();
-        if (NotificationService.isNotificationServiceAvailable()) {
-            var scheduleNotificationCofig = {
+        //if (NotificationService.isNotificationServiceAvailable()) {
+            var nativeNotificationCofig = {
                 id: notification.id,
                 text: notification.text,
                 title: notification.title,
@@ -50,14 +50,14 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
                 date: notification.startdate,
                 data: notification
             };
-            NotificationService.scheduleNotification(scheduleNotificationCofig).then(function () {
+        NotificationService.scheduleNotification(nativeNotificationCofig).then(function () {
                 deferredScheduleNotification.resolve(notification);
             }).catch(function (err) {                   // NR: Catch corresponds to relative $q promise of angular. Hence Required.
                 deferredScheduleNotification.reject(err);
             });
-        } else {
-            deferredScheduleNotification.reject("Notification Service Unavailable!!");
-        }
+        //} else {
+        //    deferredScheduleNotification.reject("Notification Service Unavailable!!");
+        //}
         return deferredScheduleNotification.promise;
     };
 
@@ -206,16 +206,19 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
                         }
                     }
                     deferredSave.resolve(notificationSavedData);
+                }).fail(function (err) {
+                    deferredSave.reject(err);
                 });
             } else {
                 notification.status = "active";
                 notificationsDataStore.save(notification).then(function (notificationSavedData) {
-                    scheduleNotification(notificationSavedData).then(function () {      
+                    scheduleNativeNotification(notificationSavedData).then(function () {                // Add a native counter-part
                         deferredSave.resolve(notificationSavedData);
-                    }).fail(function (err) {
-                        app.log.error("Failed to set Local Notification: " + err);
+                    }).catch(function (err) {                        
                         deferredSave.resolve(notificationSavedData);
                     });
+                }).fail(function (err) {
+                    deferredSave.reject(err);
                 });
             }           
 

@@ -43,8 +43,8 @@
 
 .MediumFab 
 {
-    width:80px !important;
-    height:80px !important;
+    min-width:80px !important;
+    min-height:80px !important;
 }
 
 .MediumFab:before

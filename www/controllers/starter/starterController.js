@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['ionic', 'dCare.Services.PatientsStore'])
 
-.controller('StarterController', function ($scope, $ionicLoading, PatientsStore, $state) {
+.controller('StarterController', function ($scope, $rootScope, $ionicLoading, $ionicPlatform, PatientsStore, $state) {
     $ionicLoading.show({
         template: 'Loading...'
     });
@@ -17,6 +17,11 @@ angular.module('starter.controllers', ['ionic', 'dCare.Services.PatientsStore'])
     $scope.isFirstRun = false;
     var getCountPromise = PatientsStore.getCount();
     getCountPromise.then($scope.changeState);
+
+
+    $ionicPlatform.registerBackButtonAction(function () {
+        $rootScope.$broadcast('navigate-back', { intendedController: $state.current.controller });        
+    }, 101);
 
     $ionicLoading.hide();
 })

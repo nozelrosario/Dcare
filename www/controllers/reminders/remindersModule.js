@@ -9,11 +9,16 @@ remindersModule.controller('RemindersListController', function ($scope, $ionicLo
         template: 'Loading...'
     });
 
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
+
     // Init Menu
     $scope.menuItems = [
                         { seq: 1, id: 'dashboard', title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
-                        { seq: 2, id: 'newReminder', title: 'Add New', subTitle: 'Add a new reminder', icon: 'ion-person-add' },
-                        { seq: 3, id: 'settings', title: 'Settings', subTitle: 'Change reminder preferences', icon: 'ion-gear-b' }
+                        { seq: 2, id: 'activeReminders', title: 'Active Reminders', subTitle: 'Currently active reminders', icon: 'ion-home' },
+                        { seq: 3, id: 'pastReminders', title: 'Past Reminders', subTitle: 'Past / Inactive reminders', icon: 'ion-home' },
+                        { seq: 4, id: 'allReminders', title: 'All Reminders', subTitle: 'All reminders', icon: 'ion-home' },
+                        { seq: 5, id: 'newReminder', title: 'Add New', subTitle: 'Add a new reminder', icon: 'ion-person-add' },
+                        { seq: 6, id: 'settings', title: 'Settings', subTitle: 'Change reminder preferences', icon: 'ion-gear-b' }
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
@@ -26,17 +31,26 @@ remindersModule.controller('RemindersListController', function ($scope, $ionicLo
     // Action Methods
 
     $scope.editReminder = function (reminderID) {
-        $state.go("reminderForm", { patientID: $scope.currentPatient.id, reminderID: reminderID, parentState: 'reminderslist' });
+        $state.go("reminderForm", { patientID: $scope.currentPatient.id, reminderID: reminderID, parentState: 'activeReminderslist' });
     };
 
     $scope.newReminder = function () {
-        $state.go("reminderForm", { patientID: $scope.currentPatient.id, parentState: 'reminderslist' });
+        $state.go("reminderForm", { patientID: $scope.currentPatient.id, parentState: 'activeReminderslist' });
     };
 
     $scope.activateMenuItem = function (menuItemId) {
         switch (menuItemId) {
             case 'dashboard':
                 $state.go("dashboard", { patientID: $stateParams.patientID });
+                break;
+            case 'activeReminders':
+                $state.go("activeReminderslist", { patientID: $stateParams.patientID, parentState: $scope.parentState });
+                break;
+            case 'pastReminders':
+                $state.go("pastReminderslist", { patientID: $stateParams.patientID, parentState: $scope.parentState });
+                break;
+            case 'allReminders':
+                $state.go("allReminderslist", { patientID: $stateParams.patientID, parentState: $scope.parentState });
                 break;
             case 'newReminder':
                 $scope.newReminder();
@@ -52,6 +66,15 @@ remindersModule.controller('RemindersListController', function ($scope, $ionicLo
     $scope.toggleActionsMenu = function () {
         $ionicSideMenuDelegate.toggleLeft();
     };
+
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "RemindersListController") $scope.navigateBack();
+    });
 
     $ionicLoading.hide();
 });
@@ -73,7 +96,7 @@ remindersModule.controller('ReminderFormController', function ($scope, $ionicLoa
     } else {
         $scope.reminder = { patientID: $scope.currentPatient.id, status:'active' };  // New entry : make any default values here if any
     }
-    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'reminderslist';
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'activeReminderslist';
 
     // Action Methods
     $scope.changeState = function (reminder) {
@@ -102,6 +125,15 @@ remindersModule.controller('ReminderFormController', function ($scope, $ionicLoa
                                .ok('OK!'));
     };
 
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $scope.cancel();
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "ReminderFormController") $scope.navigateBack();
+    });
+
     $ionicLoading.hide();
 });
 
@@ -110,15 +142,33 @@ remindersModule.controller('ReminderFormController', function ($scope, $ionicLoa
 remindersModule.config(function ($stateProvider, $urlRouterProvider) {
 
     $stateProvider
-          .state('reminderslist', {
+          .state('activeReminderslist', {
               resolve: {
                   remindersList: function (RemindersStore, $stateParams) { return RemindersStore.getActiveRemindersForPatient($stateParams.patientID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
               templateUrl: 'views/reminders/list.html',
               controller: 'RemindersListController',
-              params: { 'patientID': null }
+              params: { 'patientID': null, 'parentState': null }
           })
+        .state('pastReminderslist', {
+            resolve: {
+                remindersList: function (RemindersStore, $stateParams) { return RemindersStore.getPastRemindersForPatient($stateParams.patientID); },
+                currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
+            },
+            templateUrl: 'views/reminders/list.html',
+            controller: 'RemindersListController',
+            params: { 'patientID': null, 'parentState': null }
+        })
+        .state('allReminderslist', {
+            resolve: {
+                remindersList: function (RemindersStore, $stateParams) { return RemindersStore.getAllRemindersForPatient($stateParams.patientID); },
+                currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
+            },
+            templateUrl: 'views/reminders/list.html',
+            controller: 'RemindersListController',
+            params: { 'patientID': null, 'parentState': null }
+        })
           .state('reminderForm', {
               resolve: {
                   reminder: function (RemindersStore, $stateParams) { return RemindersStore.getReminderByID($stateParams.reminderID); },

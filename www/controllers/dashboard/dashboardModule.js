@@ -53,16 +53,16 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
                 $state.go("identificationInfo", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
                 break;
             case "vitals":
-                $state.go("vitalsSummary", { patientID: $scope.currentPatient.id });
+                $state.go("vitalsSummary", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
                 break;
             case "glucose":
                 $state.go("glucoselist", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
                 break;
             case "medications":
-                $state.go("medicationslist", { patientID: $scope.currentPatient.id });
+                $state.go("medicationslist", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
                 break;
             case "reminders":
-                $state.go("reminderslist", { patientID: $scope.currentPatient.id });
+                $state.go("activeReminderslist", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
                 break;
             case "settings":
                 alert('Settings');
@@ -182,7 +182,22 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
         //    }
         //});
     };
+    $scope.$on("navigate-back", function (event, data) {
+        var confirmToggle = $mdDialog.confirm()
+                  .title('Exit Application ?')
+                  .content('Are you sure you want to close application ?')
+                  .ariaLabel('Are you sure you want to close application ??')
+                  .ok('Yes')
+                  .cancel('No');
+        $mdDialog.show(confirmToggle).then(function () {
+            // Exit App
+            ionic.Platform.exitApp();
+        }, function () {
+            // Do Nothing
+        });
 
+
+    });
     $ionicLoading.hide();
 });
 

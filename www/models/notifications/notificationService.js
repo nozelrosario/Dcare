@@ -5,47 +5,77 @@
     // bind the trigger event of notification to checke if the notification is out of end date and to reschedule based on reminder ID
     
     var isNotificationServiceAvailable = function () {
-        if (cordova && cordova.plugins.notification) {
+        if ((typeof cordova !== "undefined") && cordova.plugins.notification) {   //NR:Re-think can use ionic.Platform.platform()
             return true;
         } else {
+            app.log.error("Notification Support Unavailable. Application will not be able to show native Notifications");
             return false;
         }
     };
 
     var scheduleNotification = function (notificationConfig) {
         var deferredSchedule = $q.defer();
-        
-        var notificationSuccess = function() {
-            app.log.info("Done adding Notification via. Cordova plugin");
-        };
-        notificationPermissionCheck().then(function (permisionExists) {
-            if (!permisionExists) { 
-                // if Not exists, then request for it
-                requestNotificationPermission().then(function (permissionGranted) {
-                    // Permission Granted
-                    // check if notification already present [Create else Update]
-                    cordova.plugins.notification.local.isPresent(id, function (notificationPresent) {
-                        if (notificationPresent) {
-                            cordova.plugins.notification.local.update(notificationConfig, notificationSuccess);
-                        } else {  
-                            cordova.plugins.notification.local.schedule(notificationConfig, notificationSuccess);
-                        }
+        if (isNotificationServiceAvailable()) {
+            var notificationSuccess = function () {
+                app.log.info("Done adding Notification via. Cordova plugin");
+            };
+            notificationPermissionCheck().then(function (permisionExists) {
+                if (!permisionExists) {
+                    // if Not exists, then request for it
+                    requestNotificationPermission().then(function (permissionGranted) {
+                        // Permission Granted
+                        // check if notification already present [Create else Update]
+                        cordova.plugins.notification.local.isPresent(id, function (notificationPresent) {
+                            if (notificationPresent) {
+                                cordova.plugins.notification.local.update(notificationConfig, notificationSuccess);
+                            } else {
+                                cordova.plugins.notification.local.schedule(notificationConfig, notificationSuccess);
+                            }
+                        });
+
+                        deferredSchedule.resolve();
+                    }).catch(function (permissionGranted) {
+                        // Permission Rejected
+                        var err = "Notification Permission does not exists. Application will not be able to show Notifications";
+                        app.log.error(err);
+                        deferredSchedule.reject(err);
                     });
-                    
+                } else {
+                    // Permission already Exists
+                    cordova.plugins.notification.local.schedule(notificationConfig, notificationSuccess);
                     deferredSchedule.resolve();
-                }).catch(function (permissionGranted) {
-                    // Permission Rejected
-                    var err = "Notification Permission does not exists. Application will not be able to show Notifications";
-                    app.log.error(err);
-                    deferredSchedule.reject(err);
+                }
+            });
+        } else {
+            // Notification Support Unavailable
+            deferredSchedule.reject();
+        }
+        return deferredSchedule.promise;
+    };
+
+    var removeNotification = function (notificationID) {
+        var deferredCancel = $q.defer();
+        if (isNotificationServiceAvailable()) {
+            if (notificationID > 0) {
+                cordova.plugins.notification.local.isPresent(notificationID, function (exists) {
+                    if (exists) {
+                        cordova.plugins.notification.local.cancel(notificationID, function () {
+                            deferredCancel.resolve();
+                        });
+                    } else {
+                        app.log.warn("Notification doesnot exist");
+                        deferredCancel.resolve();
+                    }
                 });
             } else {
-                // Permission already Exists
-                cordova.plugins.notification.local.schedule(notificationConfig,notificationSuccess);
-                deferredSchedule.resolve();
+                app.log.error("Error while removing notification, notificationID cannot be empty!!");
+                deferredCancel.reject();
             }
-        });
-        return deferredSchedule.promise;
+        } else {
+            // Notification Support Unavailable
+            deferredCancel.reject();
+        }
+        return deferredCancel.promise;
     };
 
     var reScheduleIfRecurringNotification = function (notification) {
@@ -62,7 +92,7 @@
         }
     };
 
-    // Try Re-Shedule notification when triggered
+    //NR: Add a service Listener. Try Re-Shedule notification when triggered
     if (isNotificationServiceAvailable()) {
         cordova.plugins.notification.local.on('trigger', function (notification) {
             reScheduleIfRecurringNotification(notification.data);
@@ -102,26 +132,9 @@
         *                                       object.data - data associated with the notification
         */
         scheduleNotification: scheduleNotification,
-        removeNotification: function (notificationID) {
-            var deferredCancel = $q.defer();
-            if (notificationID > 0) {
-                cordova.plugins.notification.local.isPresent(notificationID, function (exists) {
-                    if (exists) {
-                        cordova.plugins.notification.local.cancel(notificationID, function () {
-                            deferredCancel.resolve();
-                        });
-                    } else {
-                        app.log.warn("Notification doesnot exist");
-                        deferredCancel.resolve();
-                    }
-                });
-                
-            } else {
-                app.log.error("Error while removing notification, notificationID cannot be empty!!");
-                deferredCancel.reject();
-            }
-            
-            return deferredCancel.promise;
-        }
+        /* Removes a Notiication
+        * @params: notificationID {number}  : unique ID of notification to be removed
+        */
+        removeNotification: removeNotification
     };
 });

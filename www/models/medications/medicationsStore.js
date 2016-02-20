@@ -141,7 +141,7 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
         removeMedicationReminder: function (medicationID) {
             var deferredReminder = $q.defer(),
                 sourceID = 'Medication_' + medicationID;
-            RemindersStore.getReminderBySourceID(sourceID).then(function (matchingReminders) {
+            RemindersStore.getReminderBySourceID(sourceID).then(function (matchingReminders) {   
                 if (matchingReminders && (matchingReminders.length > 0) && matchingReminders[0].id) {
                     RemindersStore.remove(matchingReminders[0].id).then(function () {
                         deferredReminder.resolve("Reminder removed successfully!");

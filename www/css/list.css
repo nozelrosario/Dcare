@@ -1,4 +1,7 @@
-﻿.list-row 
-{
+﻿.list-row {
     border-bottom: 1px solid rgb(180, 180, 180);
+}
+
+md-list > md-item > md-item-content > button {
+    margin:0 !important;
 }

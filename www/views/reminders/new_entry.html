@@ -8,7 +8,7 @@
             <button class="button " ng-click=""><i class="icon ion-plus-round"></i></button>
         </div>-->
     </ion-header-bar>
-    <ion-scroll direction="y" style="height:80%" class="content has-header ">
+    <ion-scroll direction="y" style="height:90%" class="content has-header ">
         <md-content class="content" layout="column" layout-sm="column" style="height:auto;" layout-align="start center">
 
             <div layout="column" layout-sm="column" class="padding ">
@@ -26,7 +26,7 @@
                         <input name="title" ng-model="reminder.title">
                     </md-input-container>
                 </div>
-                <div class="padding">
+                <div flex class="padding">
                     <div><h2> Reminder Type : </h2></div>
                     <center>
                         <div layout="row" style="background-image:url('img/infobox.png'); background-size:100% 100%;height:150px; min-width:300px; max-width:400px">
@@ -45,14 +45,14 @@
                     </div>
                 </div>
                 <div layout="row" layout-sm="column">
-                    <div class="padding">
+                    <div flex class="padding">
                         <div><h2> Start Date ? </h2></div>
                         <center>
                             <input label="Start Date" ng-model="reminder.startdate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
                         </center>
                     </div>
 
-                    <div class="padding">
+                    <div flex class="padding">
                         <div><h2> End Date ? </h2></div>
                         <center>
                             <input label="End Date" ng-model="reminder.enddate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="padding" ng-show="reminder.isRecursive">
                     <div><h2> Interval ? </h2></div>
-                    <md-radio-group ng-model="reminder.frequencyUnit" class="md-primary">
+                    <md-radio-group ng-model="reminder.frequencyUnit" class="md-primary" layout="row" layout-sm="column">
                         <md-radio-button ng-repeat="unit in enums.frequencyUnit"
                                          ng-value="unit.value">
                             {{ unit.label }}
@@ -87,7 +87,7 @@
             </div>
         </md-content>
     </ion-scroll>
-    <div class="bar bar-footer" layout>
+    <div class="bar bar-footer" style="height:70px" layout>
         <div flex>
             <md-button class="md-raised button-block " ng-click="cancel()">
                 <b> Cancel </b>
