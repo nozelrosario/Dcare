@@ -102,6 +102,11 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
 
     };
 
+    $scope.addNewVitalsEntry = function () {
+        $state.go("vitalsForm", { patientID: $scope.currentPatient.id, parentState: 'dashboard' });
+
+    };
+
 
     $scope.getNextGlucose = function () {
         var glucoseNextDataPromise = GlucoseStore.getNextGlucoseForPatient($scope.currentPatient.id, $scope.glucose.datetime);

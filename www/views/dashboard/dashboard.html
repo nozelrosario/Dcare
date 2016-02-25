@@ -21,9 +21,13 @@
                     <div class="item item-avatar">
                         <img ng-src="{{currentPatient.photo}}">
                         <div class="bold-label">{{currentPatient.name}}</div>
-                        <p class="sub-label">{{currentPatient.gender}} - {{currentPatient.age}} old</p>
+                        <p class="sub-label">{{currentPatient.gender}} {{(currentPatient.age)?' - ' + (currentPatient.age) +' old':''}} </p>
                     </div>
                     <div class="item item-body">
+                        <div ng-if="!latestVitals" layout="column" layout-align="center center" class="card-overlay">
+                            <button class="md-fab ion-ios-plus-outline MediumFab md-button md-amber-theme" ng-click="addNewVitalsEntry()" aria-label="Add" tabindex="0"></button>
+                            <span class="bold-label" style="color: white;">Add Vitals</span>
+                        </div>
                         <div layout="row" layout-sm="row">
                             <div flex layout="column" style="border-right: 1px solid rgb(180, 180, 180);">
                                 <!-- Weight & BMI-->
@@ -57,8 +61,12 @@
                     </div>
                 </div>
                 <!--Glucose Info Card-->
-                <div class="list card" ng-show="glucose">
+                <div class="list card">
                     <div class="item item-body">
+                        <div ng-if="!glucose" layout="column" layout-align="center center" class="card-overlay">
+                            <button class="md-fab ion-ios-plus-outline MediumFab md-button md-amber-theme" ng-click="addNewGlucoseEntry()" aria-label="Add" tabindex="0"></button>
+                            <span class="bold-label" style="color: white;">Add Glucose entry</span>
+                        </div>
                         <div layout="row" layout-sm="row">
                             <div flex="70" layout="column" style="">
                                 <!-- Glucose Reading-->

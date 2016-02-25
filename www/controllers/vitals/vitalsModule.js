@@ -219,12 +219,7 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
         //NR TODO : Validate and sow error and clear model values if needed
 
     };
-
-    // Action Methods
-    $scope.navigateBack = function () {
-        // transition to previous state
-        $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
-    };
+ 
 
     $scope.changeState = function (vitals) {
         // vitals = updated new vital from DB
@@ -258,7 +253,7 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
     //Action Methods
     $scope.navigateBack = function () {
         // transition to previous state
-        $scope.cancel();
+        $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
     };
 
     $scope.$on("navigate-back", function (event, data) {
