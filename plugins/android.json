@@ -7,18 +7,28 @@
         "files": {}
     },
     "installed_plugins": {
-        "com.ionic.keyboard": {
+        "com.nozelrosario.cordova.plugins.heartbeat": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },
-        "com.litekey.cordova.plugins.heartbeat": {
+        "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },
-        "org.apache.cordova.console": {
+        "cordova-plugin-console": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },
-        "org.apache.cordova.device": {
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.nozel.dcare"
+        },
+        "ionic-plugin-keyboard": {
+            "PACKAGE_NAME": "com.nozel.dcare"
+        },
+        "de.appplant.cordova.plugin.local-notification": {
             "PACKAGE_NAME": "com.nozel.dcare"
         }
     },
-    "dependent_plugins": {}
+    "dependent_plugins": {
+        "cordova-plugin-app-event": {
+            "PACKAGE_NAME": "com.nozel.dcare"
+        }
+    }
 }
