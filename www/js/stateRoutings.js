@@ -16,7 +16,7 @@
             //url: '/registration',  // cannot use as using params[]
             templateUrl: 'views/registration/registration.html',
             controller: 'RegistrationController',
-            params: { 'patientID': null, 'isFirstRun': null }
+            params: { 'parentPatientID': null, 'isFirstRun': null, 'parentState': null }
 
         });
 

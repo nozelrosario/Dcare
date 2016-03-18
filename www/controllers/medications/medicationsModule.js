@@ -17,7 +17,7 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
                         { id: 3, title: 'All Medications', subTitle: 'Show all medications (active & inactive)', icon: 'ion-android-chat' },
                         { id: 4, title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
                         { id: 5, title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' }
-                       ];
+    ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = MedicationsStore.enums;
@@ -105,17 +105,22 @@ medicationsModule.controller('MedicationFormController', function ($scope, $ioni
                   .ariaLabel('Would you like to set reminder?')
                   .ok('Yes')
                   .cancel('Not Now');
-                  //.targetEvent(ev);
+        //.targetEvent(ev);
         $mdDialog.show(confirmReminder).then(function () {
-                // User clicked Yes, set reminder
+            // User clicked Yes, set reminder
             MedicationsStore.setMedicationReminder(medication.id).then(function (reminder_status) {
-                app.log.info(reminder_status);
-                $scope.changeState(medication);
+                $mdDialog.show($mdDialog.alert()
+                               .title("Medication Reminder!!")
+                               .content(reminder_status)
+                               .ariaLabel(reminder_status)
+                               .ok('OK!')).finally(function () {
+                                   $scope.changeState(medication);
+                               });
             });
-            }, function () {
-                // User clicked No, do not set reminder
-                $scope.changeState(medication);
-            });
+        }, function () {
+            // User clicked No, do not set reminder
+            $scope.changeState(medication);
+        });
     };
 
     $scope.removeReminder = function (medication) {
@@ -152,7 +157,7 @@ medicationsModule.controller('MedicationFormController', function ($scope, $ioni
                   .ok('Yes')
                   .cancel('No');
         }
-                
+
         $mdDialog.show(confirmToggle).then(function () {
             // User clicked Yes, set reminder
             $scope.medication.status = newStatus;
@@ -169,11 +174,12 @@ medicationsModule.controller('MedicationFormController', function ($scope, $ioni
     };
 
     $scope.save = function () {
-        $scope.medication.startdate = castToLongDate($scope.medication.startdate);
-        $scope.medication.enddate = castToLongDate($scope.medication.enddate);
-        $scope.medication.status = ($scope.medication.status) ? $scope.medication.status : 'active';    // NR: Default Status To Active
-        MedicationsStore.save($scope.medication).then($scope.updateRespectiveReminder).fail($scope.saveFailed);
-
+        if ($scope.medication_entry_form.$valid) {
+            $scope.medication.startdate = castToLongDate($scope.medication.startdate);
+            $scope.medication.enddate = castToLongDate($scope.medication.enddate);
+            $scope.medication.status = ($scope.medication.status) ? $scope.medication.status : 'active';    // NR: In case Status="", then Default Status To Active
+            MedicationsStore.save($scope.medication).then($scope.updateRespectiveReminder).fail($scope.saveFailed);
+        }
     };
 
 
@@ -224,7 +230,7 @@ medicationsModule.config(function ($stateProvider, $urlRouterProvider) {
               },
               templateUrl: 'views/medications/new_entry.html',
               controller: 'MedicationFormController',
-              params: { 'patientID': null ,'medicationID': null, 'parentState': null }
+              params: { 'patientID': null, 'medicationID': null, 'parentState': null }
           });
 
 });

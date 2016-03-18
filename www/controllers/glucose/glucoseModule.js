@@ -91,7 +91,7 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicLoadin
     if (glucose) {
         $scope.glucose = glucose;
     } else {
-        $scope.glucose = { patientID: $scope.currentPatient.id };  // New entry : make any default values here if any
+        $scope.glucose = { patientID: $scope.currentPatient.id, datetime: castToLongDate(new Date()) };  // New entry : make any default values here if any
     }
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'glucoselist';
 
@@ -103,10 +103,11 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicLoadin
     };
 
     $scope.save = function () {
-        $scope.glucose.datetime = castToLongDate($scope.glucose.datetime)
-        var saveGlucoseDataPromise = GlucoseStore.save($scope.glucose);
-        saveGlucoseDataPromise.then($scope.changeState, $scope.saveFailed);
-
+        if ($scope.glucose_entry_form.$valid) {
+            $scope.glucose.datetime = castToLongDate($scope.glucose.datetime)
+            var saveGlucoseDataPromise = GlucoseStore.save($scope.glucose);
+            saveGlucoseDataPromise.then($scope.changeState, $scope.saveFailed);
+        }
     };
 
     $scope.cancel = function () {

@@ -4,13 +4,15 @@ var registrationModule = angular.module('dCare.registration', ['ionic',
 
 // Controllers
 
-registrationModule.controller('RegistrationController', function ($scope, $stateParams, PatientsStore, $state) {
+registrationModule.controller('RegistrationController', function ($scope, $mdDialog, $stateParams, PatientsStore, $state) {
     // NR: here stateParam 'patientID' is not required, might be needed for testing.
     // NR: also no need of passing to the 'identification' controller.
 
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : null;
+
     $scope.isFirstRun = JSON.parse($stateParams.isFirstRun);
     $scope.proceed = function () {
-        $state.go("identificationInfo", { patientID: $stateParams.patientID });
+        $state.go("identificationInfo", { parentPatientID: $stateParams.parentPatientID, parentState: $scope.parentState });
     };
     if ($scope.isFirstRun) {
         //$scope.isFirstRun = true;
@@ -23,6 +25,31 @@ registrationModule.controller('RegistrationController', function ($scope, $state
         $scope.introductionText = [ { "textLine": "A ultimate solution for your daily diabetes care ." },
 		                            { "textLine": "Help us knowing your loved one by completing the registration process." }];
     }
+
+    //Action Methods
+    $scope.navigateBack = function () {
+        if ($scope.parentState === null) {
+            var confirmToggle = $mdDialog.confirm()
+                  .title('Exit Application ?')
+                  .content('Are you sure you want to close application ?')
+                  .ariaLabel('Are you sure you want to close application ??')
+                  .ok('Yes')
+                  .cancel('No');
+            $mdDialog.show(confirmToggle).then(function () {
+                // Exit App
+                ionic.Platform.exitApp();
+            }, function () {
+                // Do Nothing
+            });
+        } else {
+            $state.go($scope.parentState, { patientID: $stateParams.parentPatientID });   // Nozel: supress parent state when navigating to next state. block comming back to this page.
+        }
+        
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "RegistrationController") $scope.navigateBack();
+    });
 });
 
 
@@ -52,11 +79,25 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
     };
 
     $scope.proceed = function () {
-        if ($scope.identification_info.$valid) {
+        if ($scope.identification_info_form.$valid) {
             var savePatientDataPromise = PatientsStore.save($scope.patient);
             savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
         }        
     };
+
+    //Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        if ($scope.patient && $scope.patient.id) {
+            $state.go($scope.parentState, { patientID: $scope.patient.id, parentState: $scope.parentState });
+        } else {
+            $state.go($scope.parentState, { patientID: $stateParams.parentPatientID });
+        }        
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "IdentificationInfoController") $scope.navigateBack();
+    });
 
 });
 
@@ -94,6 +135,15 @@ registrationModule.controller('GenderInfoController', function ($scope, $mdDialo
                                .ok('OK!'));
     };
 
+    $scope.skipAndProceed = function () {
+        $scope.changeState($scope.patient);
+    };
+
+    $scope.saveAndProceed = function () {        
+        var savePatientDataPromise = PatientsStore.save($scope.patient);
+        savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
+    };
+
     $scope.registerMale = function () {
         $scope.patient.gender = "male";
         var savePatientDataPromise = PatientsStore.save($scope.patient);
@@ -106,6 +156,16 @@ registrationModule.controller('GenderInfoController', function ($scope, $mdDialo
         savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
     };
 
+    //Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $state.go($scope.parentState, { patientID: $stateParams.patientID, parentState: $scope.parentState });
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "GenderInfoController") $scope.navigateBack();
+    });
+
 });
 
 /**
@@ -114,12 +174,12 @@ registrationModule.controller('GenderInfoController', function ($scope, $mdDialo
 */
 registrationModule.controller('AgeInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore, patient) {
     if (!patient) {
-        // Empty Patient , should never come at this stage, redirect to default page
+        //Nozel : Empty Patient , should never come at this stage, redirect to default page
         $scope.patient = {};
         $mdDialog.show($mdDialog.alert()
                                .title('Something went wrong :(')
-                               .content('This is embarassing!!. Operation responded with ' + 'Error Code 00002')
-                               .ariaLabel('Error Code 00002')
+                               .content('This is embarassing!! Please Try again.')
+                               .ariaLabel('Something went wrong :(')
                                .ok('OK!')).finally(function () {
                                    $state.go("identificationInfo", { patientID: "" });
                                });
@@ -148,7 +208,7 @@ registrationModule.controller('AgeInfoController', function ($scope, $mdDialog, 
     $scope.saveFailed = function (errorMessage) {
         $mdDialog.show($mdDialog.alert()
                                .title('Something went wrong :(')
-                               .content('This is embarassing!!. Operation responded with ' + errorMessage)
+                               .content('This is embarassing!!. Please Try again')
                                .ariaLabel(errorMessage)
                                .ok('OK!'));
     };
@@ -162,9 +222,21 @@ registrationModule.controller('AgeInfoController', function ($scope, $mdDialog, 
     };
 
     $scope.saveAndProceed = function () {
-        var savePatientDataPromise = PatientsStore.save($scope.patient);
-        savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
+        if ($scope.age_info_form.$valid) {
+            var savePatientDataPromise = PatientsStore.save($scope.patient);
+            savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
+        }
     };
+
+    //Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $state.go($scope.parentState, { patientID: $stateParams.patientID, parentState: $scope.parentState });
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "AgeInfoController") $scope.navigateBack();
+    });
 
 });
 
@@ -240,10 +312,22 @@ registrationModule.controller('BodySizeInfoController', function ($scope, $mdDia
     };
 
     $scope.saveAndProceed = function () {
-        $scope.vitals.height = parseInt($scope.vitals.height);
-        var saveVitalsDataPromise = VitalsStore.save($scope.vitals);
-        saveVitalsDataPromise.then($scope.changeState, $scope.saveFailed);
+        if ($scope.bodysize_info_form.$valid) {
+            $scope.vitals.height = parseInt($scope.vitals.height);
+            var saveVitalsDataPromise = VitalsStore.save($scope.vitals);
+            saveVitalsDataPromise.then($scope.changeState, $scope.saveFailed);
+        }
     };
+
+    //Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $state.go($scope.parentState, { patientID: $stateParams.patientID, parentState: $scope.parentState });
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "BodySizeInfoController") $scope.navigateBack();
+    });
 
 });
 
@@ -315,9 +399,21 @@ registrationModule.controller('BloodPressureInfoController', function ($scope, $
     };
 
     $scope.saveAndProceed = function () {
-        var saveVitalsDataPromise = VitalsStore.save($scope.vitals);
-        saveVitalsDataPromise.then($scope.changeState, $scope.saveFailed);
+        if ($scope.bloodpressure_info_form.$valid) {
+            var saveVitalsDataPromise = VitalsStore.save($scope.vitals);
+            saveVitalsDataPromise.then($scope.changeState, $scope.saveFailed);
+        }
     };
+
+    //Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $state.go($scope.parentState, { patientID: $stateParams.patientID, parentState: $scope.parentState });
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "BloodPressureInfoController") $scope.navigateBack();
+    });
 
 });
 
@@ -335,7 +431,7 @@ registrationModule.config(function ($stateProvider, $urlRouterProvider) {
                 patient: function (PatientsStore, $stateParams) { return ($stateParams.patientID) ? PatientsStore.getPatientByID($stateParams.patientID) : null ; }
             },
             controller: 'IdentificationInfoController',
-            params: { 'patientID': null, 'parentState': null }
+            params: { 'patientID': null, 'parentPatientID': null, 'parentState': null }
         })
         .state('genderInfo', {
             //url: '/genderInfo',  // cannot use as using params[]
@@ -344,7 +440,7 @@ registrationModule.config(function ($stateProvider, $urlRouterProvider) {
                 patient: function (PatientsStore, $stateParams) { return ($stateParams.patientID) ? PatientsStore.getPatientByID($stateParams.patientID) : null; }
             },
             controller: 'GenderInfoController',
-            params: { 'patientID': null, 'parentState': null }
+            params: { 'patientID': null, 'parentState': 'identificationInfo' }
         })
         .state('ageInfo', {
             //url: '/genderInfo',  // cannot use as using params[]
@@ -353,7 +449,7 @@ registrationModule.config(function ($stateProvider, $urlRouterProvider) {
                 patient: function (PatientsStore, $stateParams) { return ($stateParams.patientID) ? PatientsStore.getPatientByID($stateParams.patientID) : null; }
             },
             controller: 'AgeInfoController',
-            params: { 'patientID': null, 'parentState': null }
+            params: { 'patientID': null, 'parentState': 'genderInfo' }
         })
         .state('bodysizeInfo', {
             //url: '/genderInfo',  // cannot use as using params[]
@@ -362,7 +458,7 @@ registrationModule.config(function ($stateProvider, $urlRouterProvider) {
                 vitals : function(VitalsStore, $stateParams) { return ($stateParams.vitalsID) ? VitalsStore.getVitalByID($stateParams.vitalsID) : null; }
             },
             controller: 'BodySizeInfoController',
-            params: { 'patientID': null, 'vitalsID': null, 'parentState': null }
+            params: { 'patientID': null, 'vitalsID': null, 'parentState': 'ageInfo' }
         })
         .state('bloodpressureInfo', {
             //url: '/genderInfo',  // cannot use as using params[]
@@ -371,7 +467,7 @@ registrationModule.config(function ($stateProvider, $urlRouterProvider) {
                 vitals : function(VitalsStore, $stateParams) { return ($stateParams.vitalsID) ? VitalsStore.getVitalByID($stateParams.vitalsID) : null; }
             },
             controller: 'BloodPressureInfoController',
-            params: { 'patientID': null, 'vitalsID': null, 'parentState': null }
+            params: { 'patientID': null, 'vitalsID': null, 'parentState': 'bodysizeInfo' }
         });
 
 });

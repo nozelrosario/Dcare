@@ -90,3 +90,22 @@
     padding-left: 10px;
     text-align: left;
 }
+
+
+.bar-header > .button {
+    font-size:16px;
+}
+
+/*Will not be used in future, check and remove*/
+.footer-button-bar {
+    height:70px;
+}
+
+.footer-button-bar>div {
+    padding:10px;
+}
+
+.footer-button-bar>div>button {
+    padding:10px;
+}
+

@@ -214,6 +214,28 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
         }
     };
 
+    $scope.getHeartRate = function () {  
+        var props = {
+            seconds: 10,
+            fps: 30
+        };
+        if (cordova.plugins.heartbeat) {
+            alert("cordova.plugins.heartbeat Works");
+            cordova.plugins.heartbeat.take(props, function successCallback(bpm) {
+                alert("Your heart beat per minute is:" + bpm);
+            }, function errorCallback() {
+                alert("Has not posible measure your heart beat");
+            });
+        } else {
+            alert("heartbeat Works");
+            heartbeat.take(props, function successCallback(bpm) {
+                alert("Your heart beat per minute is:" + bpm);
+            }, function errorCallback() {
+                alert("Has not posible measure your heart beat");
+            });
+        }
+    };
+
     $scope.validate = function () {
 
         //NR TODO : Validate and sow error and clear model values if needed

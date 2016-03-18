@@ -1,6 +1,17 @@
 ﻿<ion-pane md-theme="amber">
     <ion-header-bar class="bar bar-header bar-energized">
-        <h1 class="title">D-Care</h1>
+        <md-button class="button" ng-click="navigateBack()" aria-label="Back">
+            <span class="ion-button-style ion-chevron-left"></span>
+        </md-button>
+        <h1 class="title"><center><b>D-Care</b></center></h1>
+        <md-button class="button" ng-click="skipAndProceed()" aria-label="Skip">
+            <b> Skip </b>
+            <span class="ion-button-style ion-chevron-right"></span>
+        </md-button>
+        <md-button class="button" ng-click="saveAndProceed()" aria-label="Save">
+            <b> Save </b>
+            <span class="ion-button-style ion-chevron-right"></span>
+        </md-button>
     </ion-header-bar>
     <md-whiteframe class="md-whiteframe-z2 content has-header" layout layout-align="center center" style="height:100%">
         <div layout="column" layout-sm="row" layout-align="center center">

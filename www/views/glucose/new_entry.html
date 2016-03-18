@@ -1,52 +1,51 @@
 <ion-pane md-theme="amber">
-<ion-header-bar class="bar bar-header bar-energized">
-    <div class="buttons">
-        <!--<button class="button " ng-click=""><i class="icon ion-navicon-round"></i></button>-->
-    </div>
-    <h1 class="title">{{currentPatient.name}} - Glucose</h1>
-    <!--<div class="buttons">
-        <button class="button " ng-click=""><i class="icon ion-plus-round"></i></button>
-    </div>-->
-</ion-header-bar>
-    <ion-scroll direction="y" style="height:90%">
-    <md-content class="content has-header " layout-align="center center" layout="column" layout-sm="column" style="height:auto;" >
-        <div class="padding">
-            <div><center><h1> Date Time ? </h1></center></div>
-            <input label="Date & Time" ng-model="glucose.datetime" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', timeFormat:'hh:ii A', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
-        </div>
-        <div layout="row" layout-sm="column"  layout-align="center start" class="padding " >            
-            <div style="padding-top:15px;padding-left:20px;">
-                <div ><center><h1> Type ? </h1></center></div>
-                <md-radio-group ng-model="glucose.glucoseType">
-                    <md-radio-button ng-repeat="option in enums.glucoseTypes" ng-value="option.value" aria-label="{{ option.label }}">
-                        {{ option.label }}
-                    </md-radio-button>
-                </md-radio-group>
-            </div>
-            <div layout="column" layout-sm="column" layout-align="center center" class="padding ">
-                <div><center><h1> Glucose Value ? </h1></center></div>
-                <div id="glucosevalue" ng-model="glucose.glucosevalue" jquery-dynameter jquery-dynameter-config="{ label:'Glucose', unit:'mg/dL', min:20, max:500, regions:{ 150:'normal', 180:'warn', 250:'error' } }"></div>
-                <div layout="row" layout-sm="row" layout-align="center center" class="padding range" style="width:300px">
-                    <i class="icon ion-minus-circled"></i>
-                    <!--<input type="range" name="height" min="40" max="140" ng-change="validate()" ng-model="vitals.bpdiastolic" >-->
-                    <md-slider name="height" aria-label="BP-Diastolic" min="20" max="500" ng-change="validate()" ng-model="glucose.glucosevalue" style="width:100%"> </md-slider>
-                    <i class="icon ion-plus-circled"></i>
+    <ion-header-bar class="bar bar-header bar-energized">
+        <md-button class="button" ng-click="cancel()" aria-label="Back">
+            <span class="ion-button-style ion-chevron-left"></span>
+            <b> Cancel </b>
+        </md-button>
+        <h1 class="title"> <center><b>Glucose</b></center></h1>
+        <md-button class="button" ng-click="save()" aria-label="Save">
+            <b> Save </b>
+            <span class="ion-button-style ion-chevron-right"></span>
+        </md-button>
+    </ion-header-bar>
+    <form name="glucose_entry_form" style="height:99%;">
+        <ion-scroll direction="y" style="height:99%">
+            <md-content class="content has-header " layout-align="center center" layout="column" layout-sm="column" style="height:auto;">
+                <div class="padding">
+                    <div><center><h1> Date Time ? </h1></center></div>
+                    <input label="Date & Time" name="datetime" required ng-model="glucose.datetime" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', timeFormat:'hh:ii A', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
+                    <div ng-messages="glucose_entry_form.datetime.$error">
+                        <div ng-message="required">Date is required.</div>                        
+                    </div>
                 </div>
-            </div>
-        </div>
-                
-    </md-content>
-    </ion-scroll>
-    <div class="bar bar-footer" style="height:70px" layout >
-        <div flex>
-            <md-button class="md-raised button-block button-large"  ng-click="cancel()"> <b> Cancel </b>
-                <span class="ion-button-style next-arrow"></span>
-            </md-button> 
-        </div>
-        <div flex>
-            <md-button class="md-primary md-raised button-block button-large"  ng-click="save()"> <b> Save </b> 
-                <span class="ion-button-style next-arrow"></span>
-            </md-button>
-        </div>
-    </div>
-    </ion-pane>
+                <div layout="row" layout-sm="column" layout-align="center start" class="padding">
+                    <div style="padding-top:15px;width:100%;">
+                        <div><center><h1> Type ? </h1></center></div>
+                        <div ng-messages="glucose_entry_form.glucoseType.$error">
+                            <div ng-message="required" style="color:red;text-align:center;">Please set Type of Glucose measured</div>
+                        </div>
+                        <md-radio-group ng-model="glucose.glucoseType" required name="glucoseType">
+                            <md-radio-button class="md-primary" ng-repeat="option in enums.glucoseTypes" ng-value="option.value" aria-label="{{ option.label }}">
+                                {{ option.label }}
+                            </md-radio-button>
+                        </md-radio-group>                        
+                    </div>
+                    <div layout="column" layout-sm="column" layout-align="center center" class="padding " style="width:100%">
+                        <div><center><h1> Glucose Value ? </h1></center></div>                        
+                        <div id="glucosevalue" ng-model="glucose.glucosevalue" jquery-dynameter jquery-dynameter-config="{ label:'Glucose', unit:'mg/dL', min:20, max:500, regions:{ 150:'normal', 180:'warn', 250:'error' } }"></div>
+                        <div ng-messages="glucose_entry_form.glucosevalue.$error">
+                            <div ng-message="required" style="color:red;text-align:center;">Please use below Slider to set Glucose value</div>
+                        </div>
+                        <div layout="row" layout-sm="row" layout-align="center center" class="padding range" style="width:300px">
+                            <i class="icon ion-minus-circled"></i>                            
+                            <md-slider required name="glucosevalue" aria-label="Glucose" min="20" max="500" ng-change="validate()" ng-model="glucose.glucosevalue" style="width:100%" class="md-primary"> </md-slider>
+                            <i class="icon ion-plus-circled"></i>
+                        </div>
+                    </div>
+                </div>
+            </md-content>
+        </ion-scroll>
+    </form>
+</ion-pane>

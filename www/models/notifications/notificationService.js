@@ -132,7 +132,8 @@
         *                                       object.data - data associated with the notification
         */
         scheduleNotification: scheduleNotification,
-        /* Removes a Notiication
+
+        /* Removes a Notiication that is alreay scheduled
         * @params: notificationID {number}  : unique ID of notification to be removed
         */
         removeNotification: removeNotification

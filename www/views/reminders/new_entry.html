@@ -1,104 +1,105 @@
 <ion-pane md-theme="amber" layout="column">
     <ion-header-bar class="bar bar-header bar-energized">
-        <div class="buttons">
-            <!--<button class="button " ng-click=""><i class="icon ion-navicon-round"></i></button>-->
-        </div>
-        <h1 class="title">{{currentPatient.name}} - Reminder</h1>
-        <!--<div class="buttons">
-            <button class="button " ng-click=""><i class="icon ion-plus-round"></i></button>
-        </div>-->
+        <md-button class="button" ng-click="cancel()" aria-label="Back">
+            <span class="ion-button-style ion-chevron-left"></span>
+            <b> Cancel </b>
+        </md-button>
+        <h1 class="title"> <center><b>Reminder</b></center></h1>
+        <md-button class="button" ng-click="save()" aria-label="Save">
+            <b> Save </b>
+            <span class="ion-button-style ion-chevron-right"></span>
+        </md-button>
     </ion-header-bar>
-    <ion-scroll direction="y" style="height:90%" class="content has-header ">
-        <md-content class="content" layout="column" layout-sm="column" style="height:auto;" layout-align="start center">
+    <form name="reminder_entry_form" style="height:99%">
+        <ion-scroll direction="y" style="height:95%" class="content has-header ">
+            <md-content class="content" layout="column" layout-sm="column" style="height:auto;" layout-align="start center">
 
-            <div layout="column" layout-sm="column" class="padding ">
-                <div>
-                    <!--<md-text-float label="Note" ng-model="reminder.text" class="large-input" style="margin-left: 10px;"> </md-text-float>-->
-                    <md-input-container>
-                        <label>Note</label>
-                        <input name="text" ng-model="reminder.text">
-                    </md-input-container>
-                </div>
-                <div>
-                    <!--<md-text-float label="Title" ng-model="reminder.title" class="large-input" style="margin-left: 10px;"> </md-text-float>-->
-                    <md-input-container>
-                        <label>Title</label>
-                        <input name="title" ng-model="reminder.title">
-                    </md-input-container>
-                </div>
-                <div flex class="padding">
-                    <div><h2> Reminder Type : </h2></div>
-                    <center>
-                        <div layout="row" style="background-image:url('img/infobox.png'); background-size:100% 100%;height:150px; min-width:300px; max-width:400px">
-                            <div flex="80" layout="column">
-                                <div style="margin-top: 10px;font-weight: bolder;margin-left: 15px;text-align: left;" layout="row">
-                                    <div style="border-radius: 12px; border:1px solid black;width: 20px;text-align: center;line-height: 18px;font-weight: bolder;margin: 3px;" ng-show="medication.route>0">{{reminder.reminderType}}</div>
-                                    <div style="line-height: 26px;">{{(reminder.reminderType)? enums.reminderType[reminder.reminderType].label : 'Type of Reminder ?'}}</div>
-                                </div>
-                                <div style="font-weight: normal;margin-left: 20px;max-width: 200px;text-align: left;line-height: 16px;">{{(reminder.reminderType)? enums.reminderType[reminder.reminderType].short_label : 'Use the below slider to select a value'}}</div>
+                <div layout="column" layout-sm="column" class="padding ">
+                    <div>                       
+                        <md-input-container class="large-input">
+                            <label>Note</label>
+                            <input name="text" required ng-model="reminder.text">
+                            <div ng-messages="reminder_entry_form.text.$error">
+                                <div ng-message="required" class="validation-error">Please enter some descriptive text</div>
                             </div>
-                            <div flex="20" layout-align="center center"><img ng-src="{{(reminder.reminderType)? enums.reminderType[reminder.reminderType].image : 'img/question.png'}}" style="height:50px;width:50px;margin:10px"></div>
-                        </div>
-                    </center>
-                    <div style="margin-top:-20px;margin-bottom:20px">
-                        <md-slider md-discrete aira-label="Reminder Type" ng-model="reminder.reminderType" step="1" min="1" max="7"></md-slider>
-                    </div>
-                </div>
-                <div layout="row" layout-sm="column">
-                    <div flex class="padding">
-                        <div><h2> Start Date ? </h2></div>
-                        <center>
-                            <input label="Start Date" ng-model="reminder.startdate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
-                        </center>
-                    </div>
-
-                    <div flex class="padding">
-                        <div><h2> End Date ? </h2></div>
-                        <center>
-                            <input label="End Date" ng-model="reminder.enddate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
-                        </center>
-                    </div>
-                </div>
-                <div layout="row" layout-sm="column">
-                    <div class="padding" flex>
-                        <div style="margin-top:25px;">
-                            <md-switch ng-model="reminder.isRecursive" aria-label="Repeat" style="margin-left: -10px;width:100%" class="large-input"> <label>Repeat reminder ? </label></md-switch>
-                        </div>
-                        
-                        
-                    </div>
-                    <div ng-show="reminder.isRecursive" class="padding" flex>
-                        <!--<md-text-float label="Repeat Every ?" ng-model="reminder.frequency" class="large-input" style="margin-left: 10px;"> </md-text-float>-->
-                        <md-input-container>
-                            <label>Repeat Every ?</label>
-                            <input name="frequency" ng-model="reminder.frequency">
                         </md-input-container>
                     </div>
+                    <div>                        
+                        <md-input-container class="large-input">
+                            <label>Title</label>
+                            <input name="title" required ng-model="reminder.title">
+                            <div ng-messages="reminder_entry_form.title.$error">
+                                <div ng-message="required" class="validation-error">Please enter some descriptive title</div>
+                            </div>
+                        </md-input-container>
+                    </div>
+                    <div flex class="padding">
+                        <div><h2> Reminder Type : </h2></div>
+                        <center>
+                            <div layout="row" style="background-image:url('img/infobox.png'); background-size:100% 100%;height:150px; min-width:300px; max-width:400px">
+                                <div flex="80" layout="column">
+                                    <div style="margin-top: 10px;font-weight: bolder;margin-left: 15px;text-align: left;" layout="row">
+                                        <div style="border-radius: 12px; border:1px solid black;width: 20px;text-align: center;line-height: 18px;font-weight: bolder;margin: 3px;" ng-show="medication.route>0">{{reminder.reminderType}}</div>
+                                        <div style="line-height: 26px;">{{(reminder.reminderType)? enums.reminderType[reminder.reminderType].label : 'Type of Reminder ?'}}</div>
+                                    </div>
+                                    <div style="font-weight: normal;margin-left: 20px;max-width: 200px;text-align: left;line-height: 16px;">{{(reminder.reminderType)? enums.reminderType[reminder.reminderType].short_label : 'Use the below slider to select a value'}}</div>
+                                </div>
+                                <div flex="20" layout-align="center center"><img ng-src="{{(reminder.reminderType)? enums.reminderType[reminder.reminderType].image : 'img/question.png'}}" style="height:50px;width:50px;margin:10px"></div>
+                            </div>
+                        </center>
+                        <div style="margin-top:-20px;margin-bottom:20px">
+                            <md-slider md-discrete aira-label="Reminder Type" ng-model="reminder.reminderType" step="1" min="1" max="7"></md-slider>
+                        </div>
+                    </div>
+                    <div layout="row" layout-sm="column">
+                        <div flex class="padding">
+                            <div><h2> Start Date ? </h2></div>
+                            <center>
+                                <input label="Start Date" required name="startdate" ng-model="reminder.startdate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal', minDate:Date(), maxDate:Date('01/01/2050') }"> </input>
+                            </center>
+                            <div ng-messages="reminder_entry_form.startdate.$error">
+                                <div ng-message="required" class="validation-error">Please enter some descriptive title</div>
+                            </div>
+                        </div>
+
+                        <div flex class="padding">
+                            <div><h2> End Date ? </h2></div>
+                            <center>
+                                <input label="End Date" ng-model="reminder.enddate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal', minDate:Date(), maxDate:Date('01/01/2050') }"> </input>
+                            </center>
+                        </div>
+                    </div>
+                    <div layout="row" layout-sm="column">
+                        <div class="padding" flex>
+                            <div style="margin-top:25px;">
+                                <md-switch ng-model="reminder.isRecursive" aria-label="Repeat" style="margin-left:-10px;width:100%" class="large-input" ng-change="onRecursiveReminder()"> <label>Repeat reminder ? </label></md-switch>
+                            </div>
+                        </div>
+                        <div ng-show="reminder.isRecursive" class="padding" flex>
+                            <!--<md-text-float label="Repeat Every ?" ng-model="reminder.frequency" class="large-input" style="margin-left: 10px;"> </md-text-float>-->
+                            <md-input-container>
+                                <label>Repeat Every ?</label>
+                                <input name="frequency" ng-model="reminder.frequency">
+                                <div >
+                                    <div ng-if="reminder.isRecursive && !reminder.frequency" class="validation-error">Please enter some descriptive title</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="padding" ng-show="reminder.isRecursive">
+                        <div><h2> Interval ? </h2></div>
+                        <div>
+                            <div ng-if="reminder.isRecursive && !reminder.frequencyUnit" class="validation-error">Please enter some descriptive title</div>
+                        </div>
+                        <md-radio-group ng-model="reminder.frequencyUnit" class="md-primary" layout="row" layout-sm="column">
+                            <md-radio-button ng-repeat="unit in enums.frequencyUnit"
+                                             ng-value="unit.value">
+                                {{ unit.label }}
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
                 </div>
-                <div class="padding" ng-show="reminder.isRecursive">
-                    <div><h2> Interval ? </h2></div>
-                    <md-radio-group ng-model="reminder.frequencyUnit" class="md-primary" layout="row" layout-sm="column">
-                        <md-radio-button ng-repeat="unit in enums.frequencyUnit"
-                                         ng-value="unit.value">
-                            {{ unit.label }}
-                        </md-radio-button>
-                    </md-radio-group>
-                </div>
-            </div>
-        </md-content>
-    </ion-scroll>
-    <div class="bar bar-footer" style="height:70px" layout>
-        <div flex>
-            <md-button class="md-raised button-block " ng-click="cancel()">
-                <b> Cancel </b>
-                <span class="ion-button-style next-arrow"></span>
-            </md-button>
-        </div>
-        <div flex>
-            <md-button class="md-primary md-raised button-block " ng-click="save()">
-                <b> Save </b>
-                <span class="ion-button-style next-arrow"></span>
-            </md-button>
-        </div>
-    </div>
+            </md-content>
+        </ion-scroll>
+    </form>
 </ion-pane>

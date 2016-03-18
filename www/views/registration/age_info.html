@@ -1,42 +1,48 @@
 ﻿<ion-pane md-theme="amber">
     <ion-header-bar class="bar bar-header bar-energized">
-    <h1 class="title">D-Care</h1>
+        <md-button class="button" ng-click="navigateBack()" aria-label="Back">
+            <span class="ion-button-style ion-chevron-left"></span>
+        </md-button>
+        <h1 class="title"><center><b>D-Care</b></center></h1>
+        <md-button class="button" ng-click="skipAndProceed()" aria-label="Skip">
+            <b> Skip </b>
+            <span class="ion-button-style ion-chevron-right"></span>
+        </md-button>
+        <md-button class="button" ng-click="saveAndProceed()" aria-label="Save">
+            <b> Save </b>
+            <span class="ion-button-style ion-chevron-right"></span>
+        </md-button>
     </ion-header-bar>
 
-<!--    <form style="padding: 20px;" md-theme="amber">-->
-    <ion-scroll direction="y" style="height:95%">
-        <md-content class="content has-header" layout-align="center center" layout-md="row" layout-sm="column" layout-lg="row" style="height:auto;">
+    <form name="age_info_form" style="height:99%">
+        <ion-scroll direction="y" style="height:100%">
+            <md-content class="content has-header" layout-align="center center" layout-md="row" layout-sm="column" layout-lg="row" style="height:auto;">
 
-            <div layout="column" layout-sm="column" layout-align="center center" class="padding " style="height:350px">
-                <div class="padding"><center><h1> Date of Birth </h1></center></div>
-                <div layout="row" layout-sm="column" layout-align="center center" class="padding">
-                    <input id="birthdate" type="text" ng-show="false" ng-change="calculateAge()" ng-model="patient.birthdate" mobiscroll-date mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'inline'}" />
+                <div layout="column" layout-sm="column" layout-align="center center" class="padding " style="height:350px">
+                    <div class="padding"><center><h1> Date of Birth </h1></center></div>
+                    <div layout="row" layout-sm="column" layout-align="center center" class="padding">
+                        <input id="birthdate" type="text" ng-show="false" ng-change="calculateAge()" ng-model="patient.birthdate" mobiscroll-date mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'inline', maxDate:Date() }" />
+                    </div>
+                    <h2><b><input disabled ng-model="patient.birthdate" add-clear add-clear-config="{returnFocus:false, showOnLoad:true, hidOnBlur:false }" style="border-bottom: 1px solid rgb(163, 157, 157) !important; width: 280px; background-color:#ffffff; border:none; text-align:center;font-weight:bold;" /></b></h2>
                 </div>
-                <h2><b><input disabled ng-model="patient.birthdate" add-clear add-clear-config="{returnFocus:false, showOnLoad:true, hidOnBlur:false }" style="border-bottom: 1px solid rgb(163, 157, 157) !important; width: 280px; background-color:#ffffff; border:none; text-align:center;font-weight:bold;" /></b></h2>
-            </div>
-            <div layout="column" layout-sm="column" layout-align="center center" class="padding " style="height:350px;margin-top: -65px;">
-                <div class="padding"><center><h1> Age <b> {{patient.age}} </b><span ng-show="patient.age > 0">Year(s)</span></h1></center></div>
-                <div layout="row" class="padding" style="margin-top: -20px;">
-                    <input id="age" type="text" ng-model="patient.age" data-displayinput="true" jquery-knob jquery-knob-config="{step:1, angleOffset:90, lineCap:'round', min:0, max:100, displayInput:false, cursor:false }" />
+                <div layout="column" layout-sm="column" layout-align="center center" class="padding " style="height:350px;margin-top: -65px;">
+                    <div class="padding">
+                        <center>
+                            <h1> Age <b> {{patient.age}} </b><span ng-show="patient.age > 0">Year(s)</span></h1>
+                        </center>
+                        <div ng-messages="age_info_form.age.$error">
+                            <div ng-message="required" class="validation-error">Age cannot be empty.</div>
+                            <div ng-message="min" class="validation-error">Please set a valid age.</div>
+                        </div>
+                    </div>                    
+                    <div layout="row" class="padding" style="margin-top: -20px;">
+                        <input id="age" name="age" required type="number" min="0.1" max="100" ng-model="patient.age" data-displayinput="true" jquery-knob jquery-knob-config="{step:0.1, angleOffset:90, lineCap:'round', min:0.1, max:100, displayInput:false, cursor:false }" />
+                    </div>
+
                 </div>
 
-            </div>
+            </md-content>
+        </ion-scroll>
 
-        </md-content>
-    </ion-scroll>
-    
-<!--    </form>-->
-    <div class="bar bar-footer" style="height:70px" layout >
-        <!--<button class="button icon-right ion-chevron-right button-energized button-block button-large">Proceed</button>-->
-        <div flex>
-            <md-button class="md-raised button-block button-large"  ng-click="skipAndProceed()"> <b> Skip and Proceed </b>
-                <span class="ion-button-style next-arrow"></span>
-            </md-button> 
-        </div>
-        <div flex>
-            <md-button class="md-primary md-raised button-block button-large"  ng-click="saveAndProceed()"> <b> Save and Proceed </b> 
-                <span class="ion-button-style next-arrow"></span>
-            </md-button>
-        </div>
-    </div>
+    </form>
 </ion-pane>

@@ -47,7 +47,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
     $scope.activateMenuItem = function (menuItemId) {
         switch (menuItemId) {
             case "newpatient":
-                $state.go("registration", { isFirstRun: false });
+                $state.go("registration", { parentPatientID: $scope.currentPatient.id, isFirstRun: false, parentState: "dashboard" });
                 break;
             case "editprofile":
                 $state.go("identificationInfo", { patientID: $scope.currentPatient.id, parentState: "dashboard" });

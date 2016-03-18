@@ -14,8 +14,11 @@ dCare.run(function ($ionicPlatform) {
         if (window.StatusBar) {
             StatusBar.styleDefault();
         }
-
+        
     });
+    document.addEventListener("deviceready", function () {
+        app.log.info("CORDOVA PLATFORM READY!!");
+    }, false);
 });
 
 

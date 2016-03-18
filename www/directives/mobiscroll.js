@@ -4,6 +4,14 @@ mobiscrollDirectives.directive('mobiscrollDate', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
+                scope.Date = function (date) {
+                    if (date) {
+                        return (new Date(date));
+                    } else {
+                        return (new Date());
+                    }                    
+                };
+
                 $(element).mobiscroll().date(scope.$eval(attrs.mobiscrollConfig));
 
                 // Set model value on widget
@@ -20,6 +28,14 @@ mobiscrollDirectives.directive('mobiscrollDate', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
+                scope.Date = function (date) {
+                    if (date) {
+                        return (new Date(date));
+                    } else {
+                        return (new Date());
+                    }
+                };
+
                 $(element).mobiscroll().datetime(scope.$eval(attrs.mobiscrollConfig));
                 
                 // Set model value on widget

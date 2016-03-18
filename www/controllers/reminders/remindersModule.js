@@ -98,6 +98,13 @@ remindersModule.controller('ReminderFormController', function ($scope, $ionicLoa
     }
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'activeReminderslist';
 
+    $scope.onRecursiveReminder = function () {
+        if (!$scope.reminder.isRecursive) {
+            $scope.reminder.frequency = '';
+            $scope.reminder.frequencyUnit = '';
+        }
+    };
+
     // Action Methods
     $scope.changeState = function (reminder) {
         // transition to next state
@@ -105,11 +112,18 @@ remindersModule.controller('ReminderFormController', function ($scope, $ionicLoa
     };
 
     $scope.save = function () {
-        $scope.reminder.startdate = castToLongDate($scope.reminder.startdate);
-        $scope.reminder.enddate = castToLongDate($scope.reminder.enddate);;
-        var saveReminderDataPromise = RemindersStore.save($scope.reminder);
-        saveReminderDataPromise.then($scope.changeState, $scope.saveFailed);
-
+        var isValid = true;
+        if ($scope.reminder.isRecursive) {
+            if (!$scope.reminder.frequency || !$scope.reminder.frequencyUnit) {
+                isValid = false;
+            }
+        }
+        if ($scope.reminder_entry_form.$valid && isValid) {
+            $scope.reminder.startdate = castToLongDate($scope.reminder.startdate);
+            $scope.reminder.enddate = castToLongDate($scope.reminder.enddate);
+            var saveReminderDataPromise = RemindersStore.save($scope.reminder);
+            saveReminderDataPromise.then($scope.changeState, $scope.saveFailed);
+        }
     };
 
     $scope.cancel = function () {

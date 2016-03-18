@@ -1,52 +1,54 @@
-﻿<ion-pane md-theme="amber">
+﻿<ion-pane>
 	  <ion-header-bar class="bar bar-header bar-energized">
-		<h1 class="title">D-Care</h1>
-	  </ion-header-bar>
-<form style="padding: 45px 45px 45px 15px;" name="identification_info">
-<br />
-<div layout="column">
-	<div layout="column" >
-        <md-input-container class="md-icon-float md-icon-right large-input" >
-            <label>First Name</label>
-            <md-icon class="ion-person"></md-icon>
-            <input type="text" md-maxlength="30" required name="firstname" ng-model="patient.firstname">
-            <div ng-messages="identification_info.firstname.$error">
-                <div ng-message="required">This is required.</div>
-                <div ng-message="md-maxlength">The name has to be less than 30 characters long.</div>
+        <md-button class="button" ng-click="navigateBack()" aria-label="Back">
+            <span class="ion-button-style ion-chevron-left"></span>
+        </md-button>
+		<h1 class="title"><center><b>D-Care</b></center></h1>
+        <md-button class="button" aria-label="Save" ng-click="proceed()">
+            <b> Save </b>
+            <span class="ion-button-style next-arrow"></span>
+        </md-button>
+	  </ion-header-bar>    
+    <form name="identification_info_form" style="height:99%;">
+        <br />
+        <ion-scroll direction="y" style="height:100%;padding: 45px 45px 45px 15px;">
+            <div layout="column">
+                <div layout="column">
+                    <md-input-container class="md-icon-float md-icon-right large-input">
+                        <label>First Name</label>
+                        <md-icon class="ion-person"></md-icon>
+                        <input type="text" md-maxlength="30" required name="firstname" ng-model="patient.firstname">
+                        <div ng-messages="identification_info_form.firstname.$error">
+                            <div ng-message="required">This is required.</div>
+                            <div ng-message="md-maxlength">The name has to be less than 30 characters long.</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-icon-float md-icon-right large-input">
+                        <label>Last Name</label>
+                        <md-icon class="ion-person"></md-icon>
+                        <input type="text" md-maxlength="30" required name="lastname" ng-model="patient.lastname">
+                        <div ng-messages="identification_info_form.lastname.$error">
+                            <div ng-message="required">This is required.</div>
+                            <div ng-message="md-maxlength">The name has to be less than 30 characters long.</div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout="column">
+                    <md-input-container class="md-icon-float md-icon-right large-input">
+                        <label>Phone</label>
+                        <md-icon class="ion-ios-telephone"></md-icon>
+                        <input name="phone" type="tel" ng-model="patient.phone">
+                    </md-input-container>
+                    <md-input-container class="md-icon-float md-icon-right large-input">
+                        <label>Email</label>
+                        <md-icon class="ion-email"></md-icon>
+                        <input type="email" name="email" ng-model="patient.email">
+                        <div ng-messages="identification_info_form.email.$error">
+                            <div ng-message="email">Invalid Email.</div>
+                        </div>
+                    </md-input-container>
+                </div>
             </div>
-        </md-input-container>
-        <md-input-container class="md-icon-float md-icon-right large-input" >
-            <label>Last Name</label>
-            <md-icon class="ion-person"></md-icon>
-            <input type="text" md-maxlength="30" required name="lastname" ng-model="patient.lastname">
-            <div ng-messages="identification_info.lastname.$error">
-                <div ng-message="required">This is required.</div>
-                <div ng-message="md-maxlength">The name has to be less than 30 characters long.</div>
-            </div>
-        </md-input-container>
-	</div>
-	<div layout="column">
-        <md-input-container class="md-icon-float md-icon-right large-input">
-            <label>Phone</label>
-            <md-icon class="ion-ios-telephone"></md-icon>
-            <input name="phone" type="tel" ng-model="patient.phone">
-        </md-input-container>
-        <md-input-container class="md-icon-float md-icon-right large-input">
-            <label>Email</label>
-            <md-icon class="ion-email"></md-icon>
-            <input type="email" name="email" ng-model="patient.email">
-            <div ng-messages="identification_info.email.$error">
-                <div ng-message="email">Invalid Email.</div>
-            </div>
-        </md-input-container>
-	</div>
-</div>
-</form>
-      <div class="bar bar-footer" style="height:70px" >
-          <!--<button class="button icon-right ion-chevron-right button-energized button-block button-large">Proceed</button>-->
-          <md-button class="md-primary md-raised button-block button-large" ng-click="proceed()" ng-disabled="identification_info.user.$dirty && myForm.user.$invalid || myForm.email.$dirty && myForm.email.$invalid">
-              <b> Save and Proceed </b>
-              <span class="ion-button-style next-arrow"></span>
-          </md-button>
-      </div>
+        </ion-scroll>
+    </form>
 </ion-pane>

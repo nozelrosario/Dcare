@@ -117,7 +117,7 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
         getActiveNotificationsForPatient: function (patientID) {
             return notificationsDataStore.search({
                 select: '*',
-                where: "patientID=" + patientID + " and status= 'active'" + " and enddate >=" + castToLongDate(new Date())
+                where: "patientID=" + patientID + " and status= 'active'" + " and (enddate >=" + castToLongDate(new Date()) + " or enddate='')"
             });
         },
         getNotificationForReminder: function (reminderID) {

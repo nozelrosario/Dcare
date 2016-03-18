@@ -10,6 +10,9 @@
         "com.nozelrosario.cordova.plugins.heartbeat": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },
+        "cordova-plugin-app-event": {
+            "PACKAGE_NAME": "com.nozel.dcare"
+        },
         "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },
@@ -19,16 +22,12 @@
         "cordova-plugin-device": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },
-        "ionic-plugin-keyboard": {
+        "de.appplant.cordova.plugin.local-notification": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },
-        "de.appplant.cordova.plugin.local-notification": {
+        "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "com.nozel.dcare"
         }
     },
-    "dependent_plugins": {
-        "cordova-plugin-app-event": {
-            "PACKAGE_NAME": "com.nozel.dcare"
-        }
-    }
+    "dependent_plugins": {}
 }

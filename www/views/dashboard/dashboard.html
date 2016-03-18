@@ -1,4 +1,4 @@
-<ion-pane md-theme ="amber">
+<ion-pane md-theme="amber">
 
     <ion-side-menus>
         <!-- Center content -->
@@ -7,7 +7,7 @@
                 <div class="buttons">
                     <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
                 </div>
-                <h1 class="title">{{currentPatient.name}}</h1>
+                <h1 class="title"><center><b>{{currentPatient.name}}</b></center></h1>
                 <div class="buttons">
                     <button class="button " ng-click="togglePatientsList()"><i class="icon ion-person-stalker"></i></button>
                 </div>
@@ -32,13 +32,18 @@
                             <div flex layout="column" style="border-right: 1px solid rgb(180, 180, 180);">
                                 <!-- Weight & BMI-->
                                 <div flex layout="column" layout-align="center center" style="border-bottom: 1px solid rgb(180, 180, 180);">
-                                    <div class="bold-label">{{latestVitals.weight}}</div>
+                                    <div ng-if="(latestVitals.weight)" class="bold-label">{{latestVitals.weight}}</div>
+                                    <div ng-if="!(latestVitals.weight)" class="md-caption">(not available)</div>
                                     <div class="sub-label">Weight ({{latestVitals.weightunit}})</div>
                                 </div>
                                 <div flex layout="column" layout-align="center center">
-                                    <div layout="row" class="padding" layout-sm="column" layout-align="center center"><div class="sub-label">BMI :</div><div class="bold-label">{{latestVitals.bmi}}</div></div>
-
-                                    <div layout="row" layout-sm="column" layout-align="center center" ng-show="latestVitals.bmi < 18.5"><div class="sub-label"> Condition :</div><div class="bold-label">Underweight</div></div>
+                                    <div layout="row" class="padding" layout-sm="column" layout-align="center center">
+                                        <div class="sub-label">BMI :</div>
+                                        <div ng-if="(latestVitals.bmi)" class="bold-label">{{latestVitals.bmi}}</div>
+                                        <div ng-if="!(latestVitals.bmi)" class="md-caption">(not available)</div>
+                                    </div>
+                                    <div layout="row" layout-sm="column" layout-align="center center" ng-show="latestVitals.bmi <= 0"><div class="sub-label"> Condition :</div><div class="md-caption">(not available)</div></div>
+                                    <div layout="row" layout-sm="column" layout-align="center center" ng-show="latestVitals.bmi > 0 && latestVitals.bmi < 18.5"><div class="sub-label"> Condition :</div><div class="bold-label">Underweight</div></div>
                                     <div layout="row" layout-sm="column" layout-align="center center" ng-show="latestVitals.bmi > 18.5 && latestVitals.bmi <= 25 "><div class="sub-label"> Condition :</div><div class="bold-label">Normal</div></div>
                                     <div layout="row" layout-sm="column" layout-align="center center" ng-show="latestVitals.bmi > 25 && latestVitals.bmi <= 30 "><div class="sub-label"> Condition :</div><div class="bold-label">Overweight</div></div>
                                     <div layout="row" layout-sm="column" layout-align="center center" ng-show="latestVitals.bmi > 30"><div class="sub-label"> Condition :</div><div class="bold-label">Obese</div></div>
@@ -52,7 +57,8 @@
                                 </div>
                                 <div layout="column" layout-align="center center">
                                     <div><img src="img\arrow-up.png" style="height:40px;width:15px;margin:10px"></div>
-                                    <div class="bold-label">{{latestVitals.height}}</div>
+                                    <div ng-if="(latestVitals.height)" class="bold-label">{{latestVitals.height}}</div>
+                                    <div ng-if="!(latestVitals.height)" class="md-caption">(not available)</div>
                                     <div class="sub-label">Height ({{latestVitals.heightunit}})</div>
                                     <div><img src="img\arrow-down.png" style="height:40px;width:15px;margin:10px"></i></div>
                                 </div>
@@ -79,13 +85,13 @@
                                 </div>
                                 <div class="item tabs " style="height:100px">
                                     <div layout="row" layout-align="center center" class="tab-item">
-                                        <md-button class="md-fab ion-ios-arrow-left SmallFab " aria-label="Previous" ng-disabled="!isPreviousGlucoseAvailable" ng-click="getPreviousGlucose()" ng-disabled="glucose.isFirstEntry"></md-button>
+                                        <md-button class="md-flat ion-ios-arrow-left SmallFab " aria-label="Previous" ng-disabled="!isPreviousGlucoseAvailable" ng-click="getPreviousGlucose()" ng-disabled="glucose.isFirstEntry"></md-button>
                                     </div>
                                     <div layout="row" layout-align="center center" class="tab-item">
-                                        <md-button class="md-fab ion-ios-plus-outline MediumFab" aria-label="Add" ng-click="addNewGlucoseEntry()"></md-button>
+                                        <md-button class="md-flat ion-ios-plus-outline MediumFab" aria-label="Add" ng-click="addNewGlucoseEntry()"></md-button>
                                     </div>
                                     <div layout="row" layout-align="center center" class="tab-item">
-                                        <md-button class="md-fab ion-ios-arrow-right SmallFab" aria-label="Next" ng-disabled="!isNextGlucoseAvailable" ng-click="getNextGlucose()" ng-disabled="glucose.isLastEntry"></md-button>
+                                        <md-button class="md-flat ion-ios-arrow-right SmallFab" aria-label="Next" ng-disabled="!isNextGlucoseAvailable" ng-click="getNextGlucose()" ng-disabled="glucose.isLastEntry"></md-button>
                                     </div>
                                 </div>
                             </div>
@@ -156,22 +162,28 @@
         <ion-side-menu side="right">
             <!--Dashboard Right menu containing Patient List-->
             <ion-content>
-                <md-list>
-                    <md-item ng-repeat="patient in patients">
-                        <md-item-content>
-                            <md-button menu-close ng-click="switchDashboardForPatient(patient.id)" class="button-full menu-button">
-                                <div layout="row">
-                                    <img flex="20" ng-src="{{patient.photo}}" style="height:70px;width:70px;margin:10px">
-                                    <div layout="column" layout-align="center start">
-                                        <div class="menu-title">{{patient.name}}</div>
-                                        <div class="menu-sub-title">{{patient.gender}} - {{patient.age}}</div>
+                <md-input-container flex class="md-icon-float md-icon-right large-input" style="margin-top: 0px; margin-left: 15px; ">
+                    <md-icon class="ion-search"></md-icon>
+                    <input ng-model="searchText" type="text" placeholder="Search">
+                </md-input-container>
+                <ion-scroll direction="y" style="height: 90%; margin-top: 55px;">
+                    <md-list>
+                        <md-item ng-repeat="patient in patients | filter:searchText">
+                            <md-item-content>
+                                <md-button menu-close ng-click="switchDashboardForPatient(patient.id)" class="button-full menu-button">
+                                    <div layout="row">
+                                        <img flex="20" ng-src="{{patient.photo}}" style="height:70px;width:70px;margin:10px">
+                                        <div layout="column" layout-align="center start">
+                                            <div class="menu-title">{{patient.name}}</div>
+                                            <div class="menu-sub-title">{{patient.gender}} - {{patient.age}}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            </md-button>
-                        </md-item-content>
-                    </md-item>
-                </md-list>
+                                </md-button>
+                            </md-item-content>
+                        </md-item>
+                    </md-list>
+                </ion-scroll>
             </ion-content>
         </ion-side-menu>
     </ion-side-menus>
-</ion-panemd-theme>
+    </ion-panemd-theme>

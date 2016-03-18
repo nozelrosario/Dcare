@@ -104,7 +104,7 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
 
                     if (frequency !== "" && frequencyUnit !== "") {
                         if (!startDate) startDate = castToLongDate(new Date());
-                        if (!endDate) endDate = 0;
+                        if (!endDate) endDate = "";
                         reminderText = "Reminder for having your medication: " + medication.name;
                         reminderTitle = "Medication: " + medication.name;
                         newReminder = {
@@ -127,7 +127,7 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
                         });
 
                     } else {
-                        deferredReminder.resolve("Could not set Reminder!! Please fill in 'Frequency' for medication to set reminder");
+                        deferredReminder.resolve("Could not set Reminder!! Please fill in 'Frequency' for this medication and try again.");
                     }
                 } else {
                     deferredReminder.resolve("Could not set Reminder!! Medication not found");

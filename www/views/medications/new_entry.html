@@ -1,93 +1,89 @@
 <ion-pane md-theme="amber" layout="column">
-<ion-header-bar class="bar bar-header bar-energized">
-    <div class="buttons">
-        <!--<button class="button " ng-click=""><i class="icon ion-navicon-round"></i></button>-->
-    </div>
-    <h1 class="title">{{currentPatient.name}} - Medication</h1>
-    <!--<div class="buttons">
-        <button class="button " ng-click=""><i class="icon ion-plus-round"></i></button>
-    </div>-->
-</ion-header-bar>
-    <ion-scroll direction="y" style="height:80%" class="content has-header ">
-    <md-content class="content" layout="column" layout-sm="column" style="height:auto;" layout-align="center center" >
-        
-        <div layout="column" layout-sm="column"  class="padding " style="width:100%">
-            <md-button ng-show="medication.status == 'active'" class="md-raised md-warn" ng-click="toggleMedicationStatus()" style="width:98%">Discontinue This Medication</md-button>
-            <md-button ng-show="medication.status == 'inactive'" class="md-raised md-warn" ng-click="toggleMedicationStatus()" style="width:98%" >Resume This Medication</md-button>
-            <div>                
-                <md-input-container class="large-input">
-                    <label>Medication</label>
-                    <input name="name" ng-model="medication.name">
-                </md-input-container>
-            </div>
-            <div layout="row" layout-sm="column" layout-align="center center">
-                <div flex class="padding">
-                    <div><h2> Route ? </h2></div>
-                    <center>
-                        <div layout="row" style="background-image:url('img/infobox.png'); background-size:100% 100%;height:150px; min-width:300px; max-width:400px">
-                            <div flex="80" layout="column">
-                                <div style="margin-top: 10px;font-weight: bolder;margin-left: 15px;text-align: left;" layout="row">
-                                    <div style="border-radius: 12px; border:1px solid black;width: 20px;text-align: center;line-height: 18px;font-weight: bolder;margin: 3px;" ng-show="medication.route>0">{{medication.route}}</div>
-                                    <div style="line-height: 26px;">{{(medication.route)? enums.medicationRoute[medication.route].label : 'Way you consume the medicine ?'}}</div>
-                                </div>
-                                <div style="font-weight: normal;margin-left: 20px;max-width: 200px;text-align: left;line-height: 16px;">{{(medication.route)? enums.medicationRoute[medication.route].short_label : 'Use the below slider to select a value'}}</div>
+    <ion-header-bar class="bar bar-header bar-energized">
+        <md-button class="button" ng-click="cancel()" aria-label="Back">
+            <span class="ion-button-style ion-chevron-left"></span>
+            <b> Cancel </b>
+        </md-button>
+        <h1 class="title"> <center><b>Medication</b></center></h1>
+        <md-button class="button" ng-click="save()" aria-label="Save">
+            <b> Save </b>
+            <span class="ion-button-style ion-chevron-right"></span>
+        </md-button>
+    </ion-header-bar>
+    <form name="medication_entry_form" style="height:99%;">
+        <ion-scroll direction="y" style="height:95%" class="content has-header ">
+            <md-content class="content" layout="column" layout-sm="column" style="height:auto;" layout-align="center center">
+                <div layout="column" layout-sm="column" class="padding " style="width:100%">
+                    <md-button ng-show="medication.status == 'active'" class="md-raised md-warn" ng-click="toggleMedicationStatus()" style="width:98%">Discontinue This Medication</md-button>
+                    <md-button ng-show="medication.status == 'inactive'" class="md-raised md-warn" ng-click="toggleMedicationStatus()" style="width:98%">Resume This Medication</md-button>
+                    <div>
+                        <md-input-container class="large-input">
+                            <label>Medication</label>
+                            <input name="name" md-maxlength="50" required ng-model="medication.name">
+                            <div ng-messages="medication_entry_form.name.$error">
+                                <div ng-message="required">Medication name is required.</div>
+                                <div ng-message="md-maxlength">Medication name has to be less than 50 characters long.</div>
                             </div>
-                            <div flex="20" layout-align="center center"><img ng-src="{{(medication.route)? enums.medicationRoute[medication.route].image : 'img/question.png'}}" style="height:50px;width:50px;margin:10px"></div>
-                        </div>
-                    </center>
-                    <div style="margin-top:-20px;margin-bottom:20px">
-                        <md-slider md-discrete aira-label="Route" ng-model="medication.route" step="1" min="1" max="8"></md-slider>
+                        </md-input-container>
                     </div>
-                </div>
-                <div flex class="padding">
-                    <div><h2> Frequency ? </h2></div>
-                    <center>
-                        <div layout="row" style="background-image:url('img/infobox.png'); background-size:100% 100%;height:150px; min-width:300px; max-width:400px">
-                            <div flex="80" layout="column">
-                                <div style="margin-top: 10px;font-weight: bolder;margin-left: 15px;text-align: left;" layout="row">
-                                    <div style="border-radius: 12px; border:1px solid black;width: 20px;text-align: center;line-height: 18px;font-weight: bolder;margin: 3px;" ng-show="medication.dosefrequency>0">{{medication.dosefrequency}}</div>
-                                    <div style="line-height: 26px;">{{(medication.dosefrequency)? enums.doseFrequency[medication.dosefrequency].label : 'When to consume the medicine ?'}}</div>
+                    <div layout="row" layout-sm="column" layout-align="center center">
+                        <div flex class="padding">
+                            <div><h2> Route ? </h2></div>
+                            <center>
+                                <div layout="row" style="background-image:url('img/infobox.png'); background-size:100% 100%;height:150px; min-width:300px; max-width:400px">
+                                    <div flex="80" layout="column">
+                                        <div style="margin-top: 10px;font-weight: bolder;margin-left: 15px;text-align: left;" layout="row">
+                                            <div style="border-radius: 12px; border:1px solid black;width: 20px;text-align: center;line-height: 18px;font-weight: bolder;margin: 3px;" ng-show="medication.route>0">{{medication.route}}</div>
+                                            <div style="line-height: 26px;">{{(medication.route)? enums.medicationRoute[medication.route].label : 'Way you consume the medicine ?'}}</div>
+                                        </div>
+                                        <div style="font-weight: normal;margin-left: 20px;max-width: 200px;text-align: left;line-height: 16px;">{{(medication.route)? enums.medicationRoute[medication.route].short_label : 'Use the below slider to select a value'}}</div>
+                                    </div>
+                                    <div flex="20" layout-align="center center"><img ng-src="{{(medication.route)? enums.medicationRoute[medication.route].image : 'img/question.png'}}" style="height:50px;width:50px;margin:10px"></div>
                                 </div>
-                                <div style="font-weight: normal;margin-left: 20px;max-width: 200px;text-align: left;line-height: 16px;">{{(medication.dosefrequency)? enums.doseFrequency[medication.dosefrequency].short_label : 'Use the below slider to select a value'}}</div>
+                            </center>
+                            <div style="margin-top:-20px;margin-bottom:20px">
+                                <md-slider md-discrete aira-label="Route" ng-model="medication.route" step="1" min="1" max="8"></md-slider>
                             </div>
-                            <div flex="20" layout-align="center center"><img src="img/duration.png" style="height:50px;width:50px;margin:10px"></div>
                         </div>
-                    </center>
-                    <div style="margin-top:-20px;margin-bottom:20px">
-                        <md-slider md-discrete aira-label="Frequency" ng-model="medication.dosefrequency" step="1" min="1" max="7"></md-slider>
+                        <div flex class="padding">
+                            <div><h2> Frequency ? </h2></div>
+                            <center>
+                                <div layout="row" style="background-image:url('img/infobox.png'); background-size:100% 100%;height:150px; min-width:300px; max-width:400px">
+                                    <div flex="80" layout="column">
+                                        <div style="margin-top: 10px;font-weight: bolder;margin-left: 15px;text-align: left;" layout="row">
+                                            <div style="border-radius: 12px; border:1px solid black;width: 20px;text-align: center;line-height: 18px;font-weight: bolder;margin: 3px;" ng-show="medication.dosefrequency>0">{{medication.dosefrequency}}</div>
+                                            <div style="line-height: 26px;">{{(medication.dosefrequency)? enums.doseFrequency[medication.dosefrequency].label : 'When to consume the medicine ?'}}</div>
+                                        </div>
+                                        <div style="font-weight: normal;margin-left: 20px;max-width: 200px;text-align: left;line-height: 16px;">{{(medication.dosefrequency)? enums.doseFrequency[medication.dosefrequency].short_label : 'Use the below slider to select a value'}}</div>
+                                    </div>
+                                    <div flex="20" layout-align="center center"><img src="img/duration.png" style="height:50px;width:50px;margin:10px"></div>
+                                </div>
+                            </center>
+                            <div style="margin-top:-20px;margin-bottom:20px">
+                                <md-slider md-discrete aira-label="Frequency" ng-model="medication.dosefrequency" step="1" min="1" max="7"></md-slider>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div layout="row" layout-sm="column" layout-align="center center">
-                <div flex class="padding">
-                    <div><h2> Start Date & Time ? </h2></div>
-                    <center>
-                        <input label="Start Date" ng-model="medication.startdate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
-                    </center>
-                </div>
+                    <div layout="row" layout-sm="column" layout-align="center center">
+                        <div flex class="padding">
+                            <div><h2> Start Date & Time ? </h2></div>
+                            <center>
+                                <div ng-messages="medication_entry_form.startdate.$error">
+                                    <div ng-message="required">Medication Start Date is required.</div>
+                                </div>
+                                <input label="Start Date" name="startdate" ng-model="medication.startdate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
+                            </center>
+                        </div>
 
-                <div flex class="padding">
-                    <div><h2> End Date & Time ? </h2></div>
-                    <center>
-                        <input label="End Date" ng-model="medication.enddate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
-                    </center>
+                        <div flex class="padding">
+                            <div><h2> End Date & Time ? </h2></div>
+                            <center>
+                                <input label="End Date" ng-model="medication.enddate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
+                            </center>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </md-content>
-    </ion-scroll>
-    <div class="bar bar-footer" style="height:70px" layout>
-        <div flex>
-            <md-button class="md-raised button-block " ng-click="cancel()">
-                <b> Cancel </b>
-                <span class="ion-button-style next-arrow"></span>
-            </md-button>
-        </div>
-        <div flex>
-            <md-button class="md-primary md-raised button-block " ng-click="save()">
-                <b> Save </b>
-                <span class="ion-button-style next-arrow"></span>
-            </md-button>
-        </div>
-    </div>
-    </ion-pane>
+            </md-content>
+        </ion-scroll>
+    </form>
+</ion-pane>

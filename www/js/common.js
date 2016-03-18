@@ -1,6 +1,6 @@
 ﻿
 function castToLongDate(date) {
-    var converted_date;
+    var converted_date='';
     if (date) {
         if (date instanceof Date) {
             converted_date = date.getTime(); // Date.parse(date);

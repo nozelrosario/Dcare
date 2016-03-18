@@ -2,6 +2,6 @@
   "name": "Dcare",
   "private": "true",
   "devDependencies": {
-    "ionic": "driftyco/ionic-bower#1.1.0"
+    "ionic": "driftyco/ionic-bower#1.2.4"
   }
 }

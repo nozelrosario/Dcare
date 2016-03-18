@@ -33,6 +33,7 @@ public class CameraActivity extends CordovaActivity {
 				"layout", getPackageName()));
 
 		camera = getCameraInstance();
+		if(camera != null) {
 		try {
 			Camera.Parameters params = camera.getParameters();
 			params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
@@ -63,7 +64,10 @@ public class CameraActivity extends CordovaActivity {
 		ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		layout.addView(preview, layoutParams);
-
+		}
+		else {
+			return;
+		}
 	}
 
 	public static Camera getCameraInstance() {
@@ -82,12 +86,20 @@ public class CameraActivity extends CordovaActivity {
 			index++;
 		}
 		Camera camera;
-		if (index < numCameras) {
-			Log.i(TAG, "Opening camera #" + index);
-			camera = Camera.open(index);
-		} else {
-			Log.i(TAG, "No camera facing back; returning camera #0");
-			camera = Camera.open(0);
+		try
+		{
+			if (index < numCameras) {
+				Log.i(TAG, "Opening camera #" + index);
+				camera = Camera.open(index);
+			} else {
+				Log.i(TAG, "No camera facing back; returning camera #0");
+				camera = Camera.open(0);
+			}
+		}
+		catch(Exception e){
+			Log.e(TAG, "Error while interfacing Camera");
+			e.printStackTrace();
+			camera = null;
 		}
 		return camera;
 	}

@@ -21,8 +21,9 @@
 .digital-display 
 {
     font-family: 'ds-digital';
-    border-radius: 12px;
+    border-radius: 12px 12px 0 0;
     background-color: rgb(226, 226, 226);
+    border:1px solid #ddd;
     /*margin-right: 15px;*/
     padding-bottom: 10px;
 }
@@ -39,4 +40,9 @@
     font-size: 1.5em;
     padding:5px;
     height:35px;
+}
+
+.validation-error {
+    color:red;
+    text-align:center;
 }
