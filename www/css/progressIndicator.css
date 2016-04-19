@@ -1,0 +1,11 @@
+﻿md-progress-circular {
+    top: 45%;
+    position: absolute;
+    left: 45%;
+    /*transform: scale(2) !important;*/
+}
+
+
+.loading-container .loading {
+    background-color: rgba(0, 0, 0, 0) !important;
+}

@@ -3,10 +3,7 @@ var vitalsModule = angular.module('dCare.vitals', ['ionic',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng', 'dCare.jqueryDynameterDirectives', 'dCare.mobiscrollDirectives', 'dCare.jqueryKnobDirectives', 'dCare.addclearDirectives']);
 
 //Controllers
-vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, latestVitals, currentPatient, VitalsStore) {
-    $ionicLoading.show({
-        template: 'Loading...'
-    });
+vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, latestVitals, currentPatient, VitalsStore) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -64,7 +61,7 @@ vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicLoadi
             case "bp_trend":
                 $state.go("vitalstrend", { patientID: $scope.currentPatient.id, trendType: 'BP', unit: 'Cm', parentState: 'vitalsSummary' });
                 break;
-            case "alerts":
+            case "alerts":                
                 alert('Messages/Notificaions');
                 break;
             case "settings":
@@ -87,15 +84,11 @@ vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicLoadi
 
     $scope.$on("navigate-back", function (event, data) {
         if (data.intendedController === "VitalsSummaryController") $scope.navigateBack();
-    });
+    });    
 
-    $ionicLoading.hide();
 });
 
-vitalsModule.controller('VitalsListController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, vitalsList, currentPatient, VitalsStore) {
-    $ionicLoading.show({
-        template: 'Loading...'
-    });
+vitalsModule.controller('VitalsListController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, vitalsList, currentPatient, VitalsStore) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'vitalsSummary';
 
@@ -180,14 +173,10 @@ vitalsModule.controller('VitalsListController', function ($scope, $ionicLoading,
         if (data.intendedController === "VitalsListController") $scope.navigateBack();
     });
 
-    $ionicLoading.hide();
 });
 
 
-vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, vitals, latestVitals, currentPatient, VitalsStore) {
-    $ionicLoading.show({
-        template: 'Loading...'
-    });
+vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading, $state, $stateParams, vitals, latestVitals, currentPatient, VitalsStore) {
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     //$scope.enums = VitalsStore.enums; // NR: nor required currently
@@ -214,27 +203,7 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
         }
     };
 
-    $scope.getHeartRate = function () {  
-        var props = {
-            seconds: 10,
-            fps: 30
-        };
-        if (cordova.plugins.heartbeat) {
-            alert("cordova.plugins.heartbeat Works");
-            cordova.plugins.heartbeat.take(props, function successCallback(bpm) {
-                alert("Your heart beat per minute is:" + bpm);
-            }, function errorCallback() {
-                alert("Has not posible measure your heart beat");
-            });
-        } else {
-            alert("heartbeat Works");
-            heartbeat.take(props, function successCallback(bpm) {
-                alert("Your heart beat per minute is:" + bpm);
-            }, function errorCallback() {
-                alert("Has not posible measure your heart beat");
-            });
-        }
-    };
+    
 
     $scope.validate = function () {
 
@@ -272,6 +241,33 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
                                .ok('OK!'));
     };
 
+    $scope.getHeartRate = function () {
+        var props;
+        try {
+            var seconds = prompt("HeartRate Config Seconds ", "10");
+            var fps = prompt("HeartRate Config FPS ", "30");
+            props = { seconds: parseInt(seconds), fps: parseInt(fps) };
+        }
+        catch (e) {
+            alert("Setting Default : {seconds: 10, fps: 30}");
+            props = { seconds: 10, fps: 30 };
+        }
+
+        if (cordova.plugins.heartbeat) {
+            alert("cordova.plugins.heartbeat : " + JSON.stringify(props));
+            $ionicLoading.show({ template: '<md-progress-circular md-mode="indeterminate" md-diameter="70"></md-progress-circular>', noBackdrop: false });
+            cordova.plugins.heartbeat.take(props, function successCallback(bpm) {
+                $ionicLoading.hide();
+                $scope.vitals.heartRate = bpm;
+                console.log("heart Rate = " + bpm);
+            }, function errorCallback(err) {
+                alert("Is not posible measure your heart beat : " + err);
+            });
+        } else {
+            alert("Plugin not registered correctly");
+        }
+    };
+
     //Action Methods
     $scope.navigateBack = function () {
         // transition to previous state
@@ -281,17 +277,10 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
     $scope.$on("navigate-back", function (event, data) {
         if (data.intendedController === "VitalsFormController") $scope.navigateBack();
     });
-
-    $ionicLoading.hide();
 });
 
 
-vitalsModule.controller('VitalsTrendController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, vitalsTrendData, currentPatient, VitalsStore) {
-    $ionicLoading.show({
-        template: 'Loading...'
-    });
-
-    
+vitalsModule.controller('VitalsTrendController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, vitalsTrendData, currentPatient, VitalsStore) {
 
     // Init Menu
 
@@ -361,8 +350,6 @@ vitalsModule.controller('VitalsTrendController', function ($scope, $ionicLoading
     $scope.$on("navigate-back", function (event, data) {
         if (data.intendedController === "VitalsTrendController") $scope.navigateBack();
     });
-
-    $ionicLoading.hide();
 });
 
 

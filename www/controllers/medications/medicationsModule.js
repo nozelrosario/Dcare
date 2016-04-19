@@ -3,10 +3,7 @@ var medicationsModule = angular.module('dCare.medications', ['ionic',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng']);
 
 //Controllers
-medicationsModule.controller('MedicationsListController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, medicationsList, currentPatient, MedicationsStore) {
-    $ionicLoading.show({
-        template: 'Loading...'
-    });
+medicationsModule.controller('MedicationsListController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, medicationsList, currentPatient, MedicationsStore) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -71,16 +68,11 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
     $scope.$on("navigate-back", function (event, data) {
         if (data.intendedController === "MedicationsListController") $scope.navigateBack();
     });
-
-    $ionicLoading.hide();
 });
 
 
 
-medicationsModule.controller('MedicationFormController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, medication, currentPatient, MedicationsStore) {
-    $ionicLoading.show({
-        template: 'Loading...'
-    });
+medicationsModule.controller('MedicationFormController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, medication, currentPatient, MedicationsStore) {
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = MedicationsStore.enums;
@@ -203,10 +195,8 @@ medicationsModule.controller('MedicationFormController', function ($scope, $ioni
     };
 
     $scope.$on("navigate-back", function (event, data) {
-        if (data.intendedController === "MedicationsListController") $scope.navigateBack();
+        if (data.intendedController === "MedicationFormController") $scope.navigateBack();
     });
-
-    $ionicLoading.hide();
 });
 
 

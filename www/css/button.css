@@ -89,6 +89,9 @@
     text-transform: capitalize;
     padding-left: 10px;
     text-align: left;
+    word-break: normal;
+    white-space: normal;
+    line-height: 20px;
 }
 
 

@@ -1,4 +1,4 @@
-<ion-pane md-theme="amber">
+<ion-pane>
     <ion-header-bar class="bar bar-header bar-energized">
         <md-button class="button" ng-click="cancel()" aria-label="Back">
             <span class="ion-button-style ion-chevron-left"></span>
@@ -43,8 +43,35 @@
                         </select>
                     </h1>
                 </div>
+            </div>            
+            <div layout="row" layout-sm="column" layout-align="center center">
+                <div layout="column" layout-sm="column" layout-align="center center" class="padding ">
+                    <div class="padding"><center><h2> Heart rate  ? </h2></center></div>
+                    <div layout="row" layout-sm="row" layout-align="center center" class="padding ">
+                        <md-input-container class="large-input">
+                            <label>(bpm)</label>
+                            <input ng-model="vitals.heartRate">
+                        </md-input-container>
+                        <md-icon ng-click="getHeartRate()" md-svg-src="img\heart-rate.svg" style="display:inline-block;height:45px;width:45px;"></md-icon>
+                    </div>
+                </div>
+                
+                <div layout="column" layout-sm="column" layout-align="center center" class="padding " style="height:220px; width:auto">
+                    <div class="padding"><center><h2> Temperature ? </h2></center></div>
+                    <div layout="row" layout-sm="row" layout-align="center center" class="padding range" style="width:300px">
+                        <i class="icon ion-minus-circled"></i>
+                        <md-slider class="md-primary" name="height" aria-label="height" min="0" max="150" ng-model="vitals.temperature" style="width:100%"> </md-slider>
+                        <i class="icon ion-plus-circled"></i>
+                    </div>
+                    <h1>
+                        <b><input ng-model="vitals.temperature" add-clear add-clear-config="{returnFocus:false, showOnLoad:true, hidOnBlur:false }" style="border-bottom: 1px solid rgb(163, 157, 157) !important; width: 150px; background-color:#ffffff; border:none; text-align:center;font-weight:bold;" /></b>
+                        <select disabled>
+                            <option selected>Celcius</option>
+                            <option>Farhenite</option>                            
+                        </select>
+                    </h1>
+                </div>
             </div>
-            
             <div layout="row" layout-sm="column" layout-align="center center">
                 <div layout="column" layout-sm="column" layout-align="center center" class="padding ">
                     <div class="padding"><center><h2> Systolic BP ? </h2></center></div>
@@ -66,11 +93,7 @@
                         <i class="icon ion-plus-circled"></i>
                     </div>
                 </div>
-            </div>
-            <md-button class="md-primary" ng-click="getHeartRate()" aria-label="Heart">
-                <b> Heart Rate </b>
-                <span class="ion-button-style ion-android-favorite"></span>
-            </md-button>
+            </div>            
         </md-content>
     </ion-scroll>
 </ion-pane>

@@ -5,16 +5,13 @@ var dashboardModule = angular.module('dCare.dashboard', ['ionic',
                                                          'dCare.datePrettify']);
 
 //Controllers
-dashboardModule.controller('DashboardController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams,
+dashboardModule.controller('DashboardController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams,
                                                             allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData,notificationsData,
                                                             PatientsStore, VitalsStore, GlucoseStore, NotificationsStore) {
-    $ionicLoading.show({
-        template: 'Loading...'
-    });
 
     // Init Menu
     $scope.menuItems = [
-                        { seq: 1, id: "newpatient", title: 'Add a Loved one', subTitle: 'Add a new person you care for', icon: 'ion-person-add' },
+                        //{ seq: 1, id: "newpatient", title: 'Add a Loved one', subTitle: 'Add a new person you care for', icon: 'ion-person-add' },
                         { seq: 2, id: "editprofile", title: 'Edit Profile', subTitle: 'Edit you personal details', icon: 'ion-android-chat' },
                         { seq: 3, id: "vitals", seq: 3, title: 'Vitals', subTitle: 'Register Vitals', icon: 'ion-android-chat' },
                         { seq: 4, id: "glucose", title: 'Blood Glucose', subTitle: 'Blood glucose tracker', icon: 'ion-android-chat' },
@@ -29,12 +26,13 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
 
     // Init Data
     $scope.patients = allPatients;
-    $scope.latestVitals = latestVitals;
+    $scope.vitals = latestVitals;
     $scope.glucose = latestGlucose;
     $scope.glucoseTrend = glucoseSparklineData; // glucoseSparklineData = {data:[], options:{}}
     $scope.notificationsList = notificationsData;
     $scope.isNextGlucoseAvailable = false;
     $scope.isPreviousGlucoseAvailable = true;
+    $scope.isVitalsExpanded = false;
 
     if (!defaultPatient) {
         $scope.currentPatient = allPatients[0];
@@ -44,6 +42,15 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
 
 
     // Action Methods
+
+    $scope.toggleVitalsCardLayout = function () {
+        if ($scope.isVitalsExpanded) {
+            $scope.isVitalsExpanded = false;
+        }else {
+            $scope.isVitalsExpanded = true;
+        }
+    }
+
     $scope.activateMenuItem = function (menuItemId) {
         switch (menuItemId) {
             case "newpatient":
@@ -76,25 +83,34 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
     };
 
     $scope.switchDashboardForPatient = function (patientID) {
-        var vitalsDataPromise = VitalsStore.getLatestVitalsForPatient(patientID);
-        vitalsDataPromise.then(function (vitals) {
-            $scope.latestVitals = vitals;
-        });
+        if (patientID === "newPatient") {
+            $state.go("registration", { parentPatientID: $scope.currentPatient.id, isFirstRun: false, parentState: "dashboard" });
+        } else {
+            var vitalsDataPromise = VitalsStore.getLatestVitalsForPatient(patientID);
+            vitalsDataPromise.then(function (vitals) {
+                $scope.vitals = vitals;
+            });
 
-        var patientDataPromise = PatientsStore.getPatientByID(patientID);
-        patientDataPromise.then(function (patient) {
-            $scope.currentPatient = patient;
-        });
+            var patientDataPromise = PatientsStore.getPatientByID(patientID);
+            patientDataPromise.then(function (patient) {
+                $scope.currentPatient = patient;
+            });
 
-        var glucoseDataPromise = GlucoseStore.getLatestGlucoseForPatient(patientID);
-        glucoseDataPromise.then(function (glucose) {
-            $scope.glucose = glucose;
-        });
+            var glucoseDataPromise = GlucoseStore.getLatestGlucoseForPatient(patientID);
+            glucoseDataPromise.then(function (glucose) {
+                $scope.glucose = glucose;
+            });
 
-        var notificationsDataPromise = NotificationsStore.getActiveNotificationsForPatient(patientID);
-        notificationsDataPromise.then(function (notificationsData) {
-            $scope.notificationsList = notificationsData;
-        });
+            var glucoseTrendDataPromise = GlucoseStore.glucoseSparklineData(patientID);
+            glucoseTrendDataPromise.then(function (glucoseSparklineData) {
+                $scope.glucoseTrend = glucoseSparklineData;
+            });
+
+            var notificationsDataPromise = NotificationsStore.getActiveNotificationsForPatient(patientID);
+            notificationsDataPromise.then(function (notificationsData) {
+                $scope.notificationsList = notificationsData;
+            });
+        }
     };
 
     $scope.addNewGlucoseEntry = function () {
@@ -203,7 +219,6 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicLoadin
 
 
     });
-    $ionicLoading.hide();
 });
 
 

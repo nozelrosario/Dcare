@@ -1,4 +1,4 @@
-<ion-pane md-theme="amber">
+<ion-pane>
     <ion-side-menus>
         <ion-header-bar class="bar bar-header bar-energized">
             <div class="buttons">
@@ -13,46 +13,8 @@
             <!--<ion-content>-->
                 <ion-scroll direction="y" style="height:100%">
                     <md-content class="content has-header "  layout="column" layout-sm="column" style="height:auto;">
-
                         <div class="list card">
-                            <div class="item item-body">
-                                <div layout="row" layout-sm="row">
-                                    <div flex layout="column" style="border-right: 1px solid rgb(180, 180, 180);">
-                                        <!-- Weight & BMI-->
-                                        <div flex layout="column" layout-align="center center" style="border-bottom: 1px solid rgb(180, 180, 180);">
-                                            <div ng-if="(vitals.weight)" class="bold-label">{{vitals.weight}}</div>
-                                            <div ng-if="!(vitals.weight)" class="md-caption">(not available)</div>
-                                            <div class="sub-label">Weight ({{vitals.weightunit}})</div>
-                                        </div>
-                                        <div flex layout="column" layout-align="center center">
-                                            <div layout="row" class="padding" layout-sm="column" layout-align="center center">
-                                                <div class="sub-label">BMI :</div>
-                                                <div ng-if="(vitals.bmi)" class="bold-label">{{vitals.bmi}}</div>
-                                                <div ng-if="!(vitals.bmi)" class="md-caption">(not available)</div>
-                                            </div>
-                                            <div layout="row" layout-sm="column" layout-align="center center" ng-show="vitals.bmi <= 0"><div class="sub-label"> Condition :</div><div class="md-caption">(not available)</div></div>
-                                            <div layout="row" layout-sm="column" layout-align="center center" ng-show="vitals.bmi > 0 && vitals.bmi < 18.5"><div class="sub-label"> Condition :</div><div class="bold-label">Underweight</div></div>
-                                            <div layout="row" layout-sm="column" layout-align="center center" ng-show="vitals.bmi > 18.5 && vitals.bmi <= 25 "><div class="sub-label"> Condition :</div><div class="bold-label">Normal</div></div>
-                                            <div layout="row" layout-sm="column" layout-align="center center" ng-show="vitals.bmi > 25 && vitals.bmi <= 30 "><div class="sub-label"> Condition :</div><div class="bold-label">Overweight</div></div>
-                                            <div layout="row" layout-sm="column" layout-align="center center" ng-show="vitals.bmi > 30"><div class="sub-label"> Condition :</div><div class="bold-label">Obese</div></div>
-                                        </div>
-                                    </div>
-                                    <div flex layout="row" layout-align="center center">
-                                        <!-- Height-->
-                                        <div layout="row">
-                                            <img ng-show="currentPatient.gender=='male'" ng-src="img\male.png" style="height:150px;width:auto;margin:10px">
-                                            <img ng-show="currentPatient.gender=='female'" ng-src="img\female.png" style="height:150px;width:auto;margin:10px">
-                                        </div>
-                                        <div layout="column" layout-align="center center">
-                                            <div><img src="img\arrow-up.png" style="height:40px;width:15px;margin:10px"></div>
-                                            <div ng-if="(vitals.height)" class="bold-label">{{vitals.height}}</div>
-                                            <div ng-if="!(vitals.height)" class="md-caption">(not available)</div>
-                                            <div class="sub-label">Height ({{vitals.heightunit}})</div>
-                                            <div><img src="img\arrow-down.png" style="height:40px;width:15px;margin:10px"></i></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <div class="item item-body" ng-include="'views/vitals/vitals_snapshot_card.html'"></div>
                         </div>
                     </md-content>
                     <md-content class="content has-header " layout-align="center center" layout="row" layout-sm="column" style="height:auto;">

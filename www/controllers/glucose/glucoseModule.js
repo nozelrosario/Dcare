@@ -3,10 +3,7 @@ var glucoseModule = angular.module('dCare.glucose', ['ionic',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng']);
 
 //Controllers
-glucoseModule.controller('GlucoseListController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, glucoseList, currentPatient, GlucoseStore) {
-    $ionicLoading.show({
-        template: 'Loading...'
-    });
+glucoseModule.controller('GlucoseListController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, glucoseList, currentPatient, GlucoseStore) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -73,15 +70,11 @@ glucoseModule.controller('GlucoseListController', function ($scope, $ionicLoadin
         if (data.intendedController === "GlucoseListController") $scope.navigateBack();
     });
 
-    $ionicLoading.hide();
 });
 
 
 
-glucoseModule.controller('GlucoseFormController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, glucose, currentPatient, GlucoseStore) {
-    $ionicLoading.show({
-        template: 'Loading...'
-    });
+glucoseModule.controller('GlucoseFormController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, glucose, currentPatient, GlucoseStore) {
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = GlucoseStore.enums;
@@ -132,22 +125,18 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicLoadin
     $scope.$on("navigate-back", function (event, data) {
         if (data.intendedController === "GlucoseFormController") $scope.navigateBack();
     });
-
-    $ionicLoading.hide();
 });
 
 
-glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, glucoseTrendData, currentPatient, GlucoseStore) {
-    $ionicLoading.show({
-        template: 'Loading...'
-    });
+glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, glucoseTrendData, currentPatient, GlucoseStore) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'glucoselist';
 
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = GlucoseStore.enums;
-    //  High Charts config
+    
+
 
     // Init Data
     $scope.currentPatient = currentPatient;
@@ -249,8 +238,6 @@ glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicLoadi
         if (data.intendedController === "GlucoseTrendController") $scope.navigateBack();
     });
 
-
-    $ionicLoading.hide();
 });
 
 

@@ -1,9 +1,6 @@
 angular.module('starter.controllers', ['ionic', 'dCare.Services.PatientsStore'])
 
 .controller('StarterController', function ($scope, $rootScope, $ionicLoading, $ionicPlatform, PatientsStore, $state) {
-    $ionicLoading.show({
-        template: 'Loading...'
-    });
 
     $scope.changeState = function (patientCount) {
         if (patientCount < 1) {
@@ -13,7 +10,7 @@ angular.module('starter.controllers', ['ionic', 'dCare.Services.PatientsStore'])
             $state.go("dashboard", { patientID:1 });
         }
     };
-
+    
     $scope.isFirstRun = false;
     var getCountPromise = PatientsStore.getCount();
     getCountPromise.then($scope.changeState);
@@ -23,6 +20,12 @@ angular.module('starter.controllers', ['ionic', 'dCare.Services.PatientsStore'])
         $rootScope.$broadcast('navigate-back', { intendedController: $state.current.controller });        
     }, 101);
 
-    $ionicLoading.hide();
+    $rootScope.$on('$stateChangeStart', function () {
+        $ionicLoading.show({ template: '<md-progress-circular md-mode="indeterminate" md-diameter="70"></md-progress-circular>', noBackdrop: true });
+    });
+    $rootScope.$on('$stateChangeSuccess', function () {
+        $ionicLoading.hide();
+    });
+
 })
 

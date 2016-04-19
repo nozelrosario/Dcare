@@ -1,5 +1,7 @@
 ﻿.list-row {
-    border-bottom: 1px solid rgb(180, 180, 180);
+    border-bottom: 1px solid rgba(180, 180, 180, 0.32);
+    padding-bottom: 5px;
+    margin-bottom: 5px;
 }
 
 md-list > md-item > md-item-content > button {

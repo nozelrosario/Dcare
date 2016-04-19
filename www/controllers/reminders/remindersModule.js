@@ -4,10 +4,7 @@ var remindersModule = angular.module('dCare.reminders', ['ionic',
                                                      'dCare.datePrettify']);
 
 //Controllers
-remindersModule.controller('RemindersListController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, currentPatient, RemindersStore, remindersList) {
-    $ionicLoading.show({
-        template: 'Loading...'
-    });
+remindersModule.controller('RemindersListController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, currentPatient, RemindersStore, remindersList) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -75,16 +72,11 @@ remindersModule.controller('RemindersListController', function ($scope, $ionicLo
     $scope.$on("navigate-back", function (event, data) {
         if (data.intendedController === "RemindersListController") $scope.navigateBack();
     });
-
-    $ionicLoading.hide();
 });
 
 
 
-remindersModule.controller('ReminderFormController', function ($scope, $ionicLoading, $ionicSideMenuDelegate, $state, $stateParams, reminder, currentPatient, RemindersStore) {
-    $ionicLoading.show({
-        template: 'Loading...'
-    });
+remindersModule.controller('ReminderFormController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, reminder, currentPatient, RemindersStore) {
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = RemindersStore.enums;
@@ -147,8 +139,6 @@ remindersModule.controller('ReminderFormController', function ($scope, $ionicLoa
     $scope.$on("navigate-back", function (event, data) {
         if (data.intendedController === "ReminderFormController") $scope.navigateBack();
     });
-
-    $ionicLoading.hide();
 });
 
 
