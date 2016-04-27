@@ -136,7 +136,7 @@ angular.module('dCare.Services.GlucoseStore', [])
             glucoseDataStore.find({
                 fields: ['datetime', 'patientID'],
                 selector: { patientID: { "$eq": parseInt(patientID) }, datetime: {"$gt":datetime}},
-                sort: [{ 'datetime': 'desc' }],
+                sort: [{ 'datetime': 'asc' }],
                 limit: 1
             }).then(function (data) {
                 if (data) {

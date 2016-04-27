@@ -33,10 +33,10 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
     };
     // Some fake testing data
     //var notificationList = [
-    //                { id: 0, patientID: '1', text: 'Notification 1', title: 'Notification 1', notificationType: 1, startdate: '1288323623006', enddate: '1288323623006', frequencyUnit: 1, frequency: 1, status: 'active' data: "some Data" reminderID:3},
-    //                { id: 1, patientID: '1', text: 'Notification 2', title: 'Notification 2', notificationType: 3, startdate: '1289323623006', enddate: '1288323623006', frequencyUnit: null, frequency: null, status: 'expired' data: "some Data" reminderID:3},
-    //                { id: 2, patientID: '2', text: 'Notification 3', title: 'Notification 3', notificationType: 2, startdate: '1298323623006', enddate: '1288323623006', frequencyUnit: null, frequency: null, status: 'expired' data: "some Data" reminderID:3},
-    //                { id: 3, patientID: '4', text: 'Notification 4', title: 'Notification 4', notificationType: 1, startdate: '1288523623006', enddate: '1288323623006', frequencyUnit: 1, frequency: 1, status: 'active' data: "some Data" reminderID:3}
+    //                { id: 0, patientID: '1', text: 'Notification 1', title: 'Notification 1', notificationType: 1, startdate: '1288323623006', duedate: '1288523623006', enddate: '1288323623006', frequencyUnit: 1, frequency: 1, status: 'active' data: "some Data" reminderID:3},
+    //                { id: 1, patientID: '1', text: 'Notification 2', title: 'Notification 2', notificationType: 3, startdate: '1289323623006', duedate: '1288523623006', enddate: '1288323623006', frequencyUnit: null, frequency: null, status: 'expired' data: "some Data" reminderID:3},
+    //                { id: 2, patientID: '2', text: 'Notification 3', title: 'Notification 3', notificationType: 2, startdate: '1298323623006', duedate: '1288523623006', enddate: '1288323623006', frequencyUnit: null, frequency: null, status: 'expired' data: "some Data" reminderID:3},
+    //                { id: 3, patientID: '4', text: 'Notification 4', title: 'Notification 4', notificationType: 1, startdate: '1288523623006', duedate: '1288523623006', enddate: '1288323623006', frequencyUnit: 1, frequency: 1, status: 'active' data: "some Data" reminderID:3}
 	//                ];
 
     var scheduleNativeNotification = function (notification) {
@@ -63,8 +63,9 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
 
     var computeNextRecurringNotification = function (notification) {
         var nextOccuringNotification = null, occuranceFrequency ;
-        if (notification && notification.frequencyUnit !== null && notification.frequencyUnit !== "") {
+        if (notification && notification.frequencyUnit) {            
             occuranceFrequency = (notification.frequency > 0) ? notification.frequency : 1; // Default frequency to 1 in case empty
+            nextOccuringNotification = {};
             nextOccuringNotification.patientID = notification.patientID;
             nextOccuringNotification.text = notification.text;
             nextOccuringNotification.title = notification.title;
@@ -73,25 +74,27 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
             nextOccuringNotification.frequency = notification.frequency;
             nextOccuringNotification.status = "active";
             nextOccuringNotification.reminderID = notification.reminderID;
-            nextOccuringNotification.data = notification.data;
+            nextOccuringNotification.enddate = notification.enddate;
 
             switch (nextOccuringNotification.frequencyUnit) {
                 case 1: //Yearly
-                    nextOccuringNotification.startdate = castToLongDate(Date.parse(notification.startdate).addYears(occuranceFrequency));
+                    nextOccuringNotification.startdate = castToLongDate(new Date(notification.startdate).addYears(occuranceFrequency));
                     break;
                 case 2: //Monthly
-                    nextOccuringNotification.startdate = castToLongDate(Date.parse(notification.startdate).addMonths(occuranceFrequency));
+                    nextOccuringNotification.startdate = castToLongDate(new Date(notification.startdate).addMonths(occuranceFrequency));
                     break;
                 case 3: //Weekly
-                    nextOccuringNotification.startdate = castToLongDate(Date.parse(notification.startdate).addWeeks(occuranceFrequency));
+                    nextOccuringNotification.startdate = castToLongDate(new Date(notification.startdate).addWeeks(occuranceFrequency));
                     break;
                 case 4: //Hourly
-                    nextOccuringNotification.startdate = castToLongDate(Date.parse(notification.startdate).addHours(occuranceFrequency));
+                    nextOccuringNotification.startdate = castToLongDate(new Date(notification.startdate).addHours(occuranceFrequency));
                     break;
                 case 5: //Minute
-                    nextOccuringNotification.startdate = castToLongDate(Date.parse(notification.startdate).addMinutes(occuranceFrequency));
+                    nextOccuringNotification.startdate = castToLongDate(new Date(notification.startdate).addMinutes(occuranceFrequency));
                     break;
             }
+
+            nextOccuringNotification.data = "";
 
             if(nextOccuringNotification.startdate > notification.enddate) {  // Expiry/End Date reached, so no new notification to schedule
                 nextOccuringNotification = null;
@@ -102,6 +105,7 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
 
     return {
         enums: enums,
+        computeNextRecurringNotification: computeNextRecurringNotification,
         getCount: function (patientID) {
             return notificationsDataStore.search({
                 select: 'count(id)',
@@ -212,7 +216,7 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
             } else {
                 notification.status = "active";
                 notificationsDataStore.save(notification).then(function (notificationSavedData) {
-                    scheduleNativeNotification(notificationSavedData).then(function () {                // Add a native counter-part
+                        scheduleNativeNotification(notificationSavedData).then(function () {                // Add a native counter-part
                         deferredSave.resolve(notificationSavedData);
                     }).catch(function (err) {                        
                         deferredSave.resolve(notificationSavedData);

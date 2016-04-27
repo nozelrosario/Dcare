@@ -39,9 +39,9 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
     * @public
     * Save : Saved Data to Data Store.
     *  @params: data: {object} json data to be saved
-    *           config : {Object} Save config. Eg.{ fields : [field1, field2], saveEmptyValues: true,...  } }
+    *           config : {Object} Save config. Eg.{ keyFields : [field1, field2], saveEmptyValues: true,...  } }
                          optional parameter that control the data save process w.r.t insert/update , persist empty values etc.
-                                fields : {Array} specifies an array of fieldnames that will be matched to decide whether to insert new record or update.
+                                keyFields : {Array} specifies an array of fieldnames that will be matched to decide whether to insert new record or update.
                                 saveEmptyValues : {bool} Specifies if to save/overwrite null/empty values while updating record. Eg.
                                     when set false & oldData = {'a': 1, 'b': 2, 'c': 3 } newData = {'a': 4, 'b': 5, 'd':6 } => resultantData = {'a': 4, 'b': 5, 'd':6, 'c': 3 }
                                     when set  true & oldData = {'a': 1, 'b': 2, 'c': 3 } newData = {'a': 4, 'b': 5, 'd':6 } => resultantData = {'a': 4, 'b': 5, 'd':6 } 
@@ -56,10 +56,12 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 	            for (var i = 0 ; i < config.keyFields.length ; i++) {
 	                fieldName = config.keyFields[i]
 	                fieldValue = data[fieldName];
+	                if (i > 0 && queryCondition != "") queryCondition = queryCondition + " and ";
 	                if (fieldValue && fieldValue != "") {
 	                    if (typeof (fieldValue) === "string") fieldValue = "'" + fieldValue + "'";      //NR: format value for string comparison in query
-	                    if (i > 0 && queryCondition != "") queryCondition = queryCondition + ' and ';
-	                    queryCondition = queryCondition + fieldName + '=' + fieldValue;
+	                    queryCondition = queryCondition + fieldName + "=" + fieldValue;
+	                } else {
+	                    queryCondition = queryCondition + fieldName + "=" + "''";
 	                }
 	            }
 	            me.search({ select: "*", where: queryCondition }).then(function (matchedDataItem) {
@@ -97,8 +99,8 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 
 	        }
 	    } else {
-	        //NR: Save Data
-	        this.insertOrUpdate(data).then(function (savedData) {
+	        //NR: Self rectifying & recursive call to Save Data [As per PouchDB specifications i.e 'put' should be called as result of 'get' for Updates]
+	        this.save(data, { keyFields: ["id"], saveEmptyValues: false }).then(function (savedData) {
 	            deferredSave.resolve(savedData);
 	        }).fail(function (err) {
 	            deferredSave.reject(err);

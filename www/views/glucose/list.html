@@ -1,17 +1,18 @@
 <ion-pane>
     
     <ion-side-menus>
-        <ion-header-bar class="bar bar-header bar-energized">
-            <div class="buttons">
-                <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
-            </div>
-            <h1 class="title"><center><b>Glucose - {{currentPatient.name}}  </b></center></h1>
-            <div class="buttons">
-                <button class="button " ng-click="newGlucose()"><i class="icon ion-plus-round"></i></button>
-            </div>
-        </ion-header-bar>
+       
         <!-- Center content -->
 	    <ion-side-menu-content>
+            <ion-header-bar class="bar bar-header bar-energized">
+                <div class="buttons">
+                    <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
+                </div>
+                <h1 class="title"><center><b>Glucose - {{currentPatient.name}}  </b></center></h1>
+                <div class="buttons">
+                    <button class="button " ng-click="newGlucose()"><i class="icon ion-plus-round"></i></button>
+                </div>
+            </ion-header-bar>
 			<ion-content>
                 <md-list>
                     <md-item ng-repeat="glucose in glucoseList|orderBy:'datetime':true">

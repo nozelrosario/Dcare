@@ -83,7 +83,10 @@
         //     Following the Service Locator pattern of Angular
         var NotificationsStore = $injector.get('NotificationsStore');  
         // Mark current notification expired and save
-        NotificationsStore.save(angular.extend({}, notification, { status: "expired" }));
+        //TODO: Check if this should be deleted or Expired
+        //NotificationsStore.save(angular.extend({}, notification, { status: "expired" }));
+        NotificationsStore.remove(notification.id);
+
         // Check for Recursive notifications
         var nextOccuringNotification = NotificationsStore.computeNextRecurringNotification(notification);
         if (nextOccuringNotification) {
@@ -95,7 +98,7 @@
     //NR: Add a service Listener. Try Re-Shedule notification when triggered
     if (isNotificationServiceAvailable()) {
         cordova.plugins.notification.local.on('trigger', function (notification) {
-            reScheduleIfRecurringNotification(notification.data);
+            reScheduleIfRecurringNotification(JSON.parse(notification.data));
         });
     }
 
