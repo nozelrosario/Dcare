@@ -4,9 +4,11 @@ angular.module('dCare.init', ['ionic', 'dCare.Services.PatientsStore'])
 
     $scope.changeState = function (patientCount) {
         if (patientCount < 1) {
+            app.config.guidanceMode = true;
             $state.go("registration", {isFirstRun:true});
             //$state.go("registration", { isFirstRun:false, patientID: 2 });   //[Test] load specific patient
         } else {
+            app.config.guidanceMode = false;
             $state.go("dashboard", { patientID:1 });
         }
     };

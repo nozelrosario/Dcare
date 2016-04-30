@@ -33,6 +33,8 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
     $scope.isNextGlucoseAvailable = false;
     $scope.isPreviousGlucoseAvailable = true;
     $scope.isVitalsExpanded = false;
+    $scope.showOverlayHelp = app.config.isFirstDashboardView;
+    app.config.isFirstDashboardView = false;
 
     if (!defaultPatient) {
         $scope.currentPatient = allPatients[0];
@@ -42,6 +44,10 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
 
 
     // Action Methods
+
+    $scope.showHelp = function () {
+            $scope.showOverlayHelp = true;  
+    };
 
     $scope.toggleVitalsCardLayout = function () {
         if ($scope.isVitalsExpanded) {

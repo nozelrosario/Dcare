@@ -1,4 +1,5 @@
 <ion-pane>
+    <overlay-help show="showOverlayHelp" top-left-info="Tap here to open Menu" top-right-info="Tap here make a new Vitals entry" mid-left-info="Or Swipe right to open Menu"></overlay-help>
     <ion-side-menus>        
         <ion-side-menu-content >
             <!--<ion-content>-->
@@ -8,6 +9,7 @@
                 </div>
                 <h1 class="title"><center><b>Vitals - {{currentPatient.name}}</b></center></h1>
                 <div class="buttons">
+                    <md-icon class="icon ion-help" style="font-size: 25px; margin-right: 15px;" ng-click="showHelp()"></md-icon> 
                     <button class="button " ng-click="newVitals()"><i class="icon ion-plus-round"></i></button>
                 </div>
             </ion-header-bar>

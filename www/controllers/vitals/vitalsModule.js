@@ -29,6 +29,10 @@ vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicSideM
 
     // Action Methods
 
+    $scope.showHelp = function () {
+        $scope.showOverlayHelp = true;
+    };
+
     $scope.showVitalsList = function () {
         //TODO : implement height Weight page
         $state.go("vitalslist", { patientID: $scope.currentPatient.id, parentState: 'vitalsSummary' });

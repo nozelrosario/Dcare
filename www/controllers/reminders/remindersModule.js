@@ -27,6 +27,10 @@ remindersModule.controller('RemindersListController', function ($scope, $ionicSi
 
     // Action Methods
 
+    $scope.showHelp = function () {
+        $scope.showOverlayHelp = true;
+    };
+
     $scope.editReminder = function (reminderID) {
         $state.go("reminderForm", { patientID: $scope.currentPatient.id, reminderID: reminderID, parentState: 'activeReminderslist' });
     };

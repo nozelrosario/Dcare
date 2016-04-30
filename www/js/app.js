@@ -2,7 +2,7 @@
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
 
-var dCare = angular.module('dCare', ['ionic', 'dCare.init', 'dCare.registration', 'dCare.dashboard', 'ngMaterial', 'ngMessages']);
+var dCare = angular.module('dCare', ['ionic', 'dCare.init', 'dCare.registration', 'dCare.dashboard', 'ngMaterial', 'ngMessages', 'dCare.overlayHelp']);
 
 dCare.run(function ($ionicPlatform) {
     $ionicPlatform.ready(function () {

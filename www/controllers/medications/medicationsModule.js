@@ -25,6 +25,10 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
 
     // Action Methods
 
+    $scope.showHelp = function () {
+        $scope.showOverlayHelp = true;
+    };
+
     $scope.editMedication = function (medicationID) {
         $state.go("medicationForm", { patientID: $scope.currentPatient.id, medicationID: medicationID, parentState: 'medicationslist' });
     };

@@ -25,6 +25,10 @@ glucoseModule.controller('GlucoseListController', function ($scope, $ionicSideMe
 
     // Action Methods
 
+    $scope.showHelp = function () {
+        $scope.showOverlayHelp = true;
+    };
+
     $scope.editGlucose = function (glucoseID) {
         $state.go("glucoseForm", { patientID: $scope.currentPatient.id, glucoseID: glucoseID, parentState: 'glucoselist' });
     };

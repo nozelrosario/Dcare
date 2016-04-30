@@ -1,178 +1,180 @@
 <ion-pane>
-    <ion-side-menus>
-        <!-- Center content -->
-        <ion-side-menu-content>
-            <ion-header-bar class="bar bar-header bar-energized">
-                <div class="buttons">
-                    <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
-                </div>
-                <h1 class="title"><center><b>{{currentPatient.name}}</b></center></h1>
-                <div class="buttons">
-                    <button class="button " ng-click="togglePatientsList()"><i class="icon ion-person-stalker"></i></button>
-                </div>
-            </ion-header-bar>
-            <!--Dashboard content will go here-->
-            <!--<ion-nav-view name="glucose"></ion-nav-view>-->
-            <!--Patient Info Card -->
-            <ion-content>
-                <!--Vitals Info Card-->
-                <div class="list card">
-                    <div class="item item-avatar">
-                        <img ng-src="{{currentPatient.photo}}">
-                        <div class="bold-label">{{currentPatient.name}}</div>
-                        <p class="sub-label">{{currentPatient.gender}} {{(currentPatient.age)?' - ' + (currentPatient.age) +' old':''}} </p>
+    <overlay-help show="showOverlayHelp" top-left-info="Tap here to open Menu" top-right-info="Tap here to open patient list" mid-left-info="Or Swipe right to open Menu" mid-right-info="Or Swipe left to open patient list"></overlay-help>
+        <ion-side-menus>
+            <!-- Center content -->
+            <ion-side-menu-content>
+                <ion-header-bar class="bar bar-header bar-energized">
+                    <div class="buttons">
+                        <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
                     </div>
-                    <div class="item item-body" layout="row" layout-sm="row" style="padding: 0; background-color: rgba(250, 204, 101, 0.21)">
-                        <div flex="grow" ng-if="isVitalsExpanded" class="bold-label" style="padding:15px;">Vitals Summary</div>
-                        <div flex="grow" ng-if="!isVitalsExpanded" layout="row" layout-sm="row" layout-align="start center">
-                            <div class="sub-label"> Physical Condition :</div>
-                            <div ng-show="vitals.bmi <= 0" class="md-caption">(not available)</div>
-                            <div ng-show="vitals.bmi > 0 && vitals.bmi < 18.5" class="bold-label">Underweight</div>
-                            <div ng-show="vitals.bmi > 18.5 && vitals.bmi <= 25 " class="bold-label">Normal</div>
-                            <div ng-show="vitals.bmi > 25 && vitals.bmi <= 30 " class="bold-label">Overweight</div>
-                            <div ng-show="vitals.bmi > 30" class="bold-label">Obese</div>
-                        </div>
-                        <md-button ng-class="isVitalsExpanded?'ion-android-contract':'ion-android-expand'" ng-click="toggleVitalsCardLayout()" class="md-icon-button " style="font-size:40px;" aria-label="expand-Collapse"></md-button>
+                    <h1 class="title"><center><b>{{currentPatient.name}}</b></center></h1>
+                    <div class="buttons">
+                        <md-icon class="icon ion-help" style="font-size: 25px; margin-right: 15px;" ng-click="showHelp()"></md-icon>  
+                        <button class="button " ng-click="togglePatientsList()"><i class="icon ion-person-stalker"></i></button>                                              
                     </div>
-                    <div ng-if="isVitalsExpanded" class="item item-body">
-                        <div ng-if="!vitals" layout="column" layout-align="center center" class="card-overlay">
-                            <button class="md-fab ion-ios-plus-outline MediumFab md-button" ng-click="addNewVitalsEntry()" aria-label="Add" tabindex="0"></button>
-                            <span class="bold-label" style="color: white;">Add Vitals</span>
+                </ion-header-bar>
+                <!--Dashboard content will go here-->
+                <!--<ion-nav-view name="glucose"></ion-nav-view>-->
+                <!--Patient Info Card -->
+                <ion-content>
+                    <!--Vitals Info Card-->
+                    <div class="list card">
+                        <div class="item item-avatar">
+                            <img ng-src="{{currentPatient.photo}}">
+                            <div class="bold-label">{{currentPatient.name}}</div>
+                            <p class="sub-label">{{currentPatient.gender}} {{(currentPatient.age)?' - ' + (currentPatient.age) +' old':''}} </p>
                         </div>
-                        <div ng-include="'views/vitals/vitals_snapshot_card.html'"></div>
+                        <div class="item item-body" layout="row" layout-sm="row" style="padding: 0; background-color: rgba(250, 204, 101, 0.21)">
+                            <div flex="grow" ng-if="isVitalsExpanded" class="bold-label" style="padding:15px;">Vitals Summary</div>
+                            <div flex="grow" ng-if="!isVitalsExpanded" layout="row" layout-sm="row" layout-align="start center">
+                                <div class="sub-label"> Physical Condition :</div>
+                                <div ng-show="vitals.bmi <= 0" class="md-caption">(not available)</div>
+                                <div ng-show="vitals.bmi > 0 && vitals.bmi < 18.5" class="bold-label">Underweight</div>
+                                <div ng-show="vitals.bmi > 18.5 && vitals.bmi <= 25 " class="bold-label">Normal</div>
+                                <div ng-show="vitals.bmi > 25 && vitals.bmi <= 30 " class="bold-label">Overweight</div>
+                                <div ng-show="vitals.bmi > 30" class="bold-label">Obese</div>
+                            </div>
+                            <md-button ng-class="isVitalsExpanded?'ion-android-contract':'ion-android-expand'" ng-click="toggleVitalsCardLayout()" class="md-icon-button " style="font-size:40px;" aria-label="expand-Collapse"></md-button>
+                        </div>
+                        <div ng-if="isVitalsExpanded" class="item item-body">
+                            <div ng-if="!vitals" layout="column" layout-align="center center" class="card-overlay">
+                                <button class="md-fab ion-ios-plus-outline MediumFab md-button" ng-click="addNewVitalsEntry()" aria-label="Add" tabindex="0"></button>
+                                <span class="bold-label" style="color: white;">Add Vitals</span>
+                            </div>
+                            <div ng-include="'views/vitals/vitals_snapshot_card.html'"></div>
+                        </div>
                     </div>
-                </div>
-                <!--Glucose Info Card-->
-                <div class="list card">
-                    <div class="item item-body">
-                        <div ng-if="!glucose" layout="column" layout-align="center center" class="card-overlay">
-                            <button class="md-fab ion-ios-plus-outline MediumFab md-button" ng-click="addNewGlucoseEntry()" aria-label="Add" tabindex="0"></button>
-                            <span class="bold-label" style="color: white;">Add Glucose entry</span>
-                        </div>
-                        <div layout="row" layout-sm="row">
-                            <div flex="70" layout="column" style="">
-                                <!-- Glucose Reading-->
-                                <div layout="column" layout-align="center center" class="digital-display">
-                                    <div style="height:55px; padding-top:5px;"><span class="secondary-label">{{enums.glucoseTypes[glucose.type].short_label}}</span></div>
-                                    <div layout="row" layout-sm="column" layout-align="center center">
-                                        <span class="primary-label">{{glucose.glucosevalue}}</span>
-                                        <span class="secondary-label">mg/dL</span>
+                    <!--Glucose Info Card-->
+                    <div class="list card">
+                        <div class="item item-body">
+                            <div ng-if="!glucose" layout="column" layout-align="center center" class="card-overlay">
+                                <button class="md-fab ion-ios-plus-outline MediumFab md-button" ng-click="addNewGlucoseEntry()" aria-label="Add" tabindex="0"></button>
+                                <span class="bold-label" style="color: white;">Add Glucose entry</span>
+                            </div>
+                            <div layout="row" layout-sm="row">
+                                <div flex="70" layout="column" style="">
+                                    <!-- Glucose Reading-->
+                                    <div layout="column" layout-align="center center" class="digital-display">
+                                        <div style="height:55px; padding-top:5px;"><span class="secondary-label">{{enums.glucoseTypes[glucose.type].short_label}}</span></div>
+                                        <div layout="row" layout-sm="column" layout-align="center center">
+                                            <span class="primary-label">{{glucose.glucosevalue}}</span>
+                                            <span class="secondary-label">mg/dL</span>
+                                        </div>
+                                    </div>
+                                    <div class="item tabs " style="height:100px">
+                                        <div layout="row" layout-align="center center" class="tab-item">
+                                            <md-button class="md-flat ion-ios-arrow-left SmallFab " aria-label="Previous" ng-disabled="!isPreviousGlucoseAvailable" ng-click="getPreviousGlucose()" ng-disabled="glucose.isFirstEntry"></md-button>
+                                        </div>
+                                        <div layout="row" layout-align="center center" class="tab-item">
+                                            <md-button class="md-flat ion-ios-plus-outline MediumFab" aria-label="Add" ng-click="addNewGlucoseEntry()"></md-button>
+                                        </div>
+                                        <div layout="row" layout-align="center center" class="tab-item">
+                                            <md-button class="md-flat ion-ios-arrow-right SmallFab" aria-label="Next" ng-disabled="!isNextGlucoseAvailable" ng-click="getNextGlucose()" ng-disabled="glucose.isLastEntry"></md-button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="item tabs " style="height:100px">
-                                    <div layout="row" layout-align="center center" class="tab-item">
-                                        <md-button class="md-flat ion-ios-arrow-left SmallFab " aria-label="Previous" ng-disabled="!isPreviousGlucoseAvailable" ng-click="getPreviousGlucose()" ng-disabled="glucose.isFirstEntry"></md-button>
+                                <div flex layout="column" layout-align="center center">
+                                    <!-- Glucose type & Time-->
+                                    <div style="border-bottom: 1px solid rgb(180, 180, 180); width:100%">
+                                        <!--<div class="bold-label">_-^-`\_</div>-->
+                                        <div ng-click="openTrend()" jq-sparkline sparkline-config="glucoseTrend.options" ng-model="glucoseTrend.data" class="GlucoseSparkline"></div>
                                     </div>
-                                    <div layout="row" layout-align="center center" class="tab-item">
-                                        <md-button class="md-flat ion-ios-plus-outline MediumFab" aria-label="Add" ng-click="addNewGlucoseEntry()"></md-button>
-                                    </div>
-                                    <div layout="row" layout-align="center center" class="tab-item">
-                                        <md-button class="md-flat ion-ios-arrow-right SmallFab" aria-label="Next" ng-disabled="!isNextGlucoseAvailable" ng-click="getNextGlucose()" ng-disabled="glucose.isLastEntry"></md-button>
+                                    <div class="sub-label">Measured on</div>
+                                    <div>
+                                        <date-time-box ng-model="glucose.datetime" box-size="20px" box-positioning="inline-flex" style="margin-left:10px"></date-time-box>
                                     </div>
                                 </div>
                             </div>
-                            <div flex layout="column" layout-align="center center">
-                                <!-- Glucose type & Time-->
-                                <div style="border-bottom: 1px solid rgb(180, 180, 180); width:100%">
-                                    <!--<div class="bold-label">_-^-`\_</div>-->
-                                    <div ng-click="openTrend()" jq-sparkline sparkline-config="glucoseTrend.options" ng-model="glucoseTrend.data" class="GlucoseSparkline"></div>
-                                </div>
-                                <div class="sub-label">Measured on</div>
-                                <div>
-                                    <date-time-box ng-model="glucose.datetime" box-size="20px" box-positioning="inline-flex" style="margin-left:10px"></date-time-box>
-                                </div>
-                            </div>
                         </div>
-                    </div>
 
-                </div>
-                <!--Notifications Info Card-->
-                <div class="list card" ng-show="notificationsList.length">
-                    <div class="item item-divider">  Notifications   </div>
-                    <div class="item item-body">
-                        <md-list>
-                            <md-item ng-repeat="notification in notificationsList | limitTo:3" ng-click="showNotificationDetails(notification,$event)">
-                                <md-item-content>
-                                    <md-button class="button-full menu-button">
-                                        <div layout="row" class="list-row">
-                                            <img ng-src="{{enums.notificationType[notification.notificationType].image}}" style="height:50px;width:50px;margin:5px">
-                                            <div layout="column" layout-align="center start">
-                                                <div class="menu-title">{{notification.title}}</div>
-                                                <div class="menu-sub-title">{{notification.text}} </div>
-                                                <div class="menu-sub-title">{{notification.startdate | prettifyDate:'calendar'}} </div>
+                    </div>
+                    <!--Notifications Info Card-->
+                    <div class="list card" ng-show="notificationsList.length">
+                        <div class="item item-divider">  Notifications   </div>
+                        <div class="item item-body">
+                            <md-list>
+                                <md-item ng-repeat="notification in notificationsList | limitTo:3" ng-click="showNotificationDetails(notification,$event)">
+                                    <md-item-content>
+                                        <md-button class="button-full menu-button">
+                                            <div layout="row" class="list-row">
+                                                <img ng-src="{{enums.notificationType[notification.notificationType].image}}" style="height:50px;width:50px;margin:5px">
+                                                <div layout="column" layout-align="center start">
+                                                    <div class="menu-title">{{notification.title}}</div>
+                                                    <div class="menu-sub-title">{{notification.text}} </div>
+                                                    <div class="menu-sub-title">{{notification.startdate | prettifyDate:'calendar'}} </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </md-button>
-                                </md-item-content>
-                            </md-item>
-                        </md-list>
+                                        </md-button>
+                                    </md-item-content>
+                                </md-item>
+                            </md-list>
+                        </div>
                     </div>
-                </div>
 
-            </ion-content>
-        </ion-side-menu-content>
+                </ion-content>
+            </ion-side-menu-content>
 
-        <!-- Left menu -->
-        <ion-side-menu side="left">
-            <!--Dashboard left menu containing patient specific actions [Add medical data, appointments, medications e.t.c]-->
-            <ion-content>
-                <md-list>
-                    <md-item ng-repeat="menuItem in menuItems">
-                        <md-item-content>
-                            <md-button menu-close ng-click="activateMenuItem(menuItem.id)" class="button-full menu-button">
-                                <div layout="row" class="list-row">
-                                    <i class="menu-icon" ng-class="menuItem.icon"></i>
-                                    <div layout="column">
-                                        <div class="menu-title">{{menuItem.title}}</div>
-                                        <div class="menu-sub-title">{{menuItem.subTitle}}</div>
-                                    </div>
-                                </div>
-                            </md-button>
-                        </md-item-content>
-                    </md-item>
-                </md-list>
-            </ion-content>
-        </ion-side-menu>
-
-        <!-- Right menu -->
-        <ion-side-menu side="right">
-            <!--Dashboard Right menu containing Patient List-->
-            <ion-content>
-                <md-input-container flex class="md-icon-float md-icon-right large-input" style="margin-top: 0px; margin-left: 15px; ">
-                    <md-icon class="ion-search"></md-icon>
-                    <input ng-model="searchText" type="text" placeholder="Search">
-                </md-input-container>
-                <ion-scroll direction="y" style="height: 90%; margin-top: 55px;">
+            <!-- Left menu -->
+            <ion-side-menu side="left">
+                <!--Dashboard left menu containing patient specific actions [Add medical data, appointments, medications e.t.c]-->
+                <ion-content>
                     <md-list>
-                        <md-item>
+                        <md-item ng-repeat="menuItem in menuItems">
                             <md-item-content>
-                                <md-button menu-close ng-click="switchDashboardForPatient('newPatient')" class="button-full menu-button">
+                                <md-button menu-close ng-click="activateMenuItem(menuItem.id)" class="button-full menu-button">
                                     <div layout="row" class="list-row">
-                                        <i class="menu-icon ion-person-add" style="height:70px;width:70px;margin:10px"></i>
-                                        <div layout="column" layout-align="center start">
-                                            <div class="menu-title">Add New</div>
-                                            <div class="menu-sub-title">Add a new person you care for</div>
-                                        </div>
-                                    </div>
-                                </md-button>
-                            </md-item-content>
-                        </md-item>
-                        <md-item ng-repeat="patient in patients | filter:searchText">
-                            <md-item-content>
-                                <md-button menu-close ng-click="switchDashboardForPatient(patient.id)" class="button-full menu-button">
-                                    <div layout="row" class="list-row">
-                                        <img flex="20" ng-src="{{patient.photo}}" style="height:70px;width:70px;margin:10px">
-                                        <div layout="column" layout-align="center start">
-                                            <div class="menu-title">{{patient.name}}</div>
-                                            <div class="menu-sub-title">{{patient.gender}} - {{patient.age}}</div>
+                                        <i class="menu-icon" ng-class="menuItem.icon"></i>
+                                        <div layout="column">
+                                            <div class="menu-title">{{menuItem.title}}</div>
+                                            <div class="menu-sub-title">{{menuItem.subTitle}}</div>
                                         </div>
                                     </div>
                                 </md-button>
                             </md-item-content>
                         </md-item>
                     </md-list>
-                </ion-scroll>
-            </ion-content>
-        </ion-side-menu>
-    </ion-side-menus>
-    </ion-panemd-theme>
+                </ion-content>
+            </ion-side-menu>
+
+            <!-- Right menu -->
+            <ion-side-menu side="right">
+                <!--Dashboard Right menu containing Patient List-->
+                <ion-content>
+                    <md-input-container flex class="md-icon-float md-icon-right large-input" style="margin-top: 0px; margin-left: 15px; ">
+                        <md-icon class="ion-search"></md-icon>
+                        <input ng-model="searchText" type="text" placeholder="Search">
+                    </md-input-container>
+                    <ion-scroll direction="y" style="height: 90%; margin-top: 55px;">
+                        <md-list>
+                            <md-item>
+                                <md-item-content>
+                                    <md-button menu-close ng-click="switchDashboardForPatient('newPatient')" class="button-full menu-button">
+                                        <div layout="row" class="list-row">
+                                            <i class="menu-icon ion-person-add" style="height:70px;width:70px;margin:10px"></i>
+                                            <div layout="column" layout-align="center start">
+                                                <div class="menu-title">Add New</div>
+                                                <div class="menu-sub-title">Add a new person you care for</div>
+                                            </div>
+                                        </div>
+                                    </md-button>
+                                </md-item-content>
+                            </md-item>
+                            <md-item ng-repeat="patient in patients | filter:searchText">
+                                <md-item-content>
+                                    <md-button menu-close ng-click="switchDashboardForPatient(patient.id)" class="button-full menu-button">
+                                        <div layout="row" class="list-row">
+                                            <img flex="20" ng-src="{{patient.photo}}" style="height:70px;width:70px;margin:10px">
+                                            <div layout="column" layout-align="center start">
+                                                <div class="menu-title">{{patient.name}}</div>
+                                                <div class="menu-sub-title">{{patient.gender}} - {{patient.age}}</div>
+                                            </div>
+                                        </div>
+                                    </md-button>
+                                </md-item-content>
+                            </md-item>
+                        </md-list>
+                    </ion-scroll>
+                </ion-content>
+            </ion-side-menu>
+        </ion-side-menus>
+        </ion-panemd-theme>

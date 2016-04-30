@@ -12,6 +12,7 @@ registrationModule.controller('RegistrationController', function ($scope, $mdDia
 
     $scope.isFirstRun = JSON.parse($stateParams.isFirstRun);
     $scope.proceed = function () {
+        app.config.isFirstDashboardView = true;
         $state.go("identificationInfo", { parentPatientID: $stateParams.parentPatientID, parentState: $scope.parentState });
     };
     if ($scope.isFirstRun) {
@@ -87,6 +88,7 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
 
     //Action Methods
     $scope.navigateBack = function () {
+        app.config.isFirstDashboardView = false;
         // transition to previous state
         if ($scope.patient && $scope.patient.id) {
             $state.go($scope.parentState, { patientID: $scope.patient.id, parentState: $scope.parentState });
