@@ -19,20 +19,24 @@
             var notificationSuccess = function () {
                 app.log.info("Done adding Notification via. Cordova plugin");
             };
+            var setNotification = function () {
+                // check if notification already present [Create else Update]
+                cordova.plugins.notification.local.isPresent(notificationConfig.id, function (notificationPresent) {
+                    if (notificationPresent) {
+                        app.log.info("Updating Notification via. Cordova plugin");
+                        cordova.plugins.notification.local.update(notificationConfig, notificationSuccess);
+                    } else {
+                        app.log.info("Creating Notification via. Cordova plugin");
+                        cordova.plugins.notification.local.schedule(notificationConfig, notificationSuccess);
+                    }
+                });
+            };
             notificationPermissionCheck().then(function (permisionExists) {
                 if (!permisionExists) {
                     // if Not exists, then request for it
                     requestNotificationPermission().then(function (permissionGranted) {
-                        // Permission Granted
-                        // check if notification already present [Create else Update]
-                        cordova.plugins.notification.local.isPresent(id, function (notificationPresent) {
-                            if (notificationPresent) {
-                                cordova.plugins.notification.local.update(notificationConfig, notificationSuccess);
-                            } else {
-                                cordova.plugins.notification.local.schedule(notificationConfig, notificationSuccess);
-                            }
-                        });
-
+                        // Permission Granted, Set Notification.
+                        setNotification();
                         deferredSchedule.resolve();
                     }).catch(function (permissionGranted) {
                         // Permission Rejected
@@ -41,8 +45,8 @@
                         deferredSchedule.reject(err);
                     });
                 } else {
-                    // Permission already Exists
-                    cordova.plugins.notification.local.schedule(notificationConfig, notificationSuccess);
+                    // Permission already Exists, Set Notification.
+                    setNotification();
                     deferredSchedule.resolve();
                 }
             });
@@ -78,27 +82,16 @@
         return deferredCancel.promise;
     };
 
-    var reScheduleIfRecurringNotification = function (notification) {
-        // NR: Injecting Notification Store explicitly, as injecting at init causes Circular dependency issue.
-        //     Following the Service Locator pattern of Angular
-        var NotificationsStore = $injector.get('NotificationsStore');  
-        // Mark current notification expired and save
-        //TODO: Check if this should be deleted or Expired
-        //NotificationsStore.save(angular.extend({}, notification, { status: "expired" }));
-        NotificationsStore.remove(notification.id);
-
-        // Check for Recursive notifications
-        var nextOccuringNotification = NotificationsStore.computeNextRecurringNotification(notification);
-        if (nextOccuringNotification) {
-            // If recurring notification exists, then push notification to Notification Store => which in turn will add a local notification
-            NotificationsStore.save(nextOccuringNotification);
-        }
-    };
-
     //NR: Add a service Listener. Try Re-Shedule notification when triggered
     if (isNotificationServiceAvailable()) {
         cordova.plugins.notification.local.on('trigger', function (notification) {
-            reScheduleIfRecurringNotification(JSON.parse(notification.data));
+            // Wireup trigger handler
+            // might be used in future
+        });
+
+        cordova.plugins.notification.local.on('click', function (notification) {
+            // Wireup click handler
+            // might be used in future
         });
     }
 

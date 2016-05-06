@@ -46,10 +46,35 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
                 id: notification.id,
                 text: notification.text,
                 title: notification.title,
-                //every: (notification.frequencyUnit) ? notification.frequencyUnit : null, // not needed as recurring handled explicitly
-                date: notification.startdate,
                 data: notification
             };
+
+            if (notification.frequencyUnit) {
+                delete nativeNotificationCofig.at;
+                nativeNotificationCofig.firstAt = notification.startdate;
+                switch (notification.frequencyUnit) {
+                    case 1: //Yearly
+                        nativeNotificationCofig.every = "year";
+                        break;
+                    case 2: //Monthly
+                        nativeNotificationCofig.every = "month";
+                        break;
+                    case 3: //Weekly
+                        nativeNotificationCofig.every = "week";
+                        break;
+                    case 4: //Hourly
+                        nativeNotificationCofig.every = "hour";
+                        break;
+                    case 5: //Minute
+                        nativeNotificationCofig.every = "minute";
+                        break;
+                        // 'day' & 'second' also possible
+                }
+            } else {
+                delete nativeNotificationCofig.firstAt;
+                nativeNotificationCofig.at = notification.startdate;
+            }
+
         NotificationService.scheduleNotification(nativeNotificationCofig).then(function () {
                 deferredScheduleNotification.resolve(notification);
             }).catch(function (err) {                   // NR: Catch corresponds to relative $q promise of angular. Hence Required.
@@ -61,51 +86,8 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
         return deferredScheduleNotification.promise;
     };
 
-    var computeNextRecurringNotification = function (notification) {
-        var nextOccuringNotification = null, occuranceFrequency ;
-        if (notification && notification.frequencyUnit) {            
-            occuranceFrequency = (notification.frequency > 0) ? notification.frequency : 1; // Default frequency to 1 in case empty
-            nextOccuringNotification = {};
-            nextOccuringNotification.patientID = notification.patientID;
-            nextOccuringNotification.text = notification.text;
-            nextOccuringNotification.title = notification.title;
-            nextOccuringNotification.notificationType = notification.notificationType;
-            nextOccuringNotification.frequencyUnit = notification.frequencyUnit;
-            nextOccuringNotification.frequency = notification.frequency;
-            nextOccuringNotification.status = "active";
-            nextOccuringNotification.reminderID = notification.reminderID;
-            nextOccuringNotification.enddate = notification.enddate;
-
-            switch (nextOccuringNotification.frequencyUnit) {
-                case 1: //Yearly
-                    nextOccuringNotification.startdate = castToLongDate(new Date(notification.startdate).addYears(occuranceFrequency));
-                    break;
-                case 2: //Monthly
-                    nextOccuringNotification.startdate = castToLongDate(new Date(notification.startdate).addMonths(occuranceFrequency));
-                    break;
-                case 3: //Weekly
-                    nextOccuringNotification.startdate = castToLongDate(new Date(notification.startdate).addWeeks(occuranceFrequency));
-                    break;
-                case 4: //Hourly
-                    nextOccuringNotification.startdate = castToLongDate(new Date(notification.startdate).addHours(occuranceFrequency));
-                    break;
-                case 5: //Minute
-                    nextOccuringNotification.startdate = castToLongDate(new Date(notification.startdate).addMinutes(occuranceFrequency));
-                    break;
-            }
-
-            nextOccuringNotification.data = "";
-
-            if(nextOccuringNotification.startdate > notification.enddate) {  // Expiry/End Date reached, so no new notification to schedule
-                nextOccuringNotification = null;
-            }
-        }
-        return nextOccuringNotification;
-    };
-
     return {
         enums: enums,
-        computeNextRecurringNotification: computeNextRecurringNotification,
         getCount: function (patientID) {
             return notificationsDataStore.search({
                 select: 'count(id)',
@@ -156,49 +138,6 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
                 deferredDelete.reject(err);
             });
             return deferredDelete.promise;
-        },
-        snoozeNotification: function (notificationID) {
-            // check if notification is recursive, if no recursive delete datastore entry + remove native notification via service
-            // if recursive, reschedule next notification in the series, and delete the current notfication as above
-            var deferredSnooze = $q.defer();
-            var me = this, nextOccurance; // computeNextRecurringNotification();
-            this.getNotificationByID(notificationID).then(function (notificationToBeDeleted) {
-                if (notificationToBeDeleted && notificationToBeDeleted.id > 0) {
-                    nextOccurance = computeNextRecurringNotification(notificationToBeDeleted);
-                    if (nextOccurance) {                                                                  // Recursive
-                        me.notificationsDataStore.remove(notificationToBeDeleted.id).then(function () {   // Delete current notification
-                            if (NotificationService.isNotificationServiceAvailable()) {                   // Delete native counter-part
-                                NotificationService.removeNotification(notificationToBeDeleted.id);
-                            }
-                            me.notificationsDataStore.save(nextOccurance).then(function () {              // Attempt re-schedule recursive notification
-                                deferredSnooze.resolve();
-                            }).fail(function (err) {              // re-scheduling notification fails
-                                app.log.error("Could not set next recurring notification." + " [Error: " + err + "]");
-                                deferredSnooze.resolve();
-                            });
-                        }).fail(function (err) {                  // delete failed 
-                            app.log.error("Could not snooze notification." + " [Error: " + err + "]");
-                            deferredSnooze.reject(err);
-                        });
-                    } else {                                                                                // Non-Recursive, one-Time
-                        me.notificationsDataStore.remove(notificationToBeDeleted.id).then(function () {     // Delete current notification
-                            if (NotificationService.isNotificationServiceAvailable()) {                     // Delete native counter-part
-                                NotificationService.removeNotification(notificationToBeDeleted.id);
-                            }
-                            deferredSnooze.resolve();
-                        }).fail(function (err) {
-                            app.log.error("Could not snooze notification." + " [Error: " + err + "]");
-                            deferredSnooze.reject(err);
-                        });                       
-                    }
-                } else {
-                    app.log.error("Could not find notification with ID: " + notificationID);
-                    deferredSnooze.resolve();
-                }
-            }).fail(function (err) {
-                deferredSnooze.reject(err);
-            });
-            return deferredSnooze.promise;
         },
         save: function (notification) {
             var deferredSave = $q.defer();

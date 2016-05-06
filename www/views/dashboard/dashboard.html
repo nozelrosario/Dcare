@@ -101,7 +101,7 @@
                                                 <div layout="column" layout-align="center start">
                                                     <div class="menu-title">{{notification.title}}</div>
                                                     <div class="menu-sub-title">{{notification.text}} </div>
-                                                    <div class="menu-sub-title">{{notification.startdate | prettifyDate:'calendar'}} </div>
+                                                    <div class="menu-sub-title">{{notification.startdate | prettifyDate:notification.frequency:((enums['frequencyUnit'])[notification.frequencyUnit]).label}}</div>
                                                 </div>
                                             </div>
                                         </md-button>
