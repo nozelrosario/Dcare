@@ -1,0 +1,44 @@
+<ion-pane>
+    <ion-header-bar class="bar bar-header bar-energized">
+        <md-button class="button" ng-click="cancel()" aria-label="Back">
+            <span class="ion-button-style ion-chevron-left"></span>
+            <b> Cancel </b>
+        </md-button>
+        <h1 class="title"> <center><b>Meal</b></center></h1>
+        <md-button class="button" ng-click="save()" aria-label="Save">
+            <b> Save </b>
+            <span class="ion-button-style ion-chevron-right"></span>
+        </md-button>
+    </ion-header-bar>
+    <form name="meal_entry_form" style="height:99%;">
+        <ion-scroll direction="y" style="height:99%">
+            <md-content class="content has-header " layout-align="center center" layout="column" layout-sm="column" style="height:auto;">
+                <div class="padding">
+                    <div><center><h1> Date Time ? </h1></center></div>
+                    <input label="Date & Time" name="datetime" required ng-model="meal.datetime" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', timeFormat:'hh:ii A', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
+                    <div ng-messages="meal_entry_form.datetime.$error">
+                        <div ng-message="required">Date is required.</div>                        
+                    </div>
+                </div>
+                <div layout="column" layout-sm="column" layout-align="center start" class="padding">
+                    <md-input-container class="large-input">
+                        <md-button class="md-fab md-mini md-primary" aria-label="Add Meal Details"><i class="icon ion-plus-round"></i>                            
+                        </md-button>
+                        <label>Meal Summary</label>
+                        <textarea required ng-model="meal.mealSummary" md-maxlength="300" rows="5" md-select-on-focus style="height:200px"></textarea>
+                        <!--<div class="hint">Tell us what you consumed [Eg. 1cup Milk &amp; 2 Breads with Jam]!</div>-->
+                        <div ng-messages="meal_entry_form.mealSummary.$error">
+                            <div ng-message="required">Meal Summary is required.</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="large-input">
+                        <label>Total Calories </label>
+                        <!--<div class="hint">Total Calories contained in the Meal</div>-->
+                        <input ng-model="meal.totalCalories">
+
+                    </md-input-container>
+                </div>
+            </md-content>
+        </ion-scroll>
+    </form>
+</ion-pane>
