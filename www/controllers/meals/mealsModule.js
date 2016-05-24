@@ -29,7 +29,7 @@ glucoseModule.controller('MealsListController', function ($scope, $ionicSideMenu
         $scope.showOverlayHelp = true;
     };
 
-    $scope.editMeal = function (glucoseID) {
+    $scope.editMeal = function (mealsID) {
         $state.go("mealForm", { patientID: $scope.currentPatient.id, mealsID: mealsID, parentState: 'mealslist' });
     };
 
@@ -88,9 +88,68 @@ glucoseModule.controller('MealsFormController', function ($scope, $ionicSideMenu
     if (meal) {
         $scope.meal = meal;
     } else {
-        $scope.meal = { patientID: $scope.currentPatient.id, datetime: castToLongDate(new Date()) };  // New entry : make any default values here if any
+        $scope.meal = { patientID: $scope.currentPatient.id, mealDetails:[], datetime: castToLongDate(new Date()) };  // New entry : make any default values here if any
     }
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'mealslist';
+
+    $scope.showFoodItemDialog = function showDialog(foodItem) {
+        $mdDialog.show({
+            parent: angular.element(document.body),
+            //targetEvent: $event,
+            scope: $scope,        // use parent scope in template
+            preserveScope: true,  // do not forget this if use parent scope
+            // Since GreetingController is instantiated with ControllerAs syntax
+            // AND we are passing the parent '$scope' to the dialog, we MUST
+            // use 'vm.<xxx>' in the template markup
+            templateUrl: 'views/meals/food_entry.html',
+            locals: {
+                foodItem: foodItem
+            },
+            controller: addFoodItemController
+        });
+        function addFoodItemController($scope, $mdDialog, foodItem) {
+            if (foodItem) {
+                $scope.food = foodItem;
+            } else {
+                $scope.food = {};
+            }
+            
+            //TODO: Handle when foodItem is non Empty
+
+            $scope.closeDialog = function () {
+                $mdDialog.hide();
+            };
+
+            $scope.add = function () {
+                //TODO: Validate
+                $scope.meal.mealDetails.push($scope.food);
+                $mdDialog.hide();
+            };
+
+            $scope.addAndNew = function () {
+                //TODO: Validate
+                $scope.meal.mealDetails.push($scope.food);
+                $scope.food = {};
+            };
+        }
+    };
+
+    $scope.deleteFoodItem = function (index) {
+        $scope.meal.mealDetails.splice(index,1);
+    };
+
+    var createMealSummary = function (mealDetails) {
+        var summaryText = "";
+        for (var i = 0; i < mealDetails.length; i++) {
+            summaryText = summaryText + ((mealDetails[i].quantity) ? (mealDetails[i].quantity + mealDetails[i].quantityUnit) : "") + " " + mealDetails[i].foodItem;
+            if (i == (mealDetails.length - 2)) {
+                summaryText = summaryText + " & ";
+            } else if(i != (mealDetails.length-1)) {
+                summaryText = summaryText + " , ";
+            }
+        }
+        return summaryText;
+    };
 
     // Action Methods
     $scope.changeState = function (meal) {
@@ -101,7 +160,8 @@ glucoseModule.controller('MealsFormController', function ($scope, $ionicSideMenu
 
     $scope.save = function () {
         if ($scope.meal_entry_form.$valid) {
-            $scope.meal.datetime = castToLongDate($scope.meal.datetime)
+            $scope.meal.datetime = castToLongDate($scope.meal.datetime);
+            $scope.meal.mealSummary = createMealSummary($scope.meal.mealDetails);
             var saveMealDataPromise = MealsStore.save($scope.meal);
             saveMealDataPromise.then($scope.changeState, $scope.saveFailed);
         }
