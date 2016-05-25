@@ -94,13 +94,9 @@ glucoseModule.controller('MealsFormController', function ($scope, $ionicSideMenu
 
     $scope.showFoodItemDialog = function showDialog(foodItem) {
         $mdDialog.show({
-            parent: angular.element(document.body),
-            //targetEvent: $event,
-            scope: $scope,        // use parent scope in template
-            preserveScope: true,  // do not forget this if use parent scope
-            // Since GreetingController is instantiated with ControllerAs syntax
-            // AND we are passing the parent '$scope' to the dialog, we MUST
-            // use 'vm.<xxx>' in the template markup
+            parent: angular.element(document.body),            
+            scope: $scope,
+            preserveScope: true,
             templateUrl: 'views/meals/food_entry.html',
             locals: {
                 foodItem: foodItem
@@ -113,23 +109,22 @@ glucoseModule.controller('MealsFormController', function ($scope, $ionicSideMenu
             } else {
                 $scope.food = {};
             }
-            
-            //TODO: Handle when foodItem is non Empty
-
             $scope.closeDialog = function () {
                 $mdDialog.hide();
             };
 
             $scope.add = function () {
-                //TODO: Validate
-                $scope.meal.mealDetails.push($scope.food);
-                $mdDialog.hide();
+                if ($scope.food_entry_form.$valid) {
+                    $scope.meal.mealDetails.push($scope.food);
+                    $mdDialog.hide();
+                }
             };
 
             $scope.addAndNew = function () {
-                //TODO: Validate
-                $scope.meal.mealDetails.push($scope.food);
-                $scope.food = {};
+                if ($scope.food_entry_form.$valid) {
+                    $scope.meal.mealDetails.push($scope.food);
+                    $scope.food = {};
+                }
             };
         }
     };

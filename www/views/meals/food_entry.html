@@ -1,0 +1,66 @@
+﻿<md-dialog aria-label="Food entry" style="height:100%;width:100%">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Food Item </h2>
+            <span flex></span>
+            <md-button class="md-icon-button ion-close-round" ng-click="closeDialog()">
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <form name="food_entry_form" style="height:99%">
+            <ion-scroll direction="y" style="height:95%" class="content has-header">
+                <md-content class="content" layout="column" layout-sm="column" style="height:auto;" layout-align="start center">
+                    <div layout="column" layout-sm="column" class="padding ">
+                        <div>
+                            <md-input-container class="large-input">
+                                <label>Food Item</label>
+                                <input name="foodItem" required ng-model="food.foodItem" placeholder="Food Item (Eg. Rice)">
+                                <div ng-messages="food_entry_form.foodItem.$error">
+                                    <div ng-message="required" class="validation-error">Please enter the name of food item</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div layout="row" layout-sm="row">
+                            <div flex="30" class="padding ">
+                                <md-input-container class="large-input">
+                                    <label>Quantity</label>
+                                    <input name="quantity" ng-model="food.quantity" placeholder="Quantity (Eg. 25)">
+                                </md-input-container>
+                            </div>
+                            <div flex="70" class="padding">
+                                <md-input-container class="large-input">
+                                    <!--<label>Unit</label>--> <!--Not working , try updating IONIC-->
+                                    <md-select ng-model="food.quantityUnit" style="width:100%;" placeholder="Unit (Eg. Gm)">
+                                        <md-option ng-repeat="option in enums.quantityUnit" ng-value="option.value" aria-label="{{ option.label }}">
+                                            {{ option.label }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <div>
+                            <md-input-container class="large-input">
+                                <label>Calories</label>
+                                <input name="calories" ng-model="food.calories">
+                            </md-input-container>
+                        </div>
+                        <div layout="row" layout-sm="row">
+                            <div flex="45">
+                                <md-button class="md-raised md-primary button button-block icon ion-plus-round" aria-label="Add Food Item" ng-click="add()">
+                                    <b>OK</b>
+                                </md-button>
+                            </div>
+                            <div flex="5"></div>
+                            <div flex="45">
+                                <md-button class="md-raised md-primary button button-block icon ion-plus-round" aria-label="Add Food Item & New" ng-click="addAndNew()">
+                                    <b> OK &amp; New</b>
+                                </md-button>
+                            </div>
+                        </div>
+                    </div>
+                </md-content>
+            </ion-scroll>
+        </form>
+    </md-dialog-content>
+</md-dialog>

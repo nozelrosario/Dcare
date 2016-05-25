@@ -23,6 +23,16 @@
     height:2.3em;
 }
 
+.large-input md-select md-select-label {
+    height: 40px;
+    width: 100%;
+}
+.large-input md-select md-select-label.md-placeholder {
+    font-size: 20px;
+    height: 40px;
+    width: 100%;
+}
+
 .datetime-input 
 {
     display: block;
