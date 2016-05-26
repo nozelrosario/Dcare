@@ -26,6 +26,7 @@
 .large-input md-select md-select-label {
     height: 40px;
     width: 100%;
+    font-size: 0.8em;
 }
 .large-input md-select md-select-label.md-placeholder {
     font-size: 20px;

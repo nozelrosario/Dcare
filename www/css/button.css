@@ -74,6 +74,8 @@
     text-transform:capitalize;
     font-weight:bold;
     font-size: 18px;
+    white-space: normal;
+    line-height: 26px;
 }
 
 .menu-button .menu-icon

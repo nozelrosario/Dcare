@@ -13,24 +13,9 @@
                     <button class="button " ng-click="newMeal()"><i class="icon ion-plus-round"></i></button>
                 </div>
             </ion-header-bar>
-			<ion-content>
-                <md-list>
-                    <md-item ng-repeat="meal in mealsList|orderBy:'datetime':true">
-                        <md-item-content>
-                            <md-button menu-close ng-click="editMeal(meal.id)" class="button-full menu-button">
-                                <div layout="row" class="list-row">
-                                    <date-time-box ng-model="meal.datetime" box-size="20px" box-positioning="inline-flex" class=""></date-time-box>
-                                    <div flex layout="column" layout-align="center start">
-                                        <div class="menu-title">{{meal.mealSummary}}</div>
-                                        <div class="menu-sub-title">Total of {{meal.totalCalories}} Cal</div>
-                                    </div>
-                                    <!--<i class="menu-icon" ng-class="{'ion-arrow-graph-up-left': glucose.trend == 'high' , 'ion-arrow-graph-down-right': glucose.trend == 'low' , 'ion-drag': glucose.trend == 'equal' }"></i>-->
-                                </div>
-                            </md-button>
-                        </md-item-content>
-                    </md-item>
-                </md-list>
-			</ion-content>  
+            <ion-content class="has-header">
+                <div ng-include="'views/meals/meals_list.html'"></div>  <!--NR: Ionic gives related error, hence nesting ng-include with a extrs <dvi> -->
+            </ion-content>  
         </ion-side-menu-content>
 
         <!-- Left menu -->

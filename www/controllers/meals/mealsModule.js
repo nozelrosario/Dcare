@@ -29,7 +29,7 @@ glucoseModule.controller('MealsListController', function ($scope, $ionicSideMenu
         $scope.showOverlayHelp = true;
     };
 
-    $scope.editMeal = function (mealsID) {
+    $scope.editMeal = $scope.onSelectMeal = function (mealsID) {
         $state.go("mealForm", { patientID: $scope.currentPatient.id, mealsID: mealsID, parentState: 'mealslist' });
     };
 
@@ -104,26 +104,32 @@ glucoseModule.controller('MealsFormController', function ($scope, $ionicSideMenu
             controller: addFoodItemController
         });
         function addFoodItemController($scope, $mdDialog, foodItem) {
+            var isEditMode = false;
             if (foodItem) {
                 $scope.food = foodItem;
+                isEditMode = true;
             } else {
                 $scope.food = {};
+                isEditMode = false;
             }
             $scope.closeDialog = function () {
+                isEditMode = false;
                 $mdDialog.hide();
             };
 
             $scope.add = function () {
                 if ($scope.food_entry_form.$valid) {
-                    $scope.meal.mealDetails.push($scope.food);
+                    if(!isEditMode) $scope.meal.mealDetails.push($scope.food);                    
+                    isEditMode = false;
                     $mdDialog.hide();
                 }
             };
 
             $scope.addAndNew = function () {
                 if ($scope.food_entry_form.$valid) {
-                    $scope.meal.mealDetails.push($scope.food);
+                    if (!isEditMode) $scope.meal.mealDetails.push($scope.food);
                     $scope.food = {};
+                    isEditMode = false;
                 }
             };
         }

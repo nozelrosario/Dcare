@@ -32,6 +32,31 @@
                             </md-radio-button>
                         </md-radio-group>                        
                     </div>
+                    <div layout="column" layout-sm="column" layout-align="center start" class="padding full-width" ng-show="glucose.glucoseType === (enums.glucoseTypes['postmeal']).value">
+                        <md-toolbar class="md-accent">
+                            <div class="md-toolbar-tools">
+                                Meal Details
+                            </div>
+                        </md-toolbar>
+                        <div class="full-width">
+                            <div class="item" ng-if="!glucose.mealID">
+                                <div layout="row" layout-sm="column" layout-align="center center">
+                                    <md-button class="md-raised md-primary button button-block icon ion-plus-round" aria-label="Select from Food Diary" ng-click="showMealLookupDialog()">
+                                        <b>Select from Food Diary</b>
+                                    </md-button>
+                                    <md-button class="md-raised md-primary button button-block icon ion-plus-round" aria-label="Add new Meal entry">
+                                        <b> Add new Meal entry</b>
+                                    </md-button>
+                                </div>
+                            </div>
+                            <div class="item item-button-right" ng-if="glucose.mealID">
+                                <div>{{glucose.mealSummary}}</div>
+                                <button class="button md-raised md-primary">
+                                    <i class="icon ion-android-delete"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <div layout="column" layout-sm="column" layout-align="center center" class="padding " style="width:100%">
                         <div><center><h1> Glucose Value ? </h1></center></div>                        
                         <div id="glucosevalue" ng-model="glucose.glucosevalue" jquery-dynameter jquery-dynameter-config="{ label:'Glucose', unit:'mg/dL', min:20, max:500, regions:{ 150:'normal', 180:'warn', 250:'error' } }"></div>

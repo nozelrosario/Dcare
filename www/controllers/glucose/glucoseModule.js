@@ -1,5 +1,5 @@
 var glucoseModule = angular.module('dCare.glucose', ['ionic',
-                                                     'dCare.Services.PatientsStore', 'dCare.Services.GlucoseStore',
+                                                     'dCare.Services.PatientsStore', 'dCare.Services.GlucoseStore', 'dCare.Services.MealsStore',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng']);
 
 //Controllers
@@ -78,7 +78,7 @@ glucoseModule.controller('GlucoseListController', function ($scope, $ionicSideMe
 
 
 
-glucoseModule.controller('GlucoseFormController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, glucose, currentPatient, GlucoseStore) {
+glucoseModule.controller('GlucoseFormController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, glucose, currentPatient, GlucoseStore, MealsStore) {
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = GlucoseStore.enums;
@@ -91,8 +91,44 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicSideMe
         $scope.glucose = { patientID: $scope.currentPatient.id, datetime: castToLongDate(new Date()) };  // New entry : make any default values here if any
     }
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'glucoselist';
-
     // Action Methods
+
+    $scope.showMealLookupDialog = function showDialog() {
+        $mdDialog.show({
+            parent: angular.element(document.body),
+            scope: $scope,
+            preserveScope: true,
+            template: '<md-dialog aria-label="Food entry" style="height:100%;width:100%;padding:10px;">' +
+                        '<md-toolbar>' +
+                            '<div class="md-toolbar-tools">' +
+                                '<h2>Food Item </h2>' +
+                                '<span flex></span>' +
+                                '<md-button class="md-icon-button ion-close-round" ng-click="closeDialog()">' +
+                                '</md-button>' +
+                            '</div>' +
+                        '</md-toolbar> ' +
+                        '<md-dialog-content ng-include="&#39;views/meals/meals_list.html&#39;">' +
+                       '</md-dialog-content>'+
+                      '</md-dialog>',
+            controller: selectMealController,
+            resolve: {
+                mealsList: function (MealsStore, $stateParams) { return MealsStore.getAllMealsForPatient($stateParams.patientID); }
+            }
+        });
+        function selectMealController($scope, $mdDialog, MealsStore, mealsList) {
+            $scope.closeDialog = function () {
+                $mdDialog.hide();
+            };
+
+            $scope.onSelectMeal = function (mealID, mealSummary) {
+                $scope.glucose.mealID = mealID;
+                $scope.glucose.mealSummary = mealSummary;
+                $mdDialog.hide();
+            };           
+        }
+    };
+
+
     $scope.changeState = function (glucose) {
         //$scope.glucose = glucose;
         // transition to next state
