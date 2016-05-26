@@ -98,7 +98,7 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicSideMe
             parent: angular.element(document.body),
             scope: $scope,
             preserveScope: true,
-            template: '<md-dialog aria-label="Food entry" style="height:100%;width:100%;padding:10px;">' +
+            template: '<md-dialog aria-label="Food entry" style="height:100%;width:100%;padding:0px;">' +
                         '<md-toolbar>' +
                             '<div class="md-toolbar-tools">' +
                                 '<h2>Food Item </h2>' +
@@ -107,7 +107,7 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicSideMe
                                 '</md-button>' +
                             '</div>' +
                         '</md-toolbar> ' +
-                        '<md-dialog-content ng-include="&#39;views/meals/meals_list.html&#39;">' +
+                        '<md-dialog-content style="padding:0px;" ng-include="&#39;views/meals/meals_list.html&#39;">' +
                        '</md-dialog-content>'+
                       '</md-dialog>',
             controller: selectMealController,
@@ -116,6 +116,7 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicSideMe
             }
         });
         function selectMealController($scope, $mdDialog, MealsStore, mealsList) {
+            $scope.mealsList = mealsList;
             $scope.closeDialog = function () {
                 $mdDialog.hide();
             };
@@ -128,6 +129,10 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicSideMe
         }
     };
 
+    $scope.clearMealSelection = function () {
+        $scope.glucose.mealID = "";
+        $scope.glucose.mealSummary = "";
+    };
 
     $scope.changeState = function (glucose) {
         //$scope.glucose = glucose;

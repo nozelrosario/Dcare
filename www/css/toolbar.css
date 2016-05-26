@@ -1,0 +1,7 @@
+﻿md-toolbar.sub-toolbar {
+    min-height: 45px;
+    height: 45px;
+    width: 100%;
+    min-width: 100%;
+    background-color: rgb(255,236,179);
+}
