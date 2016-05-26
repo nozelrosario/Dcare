@@ -28,7 +28,19 @@
                     { id: 2, patientID: '2', mealSummary: '3Piece(s) Pizza & 2tablespoon Syrup', mealDetails: [{ foodItem: 'Pizza', quantityUnit: 'piece',quantity: '3', calories: '200' }, { foodItem: 'Syrup', quantityUnit: 'tablespoon',quantity: '2', calories: '14' }], totalCalories: '214', datetime: '1298323623006' },
                     { id: 3, patientID: '4', mealSummary: '3Piece(s) Pizza', mealDetails: [{ foodItem: 'Pizza', quantityUnit: 'piece',quantity: '3', calories: '200' }], totalCalories: '200', datetime: '1288523623006' }
     ];*/
+    var prepareLineGraphSeriesData = function (data, xFieldName, yFieldName) {
+        var dataSeries = [];
 
+        if (data && xFieldName && yFieldName) {
+            for (var i = 0 ; i < data.length ; i++) {
+                var row = data[i];
+                dataSeries.push([(((row[xFieldName]) ? row[xFieldName] : "")), (((row[yFieldName]) ? row[yFieldName] : ""))]);
+            }
+        } else {
+            dataSeries.push([]);
+        }
+        return (dataSeries);
+    };
 
     return {
         enums: enums,
@@ -61,6 +73,20 @@
                     deferredFetch.resolve([]);
                 }
             });
+            return deferredFetch.promise;
+        },
+        getLineGraphDataForPatient: function (patientID) {
+            // Search on patients
+            var deferredFetch = $q.defer();
+            this.getAllMealsForPatient(patientID).then(function (data) {
+                var calorieseData = $filter('filter')(data, { totalCalories: '!' }, true);
+                var lineGraphData = [{ data: prepareLineGraphSeriesData(calorieseData, "datetime", "totalCalories"), name: "Calories Consumed" }];
+                deferredFetch.resolve(lineGraphData);
+            });
+            //SAMPLE// lineGraphData = [ {
+            //                            name: "Calories",
+            //                            data: [[1083297600000, 130], [1085976000000, 126], [1088568000000, 150], [1091246400000, 180]]
+            //                           }];
             return deferredFetch.promise;
         },
         save: function (meal) {

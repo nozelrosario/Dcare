@@ -1,9 +1,9 @@
-var glucoseModule = angular.module('dCare.meals', ['ionic',
+var mealsModule = angular.module('dCare.meals', ['ionic',
                                                      'dCare.Services.PatientsStore', 'dCare.Services.MealsStore',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng']);
 
 //Controllers
-glucoseModule.controller('MealsListController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, mealsList, currentPatient, MealsStore) {
+mealsModule.controller('MealsListController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, mealsList, currentPatient, MealsStore) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -46,7 +46,7 @@ glucoseModule.controller('MealsListController', function ($scope, $ionicSideMenu
                 $scope.newMeal();
                 break;
             case 3:
-                $state.go("mealtrend", { patientID: $scope.currentPatient.id, parentState: 'mealslist' });
+                $state.go("caloriestrend", { patientID: $scope.currentPatient.id, parentState: 'mealslist' });
                 break;
             case 4:
                 alert('Messages/Notificaions');
@@ -78,7 +78,7 @@ glucoseModule.controller('MealsListController', function ($scope, $ionicSideMenu
 
 
 
-glucoseModule.controller('MealsFormController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, meal, currentPatient, MealsStore) {
+mealsModule.controller('MealsFormController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, meal, currentPatient, MealsStore) {
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = MealsStore.enums;
@@ -193,122 +193,78 @@ glucoseModule.controller('MealsFormController', function ($scope, $ionicSideMenu
 });
 
 
-//glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, glucoseTrendData, currentPatient, GlucoseStore) {
+mealsModule.controller('MealsTrendController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, caloriesTrendData, currentPatient, MealsStore) {
 
-//    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'glucoselist';
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'mealslist';
 
 
-//    // init enums [to add more enums use $.extend($scope.enums, newEnum)]
-//    $scope.enums = GlucoseStore.enums;
+    // init enums [to add more enums use $.extend($scope.enums, newEnum)]
+    $scope.enums = MealsStore.enums;
     
 
 
-//    // Init Data
-//    $scope.currentPatient = currentPatient;
-//    $scope.data = glucoseTrendData;
+    // Init Data
+    $scope.currentPatient = currentPatient;
+    $scope.data = caloriesTrendData;
 
-//    //  High Charts options
+    //  High Charts options
 
-//    $scope.glucoseChartConfig = {
-//        chart: {
-//                   type: 'lineChart',
-//                   spacingTop:0,
-//                   spacingBottom:0,
-//                   spacingRight:50,
-//                   spacingLeft:0,
-//                   marginTop:0,
-//                   marginBottom:0,
-//                   marginRight:50,
-//                   marginLeft:0
-//               },
-//        xAxis: {
-//                   type: 'datetime',
-//                   dateTimeLabelFormats: { // don't display the dummy year
-//                                        month: '%e. %b',
-//                                        year: '%b'
-//                                     },
-//                   title: {
-//                          text: 'Date'
-//                   }
-//               },
-//     yAxis: {
-//        title: {
-//                text: 'Glucose mg/dL'
-//            },
-//            min: 0,
-//            plotBands: [{ // Extreme High
-//                from: 180,
-//                to: 500,
-//                color: 'rgba(255, 137, 137, 0.15)',
-//                label: {
-//                    text: 'High Blood Glucose',
-//                    style: {
-//                        color: '#606060'
-//                    }
-//                }
-//            },
-//                 { // 
-//                from: 150,
-//                to: 180,
-//                color: 'rgba(255, 197, 70, 0.15)',
-//                label: {
-//                    text: 'Borderline Diabetic',
-//                    style: {
-//                        color: '#606060'
-//                    }
-//                }
-//            }, { // Normal
-//                from: 90,
-//                to: 150,
-//                color: 'rgba(70, 255, 30, 0.15)',
-//                label: {
-//                    text: 'Normal',
-//                    style: {
-//                        color: '#606060'
-//                    }
-//                }
-//            }, { // Low blood sugar
-//                from: 0,
-//                to: 90,
-//                color: 'rgba(255, 137, 137, 0.15)',
-//                label: {
-//                    text: 'Low Blood Sugar',
-//                    style: {
-//                        color: '#606060'
-//                    }
-//                }
-//            }]
-//        },
-//        tooltip: {
-//            headerFormat: '<b>{series.name}</b><br>',
-//            pointFormat: '{point.x:%e. %b}: {point.y:.2f} mg/dL'
-//        },
-//        title: {
-//            text: 'Glucose Trend over time'
-//        },
-//        subtitle: {
-//            text: 'Shows how did your glucose values perform'
-//        },
-//        series: $scope.data
-//    };
+    $scope.caloriesChartConfig = {
+        chart: {
+                   type: 'lineChart',
+                   spacingTop:0,
+                   spacingBottom:0,
+                   spacingRight:50,
+                   spacingLeft:0,
+                   marginTop:0,
+                   marginBottom:0,
+                   marginRight:50,
+                   marginLeft:0
+               },
+        xAxis: {
+                   type: 'datetime',
+                   dateTimeLabelFormats: { // don't display the dummy year
+                                        month: '%e. %b',
+                                        year: '%b'
+                                     },
+                   title: {
+                          text: 'Date'
+                   }
+               },
+     yAxis: {
+        title: { text: 'Calories Consumed' },
+               min: 0
+        },
+        tooltip: {
+            headerFormat: '<b>{series.name}</b><br>',
+            pointFormat: '{point.x:%e. %b}: {point.y:.2f} calories'
+        },
+        title: {
+            text: 'Calories Consumed over time'
+        },
+        subtitle: {
+            text: 'Shows how much calories consumed over time'
+        },
+        series: $scope.data
+    };
 
     
-//    // Action Methods
-//    $scope.navigateBack = function () {
-//        // transition to previous state
-//        $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
-//    };
+    // Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
+    };
 
-//    $scope.$on("navigate-back", function (event, data) {
-//        if (data.intendedController === "GlucoseTrendController") $scope.navigateBack();
-//    });
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "MealsTrendController") $scope.navigateBack();
+    });
 
-//});
+});
 
 
 
 // Routings
-glucoseModule.config(function ($stateProvider, $urlRouterProvider) {
+mealsModule.config(function ($stateProvider, $urlRouterProvider) {
 
     $stateProvider
           .state('mealslist', {
@@ -330,16 +286,16 @@ glucoseModule.config(function ($stateProvider, $urlRouterProvider) {
               templateUrl: 'views/meals/new_entry.html',
               controller: 'MealsFormController',
               params: { 'patientID': null, 'mealsID': null, 'parentState': null }
-          //})
-          //.state('glucosetrend', {
-          //    resolve: {
-          //        glucoseTrendData: function (GlucoseStore, $stateParams) { return GlucoseStore.getLineGraphDataForPatient($stateParams.patientID); },
-          //        currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
-          //    },
-          //    //url: '/identificationInfo',  // cannot use as using params[]
-          //    templateUrl: 'views/glucose/trend.html',
-          //    controller: 'GlucoseTrendController',
-          //    params: { 'patientID': null, 'parentState': null }
+          })
+          .state('caloriestrend', {
+              resolve: {
+                  caloriesTrendData: function (MealsStore, $stateParams) { return MealsStore.getLineGraphDataForPatient($stateParams.patientID); },
+                  currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
+              },
+              //url: '/identificationInfo',  // cannot use as using params[]
+              templateUrl: 'views/meals/trend.html',
+              controller: 'MealsTrendController',
+              params: { 'patientID': null, 'parentState': null }
           });
 
 });

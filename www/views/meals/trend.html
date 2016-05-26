@@ -3,13 +3,13 @@
     <div class="buttons">
         <button class="button " ng-click="navigateBack()"><i class="icon ion-arrow-return-left"></i></button>
     </div>
-    <h1 class="title"><center><b>Glucose Trend -{{currentPatient.name}}</b></center></h1>
+    <h1 class="title"><center><b>Calories Trend -{{currentPatient.name}}</b></center></h1>
 </ion-header-bar>
 <ion-scroll direction="y" style="height:100%">
     <md-content class="content has-header " layout="column" style="height:auto;" >
-        <highchart id="glucoseTrend" config="glucoseChartConfig"></highchart>
-        <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center">
-             <span> If the lines stay in the Green area, then you are Good </span>
+        <highchart id="caloriesTrend" config="caloriesChartConfig"></highchart>
+        <md-whiteframe class="md-whiteframe-z1 padding" layout layout-align="center center">
+             <span> If the lines stay consistent without peaks, then you are Good </span>
         </md-whiteframe>
     </md-content>
 </ion-scroll>
