@@ -206,6 +206,7 @@ mealsModule.controller('MealsTrendController', function ($scope, $ionicSideMenuD
     // Init Data
     $scope.currentPatient = currentPatient;
     $scope.data = caloriesTrendData;
+    $scope.dateFilter = {};
 
     //  High Charts options
 
@@ -250,6 +251,16 @@ mealsModule.controller('MealsTrendController', function ($scope, $ionicSideMenuD
 
     
     // Action Methods
+
+    $scope.filterDataOnDate = function () {
+        fromDate = castToLongDate($scope.dateFilter.fromDate);
+        toDate = castToLongDate($scope.dateFilter.toDate);
+        MealsStore.getLineGraphDataForPatient($scope.currentPatient.id, fromDate, toDate).then(function (filteredData) {
+            $scope.data = filteredData;
+            $scope.caloriesChartConfig.series = $scope.data;
+        });
+    };
+
     $scope.navigateBack = function () {
         // transition to previous state
         $state.go($scope.parentState, { patientID: $scope.currentPatient.id });

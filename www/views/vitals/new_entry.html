@@ -17,12 +17,12 @@
                     <div class="padding"><center><h2> What is your Height ? </h2></center></div>
                     <div layout="row" layout-sm="row" layout-align="center center" class="padding range" style="width:300px">
                         <i class="icon ion-minus-circled"></i>
-                        <md-slider class="md-primary" name="height" aria-label="height" min="145" max="230" ng-change="calculateBMI()" ng-model="vitals.height" style="width:100%"> </md-slider>
+                        <md-slider class="md-primary" name="height" aria-label="height" min="0" max="230" ng-change="calculateBMI()" ng-model="vitals.height" style="width:100%"> </md-slider>
                         <!--<input type="range" name="height" min="145" max="230" ng-change="calculateBMI()" ng-model="vitals.height">-->
                         <i class="icon ion-plus-circled"></i>
                     </div>
                     <h1>
-                        <b><input ng-model="vitals.height" add-clear add-clear-config="{returnFocus:false, showOnLoad:true, hidOnBlur:false }" style="border-bottom: 1px solid rgb(163, 157, 157) !important; width: 150px; background-color:#ffffff; border:none; text-align:center;font-weight:bold;" /></b>
+                        <b><input ng-model="vitals.height" add-clear add-clear-config="{resetValue:0, returnFocus:false, showOnLoad:true, hidOnBlur:false }" style="border-bottom: 1px solid rgb(163, 157, 157) !important; width: 150px; background-color:#ffffff; border:none; text-align:center;font-weight:bold;" /></b>
                         <select disabled>
                             <option selected>Cm</option>
                             <option>Feet</option>

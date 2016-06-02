@@ -65,41 +65,54 @@ angular.module('dCare.Services.VitalsStore', [])
                 where: "patientID = " + patientID
             });
         },
-        getAllVitalsForPatient: function (patientID) {
-            return vitalsDataStore.search({
-                select: '*',
-                where: "patientID=" + patientID + ""
-            });
+        getAllVitalsForPatient: function (patientID, fromDate, toDate) {
+            var dataPromise;
+            if (fromDate || toDate) {
+                var query = "patientID=" + patientID;
+                if (fromDate) query += " and datetime >=" + fromDate;
+                if (toDate) query += " and datetime <=" + toDate;
+                dataPromise = vitalsDataStore.search({
+                    select: '*',
+                    where: query + ""
+                });
+
+            } else {
+                dataPromise = vitalsDataStore.search({
+                    select: '*',
+                    where: "patientID=" + patientID + ""
+                });
+            }
+            return dataPromise;
         },
         getVitalByID: function (vitalsID) {
             return vitalsDataStore.getDataByID(vitalsID);
         },
-        getGraphDataForHeight: function (patientID) {
+        getGraphDataForHeight: function (patientID, fromDate, toDate) {
             var deferredFetch = $q.defer();
-            this.getAllVitalsForPatient(patientID).then(function (data) {
+            this.getAllVitalsForPatient(patientID, fromDate, toDate).then(function (data) {
                 deferredFetch.resolve(prepareLineGraphData(data, "datetime", "height", "Height"));
             });
             return deferredFetch.promise;
         },
-        getGraphDataForWeight: function (patientID) {
+        getGraphDataForWeight: function (patientID, fromDate, toDate) {
             var deferredFetch = $q.defer();
-            this.getAllVitalsForPatient(patientID).then(function (data) {
+            this.getAllVitalsForPatient(patientID, fromDate, toDate).then(function (data) {
                 deferredFetch.resolve(prepareLineGraphData(data, "datetime", "weight", "Weight"));
             });
             return deferredFetch.promise;
         },
-        getGraphDataForBP: function (patientID) {
+        getGraphDataForBP: function (patientID, fromDate, toDate) {
             // Search on patients
             var deferredFetch = $q.defer();
 
-            this.getAllVitalsForPatient(patientID).then(function (data) {
+            this.getAllVitalsForPatient(patientID, fromDate, toDate).then(function (data) {
                 deferredFetch.resolve(prepareLineGraphData(data, ["datetime", "datetime"], ["bpsystolic", "bpdiastolic"], ["BP - Systolic", "BP - Diastolic"]));
             });
             return deferredFetch.promise;
         },
-        getGraphDataForBMI: function (patientID) {
+        getGraphDataForBMI: function (patientID, fromDate, toDate) {
             var deferredFetch = $q.defer();
-            this.getAllVitalsForPatient(patientID).then(function (data) {
+            this.getAllVitalsForPatient(patientID, fromDate, toDate).then(function (data) {
                 deferredFetch.resolve(prepareLineGraphData(data, "datetime", "bmi", "BMI"));
             });
             return deferredFetch.promise;

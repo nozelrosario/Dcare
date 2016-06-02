@@ -47,11 +47,24 @@ angular.module('dCare.Services.GlucoseStore', [])
                 where: "patientID = " + patientID
             });
         },
-        getAllglucoseForPatient: function (patientID) {
-            return glucoseDataStore.search({
-                select: '*',
-                where: "patientID=" + patientID + ""
-            });
+        getAllglucoseForPatient: function (patientID, fromDate, toDate) {
+            var dataPromise;
+            if (fromDate || toDate) {
+                var query = "patientID=" + patientID;
+                if (fromDate) query += " and datetime >=" + fromDate;
+                if (toDate) query += " and datetime <=" + toDate;
+                dataPromise = glucoseDataStore.search({
+                    select: '*',
+                    where: query + ""
+                });
+
+            } else {
+                dataPromise = glucoseDataStore.search({
+                    select: '*',
+                    where: "patientID=" + patientID + ""
+                });
+            }
+            return dataPromise;
         },
         getGlucoseByID: function (glucoseID) {
             return glucoseDataStore.getDataByID(glucoseID);
@@ -94,10 +107,10 @@ angular.module('dCare.Services.GlucoseStore', [])
             });
             return deferredFetch.promise;
         },
-        getLineGraphDataForPatient: function (patientID) {
+        getLineGraphDataForPatient: function (patientID, fromDate, toDate) {
             // Search on patients
             var deferredFetch = $q.defer();
-            this.getAllglucoseForPatient(patientID).then(function (data) {
+            this.getAllglucoseForPatient(patientID, fromDate, toDate).then(function (data) {
                 var fastingGlucoseData = $filter('filter')(data, { glucoseType: 'fasting' }, true);
                 var postMealGlucoseData = $filter('filter')(data, { glucoseType: 'postmeal' }, true);
                 var lineGraphData = [ { data: prepareLineGraphSeriesData(fastingGlucoseData, "datetime", "glucosevalue"), name: "Fasting" },

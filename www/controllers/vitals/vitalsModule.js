@@ -298,6 +298,7 @@ vitalsModule.controller('VitalsTrendController', function ($scope, $ionicSideMen
     $scope.data = vitalsTrendData;
     $scope.trendType = $stateParams.trendType;
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'vitalsSummary';
+    $scope.dateFilter = {};
 
     //  High Charts options
 
@@ -346,6 +347,26 @@ vitalsModule.controller('VitalsTrendController', function ($scope, $ionicSideMen
     
 
     // Action Methods
+
+    $scope.filterDataOnDate = function () {
+        fromDate = castToLongDate($scope.dateFilter.fromDate);
+        toDate = castToLongDate($scope.dateFilter.toDate);
+        var graphDataPromise;
+        switch ($stateParams.trendType) {
+            case "Height": graphDataPromise = VitalsStore.getGraphDataForHeight($scope.currentPatient.id, fromDate, toDate); break;
+            case "Weight": graphDataPromise = VitalsStore.getGraphDataForWeight($scope.currentPatient.id, fromDate, toDate); break;
+            case "BMI": graphDataPromise = VitalsStore.getGraphDataForBMI($scope.currentPatient.id, fromDate, toDate); break;
+            case "BP": graphDataPromise = VitalsStore.getGraphDataForBP($scope.currentPatient.id, fromDate, toDate); break;
+        }
+        if (graphDataPromise) {
+            graphDataPromise.then(function (filteredData) {
+                $scope.data = filteredData;
+                $scope.vitalsChartConfig.series = $scope.data;
+            });
+        }
+    };
+
+
     $scope.navigateBack = function () {
         // transition to previous state
         $state.go($scope.parentState, { patientID: $scope.currentPatient.id });

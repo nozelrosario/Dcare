@@ -1,0 +1,15 @@
+﻿<div layout="row" layout-sm="column" layout-align="center center">
+    <div flex class="padding">
+        <div><h3> From Date ? </h3></div>
+        <center>
+            <input label="From Date" name="fromDate" ng-model="dateFilter.fromDate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }" add-clear add-clear-config="{size:'30px', returnFocus:false, showOnLoad:true }" ng-change="filterDataOnDate()"> </input>
+        </center>
+    </div>
+
+    <div flex class="padding">
+        <div><h3> To Date ? </h3></div>
+        <center>
+            <input label="To Date" name="toDate" ng-model="dateFilter.toDate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }" add-clear add-clear-config="{size:'30px', returnFocus:false, showOnLoad:true }" ng-change="filterDataOnDate()"> </input>
+        </center>
+    </div>
+</div>

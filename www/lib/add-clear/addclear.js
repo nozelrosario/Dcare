@@ -14,7 +14,9 @@
 			returnFocus: true,
 			showOnLoad: true,
 			onClear: null,
-			hideOnBlur: false
+			hideOnBlur: false,
+			resetValue: "",
+            size:""
 		};
 
 	// The actual plugin constructor
@@ -36,7 +38,7 @@
 					me = this,
 					options = this.options;
 
-			$this.wrap("<span style='position:relative;' class='add-clear-span'></span>");
+			$this.wrap("<div style='position:relative;display:inherit;' class='add-clear-span'></div>");
 			$this.after($("<a name='#clear' style='display: block;'>" + options.closeSymbol + "</a>"));
 			$this.next().css({
 				color: options.color,
@@ -46,7 +48,8 @@
 				overflow: 'hidden',
 				position: 'absolute',
 				right: options.right,
-				top: options.top
+				top: options.top,
+                'font-size': options.size
 			}, this);
 
 			if ($this.val().length >= 1 && options.showOnLoad === true) {
@@ -78,8 +81,8 @@
 			});
 
 
-			$("a[name='#clear']").click(function(e) {
-				$(this).siblings(me.element).val("");
+			$this.siblings("a[name='#clear']").click(function (e) {
+			    $(this).siblings(me.element).val(options.resetValue);
 				//$(this).hide();
 				if (options.returnFocus === true) {
 					$(this).siblings(me.element).focus();

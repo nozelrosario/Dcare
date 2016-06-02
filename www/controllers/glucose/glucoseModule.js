@@ -186,7 +186,7 @@ glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicSideM
     // Init Data
     $scope.currentPatient = currentPatient;
     $scope.data = glucoseTrendData;
-
+    $scope.dateFilter = {};
     //  High Charts options
 
     $scope.glucoseChartConfig = {
@@ -272,8 +272,20 @@ glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicSideM
         series: $scope.data
     };
 
+    //$scope.$watch("dateFilter.fromDate", function (oldval,newval) { $scope.filterDataOnDate(); });
+    //$scope.$watch("dateFilter.toDate", function (oldval, newval) { $scope.filterDataOnDate(); });
     
     // Action Methods
+
+    $scope.filterDataOnDate = function () {
+        fromDate = castToLongDate($scope.dateFilter.fromDate);
+        toDate = castToLongDate($scope.dateFilter.toDate);
+        GlucoseStore.getLineGraphDataForPatient($scope.currentPatient.id, fromDate, toDate).then(function (filteredData) {
+            $scope.data = filteredData;
+            $scope.glucoseChartConfig.series = $scope.data;
+        });
+    };
+
     $scope.navigateBack = function () {
         // transition to previous state
         $state.go($scope.parentState, { patientID: $scope.currentPatient.id });

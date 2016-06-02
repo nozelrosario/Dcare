@@ -50,11 +50,24 @@
                 where: "patientID = " + patientID
             });
         },
-        getAllMealsForPatient: function (patientID) {
-            return mealsDataStore.search({
-                select: '*',
-                where: "patientID=" + patientID + ""
-            });
+        getAllMealsForPatient: function (patientID, fromDate, toDate) {
+            var dataPromise;
+            if (fromDate || toDate) {
+                var query = "patientID=" + patientID;
+                if (fromDate) query += " and datetime >=" + fromDate;
+                if (toDate) query += " and datetime <=" + toDate;
+                dataPromise = mealsDataStore.search({
+                    select: '*',
+                    where: query + ""
+                });
+
+            } else {
+                dataPromise = mealsDataStore.search({
+                    select: '*',
+                    where: "patientID=" + patientID + ""
+                });
+            }
+            return dataPromise;
         },
         getMealByID: function (mealsID) {
             return mealsDataStore.getDataByID(mealsID);
@@ -75,10 +88,10 @@
             });
             return deferredFetch.promise;
         },
-        getLineGraphDataForPatient: function (patientID) {
+        getLineGraphDataForPatient: function (patientID, fromDate, toDate) {
             // Search on patients
             var deferredFetch = $q.defer();
-            this.getAllMealsForPatient(patientID).then(function (data) {
+            this.getAllMealsForPatient(patientID, fromDate, toDate).then(function (data) {
                 var calorieseData = $filter('filter')(data, { totalCalories: '!' }, true);
                 var lineGraphData = [{ data: prepareLineGraphSeriesData(calorieseData, "datetime", "totalCalories"), name: "Calories Consumed" }];
                 deferredFetch.resolve(lineGraphData);
