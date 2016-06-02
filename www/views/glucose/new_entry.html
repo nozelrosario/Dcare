@@ -44,12 +44,12 @@
                                     <md-button class="md-raised md-primary button button-block icon ion-plus-round" aria-label="Select from Food Diary" ng-click="showMealLookupDialog()">
                                         <b>Select from Food Diary</b>
                                     </md-button>
-                                    <md-button class="md-raised md-primary button button-block icon ion-plus-round" aria-label="Add new Meal entry">
+                                    <md-button class="md-raised md-primary button button-block icon ion-plus-round" aria-label="Add new Meal entry" ng-click="showMealForm()">
                                         <b> Add new Meal entry</b>
                                     </md-button>
                                 </div>
                             </div>
-                            <div class="item item-button-right" ng-if="glucose.mealID">
+                            <div class="item item-button-right" ng-if="glucose.mealID" ng-click="showMealForm(glucose.mealID)">
                                 <div class="full-width">{{glucose.mealSummary}}</div>
                                 <button class="button md-raised md-primary" ng-click="clearMealSelection()">
                                     <i class="icon ion-android-delete"></i>

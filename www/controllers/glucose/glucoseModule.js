@@ -129,6 +129,10 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicSideMe
         }
     };
 
+    $scope.showMealForm = function (mealID) {
+        $state.go("glucoseLinkedMealForm", { patientID: $scope.currentPatient.id, mealID:mealID, glucose: $scope.glucose, parentState: 'glucoseForm' });
+    };
+
     $scope.clearMealSelection = function () {
         $scope.glucose.mealID = "";
         $scope.glucose.mealSummary = "";
@@ -169,6 +173,126 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicSideMe
 
     $scope.$on("navigate-back", function (event, data) {
         if (data.intendedController === "GlucoseFormController") $scope.navigateBack();
+    });
+});
+
+
+glucoseModule.controller('GlucoseLinkedMealController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, meal, currentPatient, MealsStore) {
+
+    // init enums [to add more enums use $.extend($scope.enums, newEnum)]
+    $scope.enums = MealsStore.enums;
+
+    // Init Data
+    $scope.currentPatient = currentPatient;
+    $scope.glucose = $stateParams.glucose;
+    if (meal) {
+        $scope.meal = meal;
+    } else {
+        $scope.meal = { patientID: $scope.currentPatient.id, mealDetails: [], datetime: castToLongDate(new Date()) };  // New entry : make any default values here if any
+    }
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'mealslist';
+
+    $scope.showFoodItemDialog = function showDialog(foodItem) {
+        $mdDialog.show({
+            parent: angular.element(document.body),
+            scope: $scope,
+            preserveScope: true,
+            templateUrl: 'views/meals/food_entry.html',
+            locals: {
+                foodItem: foodItem
+            },
+            controller: addFoodItemController
+        });
+        function addFoodItemController($scope, $mdDialog, foodItem) {
+            var isEditMode = false;
+            if (foodItem) {
+                $scope.food = foodItem;
+                isEditMode = true;
+            } else {
+                $scope.food = {};
+                isEditMode = false;
+            }
+            $scope.closeDialog = function () {
+                isEditMode = false;
+                $mdDialog.hide();
+            };
+
+            $scope.add = function () {
+                if ($scope.food_entry_form.$valid) {
+                    if (!isEditMode) $scope.meal.mealDetails.push($scope.food);
+                    isEditMode = false;
+                    $mdDialog.hide();
+                }
+            };
+
+            $scope.addAndNew = function () {
+                if ($scope.food_entry_form.$valid) {
+                    if (!isEditMode) $scope.meal.mealDetails.push($scope.food);
+                    $scope.food = {};
+                    isEditMode = false;
+                }
+            };
+        }
+    };
+
+    $scope.deleteFoodItem = function (index) {
+        $scope.meal.mealDetails.splice(index, 1);
+    };
+
+    var createMealSummary = function (mealDetails) {
+        var summaryText = "";
+        for (var i = 0; i < mealDetails.length; i++) {
+            summaryText = summaryText + ((mealDetails[i].quantity) ? (mealDetails[i].quantity + mealDetails[i].quantityUnit) : "") + " " + mealDetails[i].foodItem;
+            if (i == (mealDetails.length - 2)) {
+                summaryText = summaryText + " & ";
+            } else if (i != (mealDetails.length - 1)) {
+                summaryText = summaryText + " , ";
+            }
+        }
+        return summaryText;
+    };
+
+    // Action Methods
+    $scope.changeState = function (meal) {
+        //$scope.glucose = glucose;
+        // transition to next state
+        $state.go($scope.parentState, { patientID: $scope.currentPatient.id, glucose: $scope.glucose });
+    };
+
+    $scope.save = function () {
+        if ($scope.meal_entry_form.$valid) {
+            $scope.meal.datetime = castToLongDate($scope.meal.datetime);
+            $scope.meal.mealSummary = createMealSummary($scope.meal.mealDetails);
+            var saveMealDataPromise = MealsStore.save($scope.meal);
+            saveMealDataPromise.then(function (savedMeal) {
+                $scope.glucose.mealID = savedMeal.id;
+                $scope.glucose.mealSummary = savedMeal.mealSummary;
+                $scope.changeState(savedMeal);
+            }, $scope.saveFailed);
+        }
+    };
+
+    $scope.cancel = function () {
+        // If required ask for confirmation
+        $scope.changeState($scope.meal);
+    };
+
+    $scope.saveFailed = function (errorMessage) {
+        $mdDialog.show($mdDialog.alert()
+                               .title('Something went wrong :(')
+                               .content('This is embarassing!!. Operation responded with ' + errorMessage)
+                               .ariaLabel(errorMessage)
+                               .ok('OK!'));
+    };
+
+    //Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $scope.cancel();
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "GlucoseLinkedMealController") $scope.navigateBack();
     });
 });
 
@@ -272,8 +396,6 @@ glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicSideM
         series: $scope.data
     };
 
-    //$scope.$watch("dateFilter.fromDate", function (oldval,newval) { $scope.filterDataOnDate(); });
-    //$scope.$watch("dateFilter.toDate", function (oldval, newval) { $scope.filterDataOnDate(); });
     
     // Action Methods
 
@@ -308,27 +430,43 @@ glucoseModule.config(function ($stateProvider, $urlRouterProvider) {
                   glucoseList: function (GlucoseStore, $stateParams) { return GlucoseStore.getAllglucoseForPatient($stateParams.patientID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
-              //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/glucose/list.html',
               controller: 'GlucoseListController',
               params: { 'patientID': null, 'parentState': null }
           })
           .state('glucoseForm', {
               resolve: {
-                  glucose: function (GlucoseStore, $stateParams) { return GlucoseStore.getGlucoseByID($stateParams.glucoseID); },
+                  glucose: function (GlucoseStore, $stateParams, $q) {                  //NR: Special Implementation form Meal Entry sub-form.
+                      var deferedFetch;
+                      if ($stateParams.glucose) {                                   //NR: if glucose Obj. passed from Meal-Form, then restore back on form
+                          var dummyGlucoseDeferedCall = $q.defer();
+                          dummyGlucoseDeferedCall.resolve($stateParams.glucose);
+                          deferedFetch = dummyGlucoseDeferedCall.promise;
+                      } else {
+                          deferedFetch = GlucoseStore.getGlucoseByID($stateParams.glucoseID);       //NR: Else fetch from glucoseID if present
+                      }                      
+                      return deferedFetch;
+                  },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
-              //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/glucose/new_entry.html',
               controller: 'GlucoseFormController',
-              params: { 'patientID': null ,'glucoseID': null, 'parentState': null }
+              params: { 'patientID': null ,'glucoseID': null, 'glucose': null, 'parentState': null }
+          })
+          .state('glucoseLinkedMealForm', {
+              resolve: {
+                  meal: function (MealsStore, $stateParams) { return MealsStore.getMealByID($stateParams.mealID); },
+                  currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
+              },
+              templateUrl: 'views/meals/new_entry.html',
+              controller: 'GlucoseLinkedMealController',
+              params: { 'patientID': null, 'mealID': null, 'glucose': null, 'parentState': null }
           })
           .state('glucosetrend', {
               resolve: {
                   glucoseTrendData: function (GlucoseStore, $stateParams) { return GlucoseStore.getLineGraphDataForPatient($stateParams.patientID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
-              //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/glucose/trend.html',
               controller: 'GlucoseTrendController',
               params: { 'patientID': null, 'parentState': null }

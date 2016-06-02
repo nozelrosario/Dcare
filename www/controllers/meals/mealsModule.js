@@ -282,8 +282,7 @@ mealsModule.config(function ($stateProvider, $urlRouterProvider) {
               resolve: {
                   mealsList: function (MealsStore, $stateParams) { return MealsStore.getAllMealsForPatient($stateParams.patientID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
-              },
-              //url: '/identificationInfo',  // cannot use as using params[]
+              },              
               templateUrl: 'views/meals/list.html',
               controller: 'MealsListController',
               params: { 'patientID': null, 'parentState': null }
@@ -293,7 +292,6 @@ mealsModule.config(function ($stateProvider, $urlRouterProvider) {
                   meal: function (MealsStore, $stateParams) { return MealsStore.getMealByID($stateParams.mealsID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
-              //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/meals/new_entry.html',
               controller: 'MealsFormController',
               params: { 'patientID': null, 'mealsID': null, 'parentState': null }
@@ -303,7 +301,6 @@ mealsModule.config(function ($stateProvider, $urlRouterProvider) {
                   caloriesTrendData: function (MealsStore, $stateParams) { return MealsStore.getLineGraphDataForPatient($stateParams.patientID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
-              //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/meals/trend.html',
               controller: 'MealsTrendController',
               params: { 'patientID': null, 'parentState': null }
