@@ -9,11 +9,12 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
 
     // Init Menu
     $scope.menuItems = [
-                        { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
-                        { id: 2, title: 'Add New', subTitle: 'Add a new medication', icon: 'ion-person-add' },
-                        { id: 3, title: 'All Medications', subTitle: 'Show all medications (active & inactive)', icon: 'ion-android-chat' },
-                        { id: 4, title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
-                        { id: 5, title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' }
+                        { seq: 1, id:'dashboard', title: 'Dashboard', subTitle: 'Your summary page', icon: 'img/home-dashboard.png' },
+                        { seq: 3, id:'add-new', title: 'Add New', subTitle: 'Add a new medication', icon: 'img/add-new.png' },
+                        { seq: 2, id:'active-medications', title: 'Active Medications', subTitle: 'Show only Active medications', icon: 'img/active-list.png' },
+                        { seq: 4, id:'all-medications', title: 'All Medications', subTitle: 'Show all medications (active & inactive)', icon: 'img/list.png' },
+                        { seq: 5, id:'alerts', title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' },
+                        { seq: 6, id:'settings', title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
     ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
@@ -30,28 +31,31 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
     };
 
     $scope.editMedication = function (medicationID) {
-        $state.go("medicationForm", { patientID: $scope.currentPatient.id, medicationID: medicationID, parentState: 'medicationslist' });
+        $state.go("medicationForm", { patientID: $scope.currentPatient.id, medicationID: medicationID, parentState: $state.current.name });
     };
 
     $scope.newMedication = function () {
-        $state.go("medicationForm", { patientID: $scope.currentPatient.id, parentState: 'medicationslist' });
+        $state.go("medicationForm", { patientID: $scope.currentPatient.id, parentState: 'activeMedicationslist' });
     };
 
     $scope.activateMenuItem = function (menuItemId) {
         switch (menuItemId) {
-            case 1:
+            case 'dashboard':
                 $state.go("dashboard", { patientID: $stateParams.patientID });
                 break;
-            case 2:
+            case 'add-new':
                 $scope.newMedication();
                 break;
-            case 3:
-                alert('all medications');
+            case 'active-medications':
+                $state.go("activeMedicationslist", { patientID: $scope.currentPatient.id, parentState: $scope.parentState });
                 break;
-            case 4:
+            case 'all-medications':
+                $state.go("allMedicationslist", { patientID: $scope.currentPatient.id, parentState: $scope.parentState });
+                break;
+            case 'alerts':
                 alert('Messages/Notificaions');
-                break;
-            case 5:
+                break
+            case 'settings':
                 alert('Settings');
                 break;
             default:
@@ -208,15 +212,24 @@ medicationsModule.controller('MedicationFormController', function ($scope, $ioni
 medicationsModule.config(function ($stateProvider, $urlRouterProvider) {
 
     $stateProvider
-          .state('medicationslist', {
+          .state('activeMedicationslist', {
               resolve: {
-                  medicationsList: function (MedicationsStore, $stateParams) { return MedicationsStore.getAllMedicationsForPatient($stateParams.patientID); },
+                  medicationsList: function (MedicationsStore, $stateParams) { return MedicationsStore.getActiveMedicationsForPatient($stateParams.patientID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
               templateUrl: 'views/medications/list.html',
               controller: 'MedicationsListController',
-              params: { 'patientID': null, 'parentState': null }
+              params: { 'patientID': null, 'parentState': 'activeMedicationslist' }
           })
+            .state('allMedicationslist', {
+                resolve: {
+                    medicationsList: function (MedicationsStore, $stateParams) { return MedicationsStore.getAllMedicationsForPatient($stateParams.patientID); },
+                    currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
+                },
+                templateUrl: 'views/medications/list.html',
+                controller: 'MedicationsListController',
+                params: { 'patientID': null, 'parentState': 'allMedicationslist' }
+            })
           .state('medicationForm', {
               resolve: {
                   medication: function (MedicationsStore, $stateParams) { return MedicationsStore.getMedicationByID($stateParams.medicationID); },

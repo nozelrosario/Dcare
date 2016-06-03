@@ -1,6 +1,7 @@
 //Application Namespaces for Classes & Singletons
 app = function () {
     return {
+        id: 'com.google.android.gm',
         classes: {
             data: {
                 adapters: {},
@@ -12,7 +13,16 @@ app = function () {
         log: null,                           //NR: Holds the instance of log writer
         config: {                            //NR: Can be used to hold app wide shared data/preferenced.
             isFirstDashboardView: false
-        }                           
+        },
+        info: {
+            developers: ['nozelrosario@gmail.com'],
+            shortInfo: 'D-Care (Diabetese Management App)',
+            appStoreLink: {
+                ios: "itms-apps://itunes.apple.com/us/app/D-Care-APP-SLUG-URL/id1111111111111?mt=8&uo=4",
+                android: "market://details?id=com.google.android.gm&hl=en",
+                windows: ""
+            }
+        }
     };
 }();
 

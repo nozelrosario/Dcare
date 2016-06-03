@@ -9,15 +9,15 @@ vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicSideM
 
     // Init Menu
     $scope.menuItems = [
-                        { seq: 1, id:"dashboard", title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
-                        { seq: 2, id: "vitals_list", title: 'Vitals List', subTitle: 'List of all recorded vitals', icon: 'ion-person-add' },
-                        { seq: 3, id: "new_vitals", title: 'Add New', subTitle: 'Add a new Vitals record', icon: 'ion-person-add' },
-                        { seq: 4, id: "height_trend", title: 'See Height Trend', subTitle: 'Height values graph', icon: 'ion-android-chat' },
-                        { seq: 5, id: "weight_trend", title: 'See Weight Trend', subTitle: 'Weight values graph', icon: 'ion-android-chat' },
-                        { seq: 6, id: "bmi_trend", title: 'See BMI Trend', subTitle: 'BMI values graph', icon: 'ion-android-chat' },
-                        { seq: 7, id: "bp_trend", title: 'See BP Trend', subTitle: 'Blood pressure values graph', icon: 'ion-android-chat' },
-                        { seq: 8, id: "alerts", title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
-                        { seq: 9, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' }
+                        { seq: 1, id: "dashboard", title: 'Dashboard', subTitle: 'Your summary page', icon: 'img/home-dashboard.png' },
+                        { seq: 2, id: "vitals_list", title: 'Vitals List', subTitle: 'List of all recorded vitals', icon: 'img/list.png' },
+                        { seq: 3, id: "new_vitals", title: 'Add New', subTitle: 'Add a new Vitals record', icon: 'img/add-new.png' },
+                        { seq: 4, id: "height_trend", title: 'See Height Trend', subTitle: 'Height values graph', icon: 'img/chart.png' },
+                        { seq: 5, id: "weight_trend", title: 'See Weight Trend', subTitle: 'Weight values graph', icon: 'img/chart.png' },
+                        { seq: 6, id: "bmi_trend", title: 'See BMI Trend', subTitle: 'BMI values graph', icon: 'img/chart.png' },
+                        { seq: 7, id: "bp_trend", title: 'See BP Trend', subTitle: 'Blood pressure values graph', icon: 'img/chart.png' },
+                        { seq: 8, id: "alerts", title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' },
+                        { seq: 9, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
@@ -98,15 +98,15 @@ vitalsModule.controller('VitalsListController', function ($scope, $ionicSideMenu
 
     // Init Menu
     $scope.menuItems = [
-                        { seq: 1, id:"dashboard", title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
-                        { seq: 2, id: "vitals_summary", title: 'Vitals Summary', subTitle: 'Vitals summary page', icon: 'ion-home' },
-                        { seq: 3, id: "new_vitals", title: 'Add New', subTitle: 'Add a new Vitals record', icon: 'ion-person-add' },
-                        { seq: 4, id: "height_trend", title: 'See Height Trend', subTitle: 'Height values graph', icon: 'ion-android-chat' },
-                        { seq: 5, id: "weight_trend", title: 'See Weight Trend', subTitle: 'Weight values graph', icon: 'ion-android-chat' },
-                        { seq: 6, id: "bmi_trend", title: 'See BMI Trend', subTitle: 'BMI values graph', icon: 'ion-android-chat' },
-                        { seq: 7, id: "bp_trend", title: 'See BP Trend', subTitle: 'Blood pressure values graph', icon: 'ion-android-chat' },
-                        { seq: 8, id: "alerts", title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
-                        { seq: 9, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' }
+                        { seq: 1, id: "dashboard", title: 'Dashboard', subTitle: 'Your summary page', icon: 'img/home-dashboard.png' },
+                        { seq: 2, id: "vitals_summary", title: 'Vitals Summary', subTitle: 'Vitals summary page', icon: 'img/summary.png' },
+                        { seq: 3, id: "new_vitals", title: 'Add New', subTitle: 'Add a new Vitals record', icon: 'img/add-new.png' },
+                        { seq: 4, id: "height_trend", title: 'See Height Trend', subTitle: 'Height values graph', icon: 'img/chart.png' },
+                        { seq: 5, id: "weight_trend", title: 'See Weight Trend', subTitle: 'Weight values graph', icon: 'img/chart.png' },
+                        { seq: 6, id: "bmi_trend", title: 'See BMI Trend', subTitle: 'BMI values graph', icon: 'img/chart.png' },
+                        { seq: 7, id: "bp_trend", title: 'See BP Trend', subTitle: 'Blood pressure values graph', icon: 'img/chart.png' },
+                        { seq: 8, id: "alerts", title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' },
+                        { seq: 9, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
     ];
 
     $scope.activateMenuItem = function (menuItemId) {

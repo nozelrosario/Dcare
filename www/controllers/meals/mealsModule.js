@@ -9,11 +9,11 @@ mealsModule.controller('MealsListController', function ($scope, $ionicSideMenuDe
 
     // Init Menu
     $scope.menuItems = [
-                        { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'ion-home' },
-                        { id: 2, title: 'Add New', subTitle: 'Add a new meal entry', icon: 'ion-person-add' },
-                        { id: 3, title: 'See Trend', subTitle: 'Calories consumption graph', icon: 'ion-android-chat' },
-                        { id: 4, title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'ion-android-chat' },
-                        { id: 5, title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' }
+                        { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'img/home-dashboard.png' },
+                        { id: 2, title: 'Add New', subTitle: 'Add a new meal entry', icon: 'img/add-new.png' },
+                        { id: 3, title: 'See Trend', subTitle: 'Calories consumption graph', icon: 'img/chart.png' },
+                        { id: 4, title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' },
+                        { id: 5, title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]

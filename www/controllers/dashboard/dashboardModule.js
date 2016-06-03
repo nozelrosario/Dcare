@@ -1,6 +1,6 @@
 var dashboardModule = angular.module('dCare.dashboard', ['ionic',
                                                          'dCare.Services.PatientsStore', 'dCare.Services.VitalsStore', 'dCare.Services.GlucoseStore', 'dCare.Services.NotificationsStore',
-                                                         'dCare.glucose', 'dCare.medications','dCare.vitals','dCare.reminders', 'dCare.meals',
+                                                         'dCare.glucose', 'dCare.medications','dCare.vitals','dCare.reminders', 'dCare.meals', 'dCare.feedback',
                                                          'dCare.dateTimeBoxDirectives', 'dCare.jqSparklineDirectives',
                                                          'dCare.datePrettify']);
 
@@ -12,14 +12,14 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
     // Init Menu
     $scope.menuItems = [
                         //{ seq: 1, id: "newpatient", title: 'Add a Loved one', subTitle: 'Add a new person you care for', icon: 'ion-person-add' },
-                        { seq: 2, id: "editprofile", title: 'Edit Profile', subTitle: 'Edit you personal details', icon: 'ion-android-chat' },
-                        { seq: 3, id: "vitals", seq: 3, title: 'Vitals', subTitle: 'Register Vitals', icon: 'ion-android-chat' },
-                        { seq: 4, id: "glucose", title: 'Blood Glucose', subTitle: 'Blood glucose tracker', icon: 'ion-android-chat' },
-                        { seq: 5, id: "medications", title: 'Medications', subTitle: 'Medications', icon: 'ion-android-chat' },
-                        { seq: 6, id: "reminders", title: 'Reminders', subTitle: 'Your reminders', icon: 'ion-android-chat' },
-                        { seq: 7, id: "fooddiary", title: 'Food Diary', subTitle: 'Your Meals', icon: 'ion-android-chat' },
-                        { seq: 8, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'ion-gear-b' },
-                        { seq: 9, id: "about", title: 'About', subTitle: 'Know more about contributers', icon: 'ion-information-circled' }
+                        { seq: 2, id: "editprofile", title: 'Edit Profile', subTitle: 'Edit you personal details', icon: 'img/edit.png' },
+                        { seq: 3, id: "vitals", seq: 3, title: 'Vitals', subTitle: 'Register Vitals', icon: 'img/vitals.png' },
+                        { seq: 4, id: "glucose", title: 'Blood Glucose', subTitle: 'Blood glucose tracker', icon: 'img/glucose.png' },
+                        { seq: 5, id: "medications", title: 'Medications', subTitle: 'Medications', icon: 'img/medications.png' },
+                        { seq: 6, id: "reminders", title: 'Reminders', subTitle: 'Your reminders', icon: 'img/reminders.png' },
+                        { seq: 7, id: "fooddiary", title: 'Food Diary', subTitle: 'Your Meals', icon: 'img/food-diary.png' },
+                        { seq: 8, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' },
+                        { seq: 9, id: "feedback", title: 'Feedback', subTitle: 'Give feedback & know more about D-Care', icon: 'img/info.png' }
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
@@ -73,7 +73,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
                 $state.go("glucoselist", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
                 break;
             case "medications":
-                $state.go("medicationslist", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
+                $state.go("activeMedicationslist", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
                 break;                
             case "reminders":
                 $state.go("activeReminderslist", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
@@ -84,8 +84,8 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
             case "settings":
                 alert('Settings');
                 break;
-            case "about":
-                alert('About');
+            case "feedback":
+                $state.go("feedback", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
                 break;
             default:
                 alert('No Match');

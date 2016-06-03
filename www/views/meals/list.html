@@ -26,8 +26,8 @@
                     <md-item ng-repeat="menuItem in menuItems" >
                         <md-item-content >
                         <md-button menu-close ng-click="activateMenuItem(menuItem.id)" class="button-full menu-button">
-                            <div layout="row">
-                                <i class="menu-icon" ng-class="menuItem.icon"></i>
+                            <div layout="row" class="list-row">
+                                <img ng-src="{{menuItem.icon}}" class="list-icon" />
                                 <div layout="column">
                                     <div class="menu-title">{{menuItem.title}}</div>
                                     <div class="menu-sub-title">{{menuItem.subTitle}}</div>

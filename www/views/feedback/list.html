@@ -1,0 +1,25 @@
+<ion-pane>            
+            <ion-header-bar class="bar bar-header bar-energized">
+                <div class="buttons">
+                    <button class="button " ng-click="navigateBack()"><i class="icon ion-arrow-return-left"></i></button>
+                </div>
+                <h1 class="title" style=" margin-left: -52px;"><center><b>Feedback &amp; Info</b></center></h1>             
+            </ion-header-bar>
+			<ion-content>
+                <md-list>
+                    <md-item ng-repeat="menuItem in menuItems">
+                        <md-item-content>
+                            <md-button menu-close ng-click="activateMenuItem(menuItem.id)" class="button-full menu-button">
+                                <div layout="row" class="list-row">
+                                    <img ng-src="{{menuItem.icon}}" class="list-icon" />
+                                    <div layout="column">
+                                        <div class="menu-title">{{menuItem.title}}</div>
+                                        <div class="menu-sub-title">{{menuItem.subTitle}}</div>
+                                    </div>
+                                </div>
+                            </md-button>
+                        </md-item-content>
+                    </md-item>
+                </md-list>
+			</ion-content>  
+</ion-pane>

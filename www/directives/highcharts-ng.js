@@ -81,7 +81,20 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
           series: [],
           credits: {},
           plotOptions: {},
-          navigator: { enabled: false }
+          navigator: { enabled: false },
+          exporting: {
+              buttons: {
+                  contextButton: {
+                      enabled: false
+                  },
+                  exportButton: {
+                      enabled: false
+                  },
+                  printButton: {
+                      enabled: false
+                  }
+              }
+          }
         };
       if (config.options) {
         mergedOptions = highchartsNGUtils.deepExtend(defaultOptions, config.options);
