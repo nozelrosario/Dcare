@@ -1,7 +1,11 @@
 //Application Namespaces for Classes & Singletons
 app = function () {
     return {
-        id: 'com.google.android.gm',
+        id: {
+            ios: "",
+            android: "com.google.android.gm",
+            windows: ""
+        },
         classes: {
             data: {
                 adapters: {},

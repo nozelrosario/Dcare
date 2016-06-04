@@ -1,7 +1,7 @@
 var feedbackModule = angular.module('dCare.feedback', ['ionic']);
 
 //Controllers
-remindersModule.controller('FeedbackController', function ($scope, $state, $stateParams) {
+remindersModule.controller('FeedbackController', function ($scope, $state, $stateParams, $mdDialog) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -25,7 +25,7 @@ remindersModule.controller('FeedbackController', function ($scope, $state, $stat
                 $scope.giveFeedback();
                 break;
             case 'about':
-                alert(app.info.shortInfo);
+                $scope.showAboutDialog();
                 break;
             case 'share':
                 $scope.shareAppLink();
@@ -93,10 +93,27 @@ remindersModule.controller('FeedbackController', function ($scope, $state, $stat
     $scope.rateApp = function () {
         var shareLink = app.info.appStoreLink[ionic.Platform.platform()];
         if (shareLink) {
-            window.open(shareLink);
+            window.open(shareLink, "_system");
         } else {
             app.log.error("App Store link not available for current platform [ " + ionic.Platform.platform() + " ]");
         }
+    };
+
+    $scope.showAboutDialog = function () {
+        var aboutDialogController = function ($scope, $mdDialog) {
+            $scope.closeDialog = function () {
+                $mdDialog.hide();
+            };
+        };
+
+        $mdDialog.show({
+            parent: angular.element(document.body),            
+            scope: $scope,
+            preserveScope: true,
+            clickOutsideToClose:true,
+            templateUrl: 'views/feedback/about.html',
+            controller: aboutDialogController
+        });
     };
 
     $scope.navigateBack = function () {

@@ -14,7 +14,7 @@ remindersModule.controller('RemindersListController', function ($scope, $ionicSi
                         { seq: 2, id: 'activeReminders', title: 'Active Reminders', subTitle: 'Currently active reminders', icon: 'img/active-list.png' },
                         { seq: 3, id: 'pastReminders', title: 'Past Reminders', subTitle: 'Past / Inactive reminders', icon: 'img/inactive-list.png' },
                         { seq: 4, id: 'allReminders', title: 'All Reminders', subTitle: 'All reminders', icon: 'img/list.png' },
-                        { seq: 5, id: 'newReminder', title: 'Add New', subTitle: 'Add a new reminder', icon: 'img/alerts-recommendations.png' },
+                        { seq: 5, id: 'newReminder', title: 'Add New', subTitle: 'Add a new reminder', icon: 'img/add-new.png' },
                         { seq: 6, id: 'settings', title: 'Settings', subTitle: 'Change reminder preferences', icon: 'img/settings.png' }
                        ];
 

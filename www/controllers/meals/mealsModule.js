@@ -93,17 +93,8 @@ mealsModule.controller('MealsFormController', function ($scope, $ionicSideMenuDe
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'mealslist';
 
     $scope.showFoodItemDialog = function showDialog(foodItem) {
-        $mdDialog.show({
-            parent: angular.element(document.body),            
-            scope: $scope,
-            preserveScope: true,
-            templateUrl: 'views/meals/food_entry.html',
-            locals: {
-                foodItem: foodItem
-            },
-            controller: addFoodItemController
-        });
-        function addFoodItemController($scope, $mdDialog, foodItem) {
+
+        var addFoodItemController = function ($scope, $mdDialog, foodItem) {
             var isEditMode = false;
             if (foodItem) {
                 $scope.food = foodItem;
@@ -132,7 +123,19 @@ mealsModule.controller('MealsFormController', function ($scope, $ionicSideMenuDe
                     isEditMode = false;
                 }
             };
-        }
+        };
+
+        $mdDialog.show({
+            parent: angular.element(document.body),            
+            scope: $scope,
+            preserveScope: true,
+            templateUrl: 'views/meals/food_entry.html',
+            locals: {
+                foodItem: foodItem
+            },
+            controller: addFoodItemController
+        });
+        
     };
 
     $scope.deleteFoodItem = function (index) {

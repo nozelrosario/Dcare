@@ -13,20 +13,20 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
 
     var enums = {
         reminderType: {
-            1: { label: 'Medicine', short_label: 'Medicine', image: 'img/no-image.png', value: 1 },
-            2: { label: 'Insulin', short_label: 'Insulin', image: 'img/no-image.png', value: 2 },
-            3: { label: 'Dr. Appointment', short_label: 'Dr. Appointment', image: 'img/no-image.png', value: 3 },
-            4: { label: 'Glucose test', short_label: 'Glucose test', image: 'img/no-image.png', value: 4 },
-            5: { label: 'BP check', short_label: 'BP check', image: 'img/no-image.png', value: 5 },
-            6: { label: 'Recommendation', short_label: 'Recommendation', image: 'img/no-image.png', value: 6 },
-            7: { label: 'Other', short_label: 'Other', image: 'img/no-image.png', value: 7 }
+            1: { label: 'Medicine', short_label: 'Medicine', image: 'img/medicines-reminder.png', value: 1 },
+            2: { label: 'Insulin', short_label: 'Insulin', image: 'img/syringe.png', value: 2 },
+            3: { label: 'Dr. Appointment', short_label: 'Dr. Appointment', image: 'img/doctor-app.png', value: 3 },
+            4: { label: 'Glucose test', short_label: 'Glucose test', image: 'img/glucose.png', value: 4 },
+            5: { label: 'BP check', short_label: 'BP check', image: 'img/blood-pressure-gauge.png', value: 5 },
+            6: { label: 'Recommendation', short_label: 'Recommendation', image: 'img/alerts-recommendations.png', value: 6 },
+            7: { label: 'Other', short_label: 'Other', image: 'img/other.png', value: 7 }
         },
         frequencyUnit: {
-            1: { label: 'Year', short_label: 'Yearly', image: '', value: 1 },
-            2: { label: 'Month', short_label: 'Monthly', image: '', value: 2 },
-            3: { label: 'Week', short_label: 'Weekly', image: '', value: 3 },
-            4: { label: 'Hour', short_label: 'Hourly', image: '', value: 4 },
-            5: { label: 'Minutes', short_label: 'Minutes', image: '', value: 5 }
+            1: { label: 'Year', short_label: 'Yearly', image: 'img/year.png', value: 1 },
+            2: { label: 'Month', short_label: 'Monthly', image: 'img/month.png', value: 2 },
+            3: { label: 'Week', short_label: 'Weekly', image: 'img/week.png', value: 3 },
+            4: { label: 'Hour', short_label: 'Hourly', image: 'img/clock.png', value: 4 },
+            5: { label: 'Minutes', short_label: 'Minutes', image: 'img/clock.png', value: 5 }
         }
     };
     //// Some fake testing data

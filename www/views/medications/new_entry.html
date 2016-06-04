@@ -38,7 +38,7 @@
                                         </div>
                                         <div style="font-weight: normal;margin-left: 20px;max-width: 200px;text-align: left;line-height: 16px;">{{(medication.route)? enums.medicationRoute[medication.route].short_label : 'Use the below slider to select a value'}}</div>
                                     </div>
-                                    <div flex="20" layout-align="center center"><img ng-src="{{(medication.route)? enums.medicationRoute[medication.route].image : 'img/question.png'}}" style="height:50px;width:50px;margin:10px"></div>
+                                    <div flex="20" layout-align="center center"><img ng-src="{{(medication.route)? enums.medicationRoute[medication.route].image : 'img/question.png'}}" style="height: 50px; width: 50px; margin: 10px; padding-right: 10px;"></div>
                                 </div>
                             </center>
                             <div style="margin-top:-20px;margin-bottom:20px">
@@ -56,7 +56,7 @@
                                         </div>
                                         <div style="font-weight: normal;margin-left: 20px;max-width: 200px;text-align: left;line-height: 16px;">{{(medication.dosefrequency)? enums.doseFrequency[medication.dosefrequency].short_label : 'Use the below slider to select a value'}}</div>
                                     </div>
-                                    <div flex="20" layout-align="center center"><img src="img/duration.png" style="height:50px;width:50px;margin:10px"></div>
+                                    <div flex="20" layout-align="center center"><img ng-src="{{(medication.dosefrequency)? enums.doseFrequency[medication.dosefrequency].image : 'img/question.png'}}" style="height: 50px; width: 50px; margin: 10px; padding-right: 10px;"></div>
                                 </div>
                             </center>
                             <div style="margin-top:-20px;margin-bottom:20px">
