@@ -25,6 +25,9 @@
         "de.appplant.cordova.plugin.email-composer": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },
+        "cordova-plugin-inappbrowser": {
+            "PACKAGE_NAME": "com.nozel.dcare"
+        },
         "cordova-plugin-x-socialsharing": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },

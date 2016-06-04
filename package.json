@@ -18,6 +18,7 @@
     "cordova-plugin-console",
     "cordova-plugin-device",
     "cordova-plugin-camera",
+    "cordova-plugin-inappbrowser",
     "ionic-plugin-keyboard",
     {
       "locator": "https://github.com/nozelrosario/heartbeat-cordova-plugin",
@@ -28,11 +29,11 @@
       "id": "de.appplant.cordova.plugin.local-notification"
     },
     "cordova-plugin-app-event",
-	{
+    {
       "locator": "https://github.com/katzer/cordova-plugin-email-composer#0.8.2",
       "id": "cordova-plugin-email-composer"
     },
-	{
+    {
       "locator": "https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin.git",
       "id": "cordova-plugin-x-socialsharing"
     }
