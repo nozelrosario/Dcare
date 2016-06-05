@@ -16,8 +16,8 @@
 			<ion-content>
                 <md-list>
                     <md-item ng-repeat="glucose in glucoseList|orderBy:'datetime':true">
-                        <md-item-content>
-                            <md-button menu-close ng-click="editGlucose(glucose.id)" class="button-full menu-button">
+                        <md-item-content on-hold="onLongPress(glucose, $event)">
+                            <md-button menu-close on-tap="editGlucose(glucose.id)" class="button-full menu-button">
                                 <div layout="row" class="list-row">
                                     <date-time-box ng-model="glucose.datetime" box-size="20px" box-positioning="inline-flex" class=""></date-time-box>
                                     <div flex layout="column" layout-align="center start">

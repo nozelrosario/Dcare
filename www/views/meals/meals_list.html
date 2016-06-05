@@ -1,7 +1,7 @@
 ﻿<md-list>
     <md-item ng-repeat="meal in mealsList|orderBy:'datetime':true">
-        <md-item-content>
-            <md-button menu-close ng-click="onSelectMeal(meal.id,meal.mealSummary)" class="button-full menu-button">
+        <md-item-content on-hold="onLongPress(meal, $event)">
+            <md-button menu-close on-tap="onSelectMeal(meal.id,meal.mealSummary)" class="button-full menu-button">
                 <div layout="row" class="list-row">
                     <date-time-box ng-model="meal.datetime" box-size="20px" box-positioning="inline-flex" class=""></date-time-box>
                     <div flex layout="column" layout-align="center start">

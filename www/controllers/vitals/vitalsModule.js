@@ -92,7 +92,7 @@ vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicSideM
 
 });
 
-vitalsModule.controller('VitalsListController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, vitalsList, currentPatient, VitalsStore) {
+vitalsModule.controller('VitalsListController', function ($scope, $ionicSideMenuDelegate, $mdToast, $mdBottomSheet, $state, $stateParams, vitalsList, currentPatient, VitalsStore) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'vitalsSummary';
 
@@ -151,6 +151,34 @@ vitalsModule.controller('VitalsListController', function ($scope, $ionicSideMenu
     $scope.currentPatient = currentPatient;
 
     // Action Methods
+
+    $scope.onLongPress = function (item, $event) {
+        $scope.showListActionSheet(item);
+        $event.stopPropagation();
+    };
+
+    $scope.showListActionSheet = function (item) {
+        var actionSheetController = function ($scope, $mdBottomSheet) {
+            $scope.actionClicked = function (actionCode) {
+                $mdBottomSheet.hide({ actionItem: item, actionCode: actionCode });
+            };
+        };
+        $mdBottomSheet.show({
+            templateUrl: 'views/common-templates/list_action_sheet.html',
+            controller: actionSheetController,
+        }).then(function (event) {
+            $scope.invokeListAction(event.actionItem, event.actionCode);
+        });
+    };
+
+    $scope.invokeListAction = function (actionItem, actionCode) {
+        switch (actionCode) {
+            case 'edit': $scope.editVitals(actionItem.id); break;
+            case 'delete': $scope.deleteVitals(actionItem.id); break;
+            default: app.log.error("Action not Supported !!");
+        }
+    };
+
     $scope.showVitalsSummary = function () {
         //TODO : implement summary page Fully
         $state.go("vitalsSummary", { patientID: $scope.currentPatient.id, parentState: 'dashboard' });
@@ -162,6 +190,23 @@ vitalsModule.controller('VitalsListController', function ($scope, $ionicSideMenu
 
     $scope.newVitals = function () {
         $state.go("vitalsForm", { patientID: $scope.currentPatient.id, parentState: 'vitalslist' });
+    };
+
+    $scope.deleteVitals = function (vitalsID) {
+        var onDeleteSuccess = function (deletedRecord) {
+            $mdToast.show($mdToast.simple().content("Deleted successfully !!").position('bottom').hideDelay(app.config.toastAutoCloseDelay));
+            for (var i = 0; i < $scope.vitalsList.length; i++) {
+                if (($scope.vitalsList[i])._id == deletedRecord._id) {
+                    $scope.vitalsList.splice(i, 1);
+                    break;
+                }
+            }
+        };
+        var onDeleteFail = function () {
+            $mdToast.show($mdToast.simple().content("Delete Failed !!").position('bottom').hideDelay(app.config.toastAutoCloseDelay));
+        };
+        var deleteVitalsDataPromise = VitalsStore.remove(vitalsID);
+        deleteVitalsDataPromise.then(onDeleteSuccess, onDeleteFail);
     };
 
     $scope.toggleActionsMenu = function () {

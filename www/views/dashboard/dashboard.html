@@ -28,7 +28,7 @@
                             <div flex="grow" ng-if="isVitalsExpanded" class="bold-label" style="padding:15px;">Vitals Summary</div>
                             <div flex="grow" ng-if="!isVitalsExpanded" layout="row" layout-sm="row" layout-align="start center">
                                 <div class="sub-label"> Physical Condition :</div>
-                                <div ng-show="vitals.bmi <= 0" class="md-caption">(not available)</div>
+                                <div ng-show="!vitals || vitals.bmi <= 0" class="md-caption">(not available)</div>
                                 <div ng-show="vitals.bmi > 0 && vitals.bmi < 18.5" class="bold-label">Underweight</div>
                                 <div ng-show="vitals.bmi > 18.5 && vitals.bmi <= 25 " class="bold-label">Normal</div>
                                 <div ng-show="vitals.bmi > 25 && vitals.bmi <= 30 " class="bold-label">Overweight</div>
@@ -91,9 +91,9 @@
                     <!--Notifications Info Card-->
                     <div class="list card" ng-show="notificationsList.length">
                         <div class="item item-divider">  Notifications   </div>
-                        <div class="item item-body">
+                        <div class="item item-body" style="max-height:300px;overflow-y:auto;">
                             <md-list>
-                                <md-item ng-repeat="notification in notificationsList | limitTo:3" ng-click="showNotificationDetails(notification,$event)">
+                                <md-item ng-repeat="notification in notificationsList | limitTo:10" ng-click="showNotificationDetails(notification,$event)">
                                     <md-item-content>
                                         <md-button class="button-full menu-button">
                                             <div layout="row" class="list-row">

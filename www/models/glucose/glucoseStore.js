@@ -185,6 +185,9 @@ angular.module('dCare.Services.GlucoseStore', [])
         },
         save: function (glucose) {
             return glucoseDataStore.save(glucose);
+        },
+        remove: function (glucoseID) {
+            return glucoseDataStore.remove(glucoseID);
         }
 
     }

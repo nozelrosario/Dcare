@@ -119,13 +119,13 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
         getActiveRemindersForPatient: function (patientID) {
             return remindersDataStore.search({
                 select: '*',
-                where: "patientID=" + patientID + " and status= 'active'" + " and (enddate >=" + castToLongDate(new Date()) + " or enddate='')"
+                where: "patientID=" + patientID + " and status= 'active'" + "and ((startdate >= " + castToLongDate(new Date()) + ") or (isRecursive=true and (enddate >=" + castToLongDate(new Date()) + " or enddate='')))"
             });
         },
         getPastRemindersForPatient: function (patientID) {
             return remindersDataStore.search({
                 select: '*',
-                where: "patientID=" + patientID + " and enddate <" + castToLongDate(new Date())
+                where: "patientID=" + patientID + " and startdate <" + castToLongDate(new Date()) + " and enddate <" + castToLongDate(new Date()) + ""
             });
         },
         getReminderBySourceID: function (sourceID) {

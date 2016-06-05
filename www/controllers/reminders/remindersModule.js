@@ -4,7 +4,7 @@ var remindersModule = angular.module('dCare.reminders', ['ionic',
                                                      'dCare.datePrettify']);
 
 //Controllers
-remindersModule.controller('RemindersListController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, currentPatient, RemindersStore, remindersList) {
+remindersModule.controller('RemindersListController', function ($scope, $ionicSideMenuDelegate, $mdToast, $mdBottomSheet, $state, $stateParams, currentPatient, RemindersStore, remindersList) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -27,6 +27,33 @@ remindersModule.controller('RemindersListController', function ($scope, $ionicSi
 
     // Action Methods
 
+    $scope.onLongPress = function (item,$event) {
+        $scope.showListActionSheet(item);
+        $event.stopPropagation();
+    };
+
+    $scope.showListActionSheet = function (item) {
+        var actionSheetController = function ($scope, $mdBottomSheet) {           
+            $scope.actionClicked = function (actionCode) {                
+                $mdBottomSheet.hide({actionItem: item, actionCode:actionCode});
+            };            
+        };
+        $mdBottomSheet.show({
+            templateUrl: 'views/common-templates/list_action_sheet.html',
+            controller: actionSheetController,
+        }).then(function (event) {
+            $scope.invokeListAction(event.actionItem, event.actionCode);            
+        });
+    };
+
+    $scope.invokeListAction = function (actionItem, actionCode) {
+        switch (actionCode) {
+            case 'edit': $scope.editReminder(actionItem.id); break;
+            case 'delete': $scope.deleteReminder(actionItem.id); break;
+            default: app.log.error("Action not Supported !!");
+        }
+    };
+
     $scope.showHelp = function () {
         $scope.showOverlayHelp = true;
     };
@@ -37,6 +64,23 @@ remindersModule.controller('RemindersListController', function ($scope, $ionicSi
 
     $scope.newReminder = function () {
         $state.go("reminderForm", { patientID: $scope.currentPatient.id, parentState: 'activeReminderslist' });
+    };
+
+    $scope.deleteReminder = function (reminderID) {
+        var deleteReminderDataPromise = RemindersStore.remove(reminderID);
+        var onDeleteSuccess = function (deletedRecord) {
+            $mdToast.show($mdToast.simple().content("Deleted successfully !!").position('bottom').hideDelay(app.config.toastAutoCloseDelay));
+            for (var i = 0; i < $scope.remindersList.length; i++) {
+                if (($scope.remindersList[i])._id == deletedRecord._id) {
+                    $scope.remindersList.splice(i, 1);
+                    break;
+                }
+            }            
+        };
+        var onDeleteFail = function () {
+            $mdToast.show($mdToast.simple().content("Delete Failed !!").position('bottom').hideDelay(app.config.toastAutoCloseDelay));
+        };
+        deleteReminderDataPromise.then(onDeleteSuccess, onDeleteFail);
     };
 
     $scope.activateMenuItem = function (menuItemId) {

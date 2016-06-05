@@ -39,6 +39,105 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
 	//                { id: 2, patientID: '2', name: 'Asprin', dose: '5ml', dosefrequency: 2, startdate: '1298323623006', enddate: '1288323623006', route: 4, notes: '', status: 'active' },
 	//                { id: 3, patientID: '4', name: 'Lanta Reflux li', dose: '1 drop', dosefrequency: 1, startdate: '1288523623006', enddate: '1288323623006', route: 3, notes: '', status: 'active' }
 	//                ];
+    var setMedicationReminder = function (medicationID) {
+        var deferredReminder = $q.defer();
+        this.getMedicationByID(medicationID).then(function (medication) {
+            if(medication) {
+                var startDate = medication.startdate;
+                var endDate = medication.enddate;
+                var frequency, frequencyUnit;
+                var newReminder = null, reminderText="", reminderTitle = "";
+                //NR: map medication.doseFrequency <=> reminder.frequencyUnit & reminder.frequency
+                switch (medication.dosefrequency) {
+                    case 1: frequency = 6;
+                        frequencyUnit = 4; //6 hourly
+                        break;
+                    case 2: frequency = 8;
+                        frequencyUnit = 4; //8 hourly
+                        break;
+                    case 3: frequency = 12;
+                        frequencyUnit = 4; //12 hourly
+                        break;
+                    case 4: frequency = 24;
+                        frequencyUnit = 4; //24 hourly
+                        break;
+                    case 5: frequency = 1;
+                        frequencyUnit = 3; // weekly
+                        break;
+                    case 6: frequency = 1;
+                        frequencyUnit = 2; // monthly
+                        break;
+                    case 7: frequency = 1;
+                        frequencyUnit = 1; // yearly
+                        break;
+                    default: frequency = "";
+                        frequencyUnit = ""; 
+                        break;
+                }
+
+                if (frequency !== "" && frequencyUnit !== "") {
+                    if (!startDate) startDate = castToLongDate(new Date());
+                    if (!endDate) endDate = "";
+                    reminderText = "Reminder for having your medication: " + medication.name;
+                    reminderTitle = "Medication: " + medication.name;
+                    newReminder = {
+                        patientID: medication.patientID,
+                        text: reminderText,
+                        title: reminderTitle,
+                        reminderType: 1,    //NR: medication reminder
+                        startdate: startDate,
+                        enddate: endDate,
+                        isRecursive: true,
+                        frequencyUnit: frequencyUnit,
+                        frequency: frequency,
+                        status: 'active',
+                        sourceID: 'Medication_' + medication.id
+                    };
+                    RemindersStore.save(newReminder, { keyFields: ["sourceID"], saveEmptyValues: true } ).then(function (reminder) {
+                        deferredReminder.resolve("Reminder set successfully!");
+                    }).fail(function (err) {                        
+                        deferredReminder.resolve("Could not set Reminder!!");
+                    });
+
+                } else {
+                    deferredReminder.resolve("Could not set Reminder!! Please fill in 'Frequency' for this medication and try again.");
+                }
+            } else {
+                deferredReminder.resolve("Could not set Reminder!! Medication not found");
+            }
+        }).fail(function (err) {                
+            deferredReminder.resolve("Could not set Reminder!! please try again.");
+        });
+            
+        return deferredReminder.promise;
+    };
+
+
+    var removeMedicationReminder = function (medicationID) {
+        var deferredReminder = $q.defer(),
+            sourceID = 'Medication_' + medicationID;
+        RemindersStore.getReminderBySourceID(sourceID).then(function (matchingReminders) {   
+            if (matchingReminders && (matchingReminders.length > 0) && matchingReminders[0].id) {
+                RemindersStore.remove(matchingReminders[0].id).then(function () {
+                    deferredReminder.resolve("Reminder removed successfully!");
+                }).fail(function (err) {
+                    deferredReminder.resolve("Could not remove Reminder!! please try again.");
+                });                    
+            } else {
+                deferredReminder.resolve("Could not remove Reminder!! Reminder not found");
+            }
+        }).fail(function (err) {
+            deferredReminder.resolve("Could not remove Reminder!! please try again.");
+        });
+
+        return deferredReminder.promise;
+    };
+
+    // Trigger remove reminder upon Delete
+    medicationsDataStore.addTrigger("after-delete", "trigger_remove_reminder", function (evtData) {
+        var deletedMedication = evtData.data;
+        removeMedicationReminder(deletedMedication.id);        
+    });
 
     return {
         enums: enums,
@@ -66,96 +165,10 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
         save: function (medication) {
             return medicationsDataStore.save(medication);
         },
-        setMedicationReminder: function (medicationID) {
-            var deferredReminder = $q.defer();
-            this.getMedicationByID(medicationID).then(function (medication) {
-                if(medication) {
-                    var startDate = medication.startdate;
-                    var endDate = medication.enddate;
-                    var frequency, frequencyUnit;
-                    var newReminder = null, reminderText="", reminderTitle = "";
-                    //NR: map medication.doseFrequency <=> reminder.frequencyUnit & reminder.frequency
-                    switch (medication.dosefrequency) {
-                        case 1: frequency = 6;
-                            frequencyUnit = 4; //6 hourly
-                            break;
-                        case 2: frequency = 8;
-                            frequencyUnit = 4; //8 hourly
-                            break;
-                        case 3: frequency = 12;
-                            frequencyUnit = 4; //12 hourly
-                            break;
-                        case 4: frequency = 24;
-                            frequencyUnit = 4; //24 hourly
-                            break;
-                        case 5: frequency = 1;
-                            frequencyUnit = 3; // weekly
-                            break;
-                        case 6: frequency = 1;
-                            frequencyUnit = 2; // monthly
-                            break;
-                        case 7: frequency = 1;
-                            frequencyUnit = 1; // yearly
-                            break;
-                        default: frequency = "";
-                            frequencyUnit = ""; 
-                            break;
-                    }
-
-                    if (frequency !== "" && frequencyUnit !== "") {
-                        if (!startDate) startDate = castToLongDate(new Date());
-                        if (!endDate) endDate = "";
-                        reminderText = "Reminder for having your medication: " + medication.name;
-                        reminderTitle = "Medication: " + medication.name;
-                        newReminder = {
-                            patientID: medication.patientID,
-                            text: reminderText,
-                            title: reminderTitle,
-                            reminderType: 1,    //NR: medication reminder
-                            startdate: startDate,
-                            enddate: endDate,
-                            isRecursive: true,
-                            frequencyUnit: frequencyUnit,
-                            frequency: frequency,
-                            status: 'active',
-                            sourceID: 'Medication_' + medication.id
-                        };
-                        RemindersStore.save(newReminder, { keyFields: ["sourceID"], saveEmptyValues: true } ).then(function (reminder) {
-                            deferredReminder.resolve("Reminder set successfully!");
-                        }).fail(function (err) {                        
-                            deferredReminder.resolve("Could not set Reminder!!");
-                        });
-
-                    } else {
-                        deferredReminder.resolve("Could not set Reminder!! Please fill in 'Frequency' for this medication and try again.");
-                    }
-                } else {
-                    deferredReminder.resolve("Could not set Reminder!! Medication not found");
-                }
-            }).fail(function (err) {                
-                deferredReminder.resolve("Could not set Reminder!! please try again.");
-               });
-            
-            return deferredReminder.promise;
-        },
-        removeMedicationReminder: function (medicationID) {
-            var deferredReminder = $q.defer(),
-                sourceID = 'Medication_' + medicationID;
-            RemindersStore.getReminderBySourceID(sourceID).then(function (matchingReminders) {   
-                if (matchingReminders && (matchingReminders.length > 0) && matchingReminders[0].id) {
-                    RemindersStore.remove(matchingReminders[0].id).then(function () {
-                        deferredReminder.resolve("Reminder removed successfully!");
-                    }).fail(function (err) {
-                        deferredReminder.resolve("Could not remove Reminder!! please try again.");
-                    });                    
-                } else {
-                    deferredReminder.resolve("Could not remove Reminder!! Reminder not found");
-                }
-            }).fail(function (err) {
-                deferredReminder.resolve("Could not remove Reminder!! please try again.");
-            });
-
-            return deferredReminder.promise;
+        setMedicationReminder: setMedicationReminder,
+        removeMedicationReminder: removeMedicationReminder,
+        remove: function (medicationID) {
+            return medicationsDataStore.remove(medicationID);
         }
     }
 });

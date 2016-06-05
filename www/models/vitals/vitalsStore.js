@@ -131,6 +131,9 @@ angular.module('dCare.Services.VitalsStore', [])
         },
         save: function (vitals) {
             return vitalsDataStore.save(vitals);
+        },
+        remove: function (vitalsID) {
+            return vitalsDataStore.remove(vitalsID);
         }
 
     }

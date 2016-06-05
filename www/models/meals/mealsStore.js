@@ -69,8 +69,8 @@
             }
             return dataPromise;
         },
-        getMealByID: function (mealsID) {
-            return mealsDataStore.getDataByID(mealsID);
+        getMealByID: function (mealID) {
+            return mealsDataStore.getDataByID(mealID);
         },
         getLatestMealForPatient: function (patientID) {
             var deferredFetch = $q.defer();
@@ -104,6 +104,9 @@
         },
         save: function (meal) {
             return mealsDataStore.save(meal);
+        },
+        remove: function (mealID) {
+            return mealsDataStore.remove(mealID);
         }
 
     }

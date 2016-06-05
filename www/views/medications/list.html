@@ -17,10 +17,10 @@
 			<ion-content>
                 <md-list>
                     <md-item ng-repeat="medication in medicationsList" >
-                        <md-item-content >
-                            <md-button menu-close ng-click="editMedication(medication.id)" class="button-full menu-button">
+                        <md-item-content on-hold="onLongPress(medication, $event)">
+                            <md-button menu-close on-tap="editMedication(medication.id)" class="button-full menu-button">
                                 <div layout="row" class="list-row">
-                                    <img  ng-src="{{enums.medicationRoute[medication.route].image}}" style="height:50px;width:50px;margin:10px">
+                                    <img ng-src="{{enums.medicationRoute[medication.route].image}}" style="height:50px;width:50px;margin:10px">
                                     <div layout="column" layout-align="center start">
                                         <div class="menu-title">{{medication.name}}</div>
                                         <div class="menu-sub-title">{{medication.dose}} - {{enums.doseFrequency[medication.dosefrequency].label}}</div>

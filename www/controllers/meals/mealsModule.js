@@ -3,7 +3,7 @@ var mealsModule = angular.module('dCare.meals', ['ionic',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng']);
 
 //Controllers
-mealsModule.controller('MealsListController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, mealsList, currentPatient, MealsStore) {
+mealsModule.controller('MealsListController', function ($scope, $ionicSideMenuDelegate, $mdToast, $mdBottomSheet, $state, $stateParams, mealsList, currentPatient, MealsStore) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -25,16 +25,60 @@ mealsModule.controller('MealsListController', function ($scope, $ionicSideMenuDe
 
     // Action Methods
 
+    $scope.onLongPress = function (item, $event) {
+        $scope.showListActionSheet(item);
+        $event.stopPropagation();
+    };
+
+    $scope.showListActionSheet = function (item) {
+        var actionSheetController = function ($scope, $mdBottomSheet) {
+            $scope.actionClicked = function (actionCode) {
+                $mdBottomSheet.hide({ actionItem: item, actionCode: actionCode });
+            };
+        };
+        $mdBottomSheet.show({
+            templateUrl: 'views/common-templates/list_action_sheet.html',
+            controller: actionSheetController,
+        }).then(function (event) {
+            $scope.invokeListAction(event.actionItem, event.actionCode);
+        });
+    };
+
+    $scope.invokeListAction = function (actionItem, actionCode) {
+        switch (actionCode) {
+            case 'edit': $scope.editMeal(actionItem.id); break;
+            case 'delete': $scope.deleteMeal(actionItem.id); break;
+            default: app.log.error("Action not Supported !!");
+        }
+    };
+
     $scope.showHelp = function () {
         $scope.showOverlayHelp = true;
     };
 
-    $scope.editMeal = $scope.onSelectMeal = function (mealsID) {
-        $state.go("mealForm", { patientID: $scope.currentPatient.id, mealsID: mealsID, parentState: 'mealslist' });
+    $scope.editMeal = $scope.onSelectMeal = function (mealID) {
+        $state.go("mealForm", { patientID: $scope.currentPatient.id, mealID: mealID, parentState: 'mealslist' });
     };
 
     $scope.newMeal = function () {
         $state.go("mealForm", { patientID: $scope.currentPatient.id, parentState: 'mealslist' });
+    };
+
+    $scope.deleteMeal = function (mealID) {
+        var onDeleteSuccess = function (deletedRecord) {
+            $mdToast.show($mdToast.simple().content("Deleted successfully !!").position('bottom').hideDelay(app.config.toastAutoCloseDelay));
+            for (var i = 0; i < $scope.mealsList.length; i++) {
+                if (($scope.mealsList[i])._id == deletedRecord._id) {
+                    $scope.mealsList.splice(i, 1);
+                    break;
+                }
+            }
+        };
+        var onDeleteFail = function () {
+            $mdToast.show($mdToast.simple().content("Delete Failed !!").position('bottom').hideDelay(app.config.toastAutoCloseDelay));
+        };
+        var deleteMealDataPromise = MealsStore.remove(mealID);
+        deleteMealDataPromise.then(onDeleteSuccess, onDeleteFail);
     };
 
     $scope.activateMenuItem = function (menuItemId) {
@@ -292,12 +336,12 @@ mealsModule.config(function ($stateProvider, $urlRouterProvider) {
           })
           .state('mealForm', {
               resolve: {
-                  meal: function (MealsStore, $stateParams) { return MealsStore.getMealByID($stateParams.mealsID); },
+                  meal: function (MealsStore, $stateParams) { return MealsStore.getMealByID($stateParams.mealID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
               templateUrl: 'views/meals/new_entry.html',
               controller: 'MealsFormController',
-              params: { 'patientID': null, 'mealsID': null, 'parentState': null }
+              params: { 'patientID': null, 'mealID': null, 'parentState': null }
           })
           .state('caloriestrend', {
               resolve: {

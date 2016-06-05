@@ -236,8 +236,10 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
         });
         return deferredFetch;
     },
+
     /*
-    *GQL Query Syntax based querying
+    * GQL Query Syntax based querying
+    * API : https://pouchdb.com/gql.html   AND  https://cloud.google.com/datastore/docs/apis/gql/gql_reference
     */
 
 	search : function (query) {
@@ -259,6 +261,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 	},
     /*
     *query: {fields,selector,sort,limit}
+    * API : 
     */
     find : function (query) {
         var deferredQuery = $.Deferred();

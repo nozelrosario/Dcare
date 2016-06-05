@@ -3,7 +3,7 @@ var glucoseModule = angular.module('dCare.glucose', ['ionic',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng']);
 
 //Controllers
-glucoseModule.controller('GlucoseListController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, glucoseList, currentPatient, GlucoseStore) {
+glucoseModule.controller('GlucoseListController', function ($scope, $ionicSideMenuDelegate, $mdToast, $mdBottomSheet, $state, $stateParams, glucoseList, currentPatient, GlucoseStore) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -25,6 +25,33 @@ glucoseModule.controller('GlucoseListController', function ($scope, $ionicSideMe
 
     // Action Methods
 
+    $scope.onLongPress = function (item, $event) {
+        $scope.showListActionSheet(item);
+        $event.stopPropagation();
+    };
+
+    $scope.showListActionSheet = function (item) {
+        var actionSheetController = function ($scope, $mdBottomSheet) {
+            $scope.actionClicked = function (actionCode) {
+                $mdBottomSheet.hide({ actionItem: item, actionCode: actionCode });
+            };
+        };
+        $mdBottomSheet.show({
+            templateUrl: 'views/common-templates/list_action_sheet.html',
+            controller: actionSheetController,
+        }).then(function (event) {
+            $scope.invokeListAction(event.actionItem, event.actionCode);
+        });
+    };
+
+    $scope.invokeListAction = function (actionItem, actionCode) {
+        switch (actionCode) {
+            case 'edit': $scope.editGlucose(actionItem.id); break;
+            case 'delete': $scope.deleteGlucose(actionItem.id); break;
+            default: app.log.error("Action not Supported !!");
+        }
+    };
+
     $scope.showHelp = function () {
         $scope.showOverlayHelp = true;
     };
@@ -35,6 +62,23 @@ glucoseModule.controller('GlucoseListController', function ($scope, $ionicSideMe
 
     $scope.newGlucose = function () {
         $state.go("glucoseForm", { patientID: $scope.currentPatient.id, parentState: 'glucoselist' });
+    };
+
+    $scope.deleteGlucose = function (glucoseID) {
+        var onDeleteSuccess = function (deletedRecord) {
+            $mdToast.show($mdToast.simple().content("Deleted successfully !!").position('bottom').hideDelay(app.config.toastAutoCloseDelay));
+            for (var i = 0; i < $scope.glucoseList.length; i++) {
+                if (($scope.glucoseList[i])._id == deletedRecord._id) {
+                    $scope.glucoseList.splice(i, 1);
+                    break;
+                }
+            }
+        };
+        var onDeleteFail = function () {
+            $mdToast.show($mdToast.simple().content("Delete Failed !!").position('bottom').hideDelay(app.config.toastAutoCloseDelay));
+        };
+        var deleteGlucoseDataPromise = GlucoseStore.remove(glucoseID);
+        deleteGlucoseDataPromise.then(onDeleteSuccess, onDeleteFail);
     };
 
     $scope.activateMenuItem = function (menuItemId) {

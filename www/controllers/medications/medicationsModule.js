@@ -3,7 +3,7 @@ var medicationsModule = angular.module('dCare.medications', ['ionic',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng']);
 
 //Controllers
-medicationsModule.controller('MedicationsListController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, medicationsList, currentPatient, MedicationsStore) {
+medicationsModule.controller('MedicationsListController', function ($scope, $ionicSideMenuDelegate, $mdToast, $mdBottomSheet, $state, $stateParams, medicationsList, currentPatient, MedicationsStore) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -26,6 +26,33 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
 
     // Action Methods
 
+    $scope.onLongPress = function (item, $event) {
+        $scope.showListActionSheet(item);
+        $event.stopPropagation();
+    };
+
+    $scope.showListActionSheet = function (item) {
+        var actionSheetController = function ($scope, $mdBottomSheet) {
+            $scope.actionClicked = function (actionCode) {
+                $mdBottomSheet.hide({ actionItem: item, actionCode: actionCode });
+            };
+        };
+        $mdBottomSheet.show({
+            templateUrl: 'views/common-templates/list_action_sheet.html',
+            controller: actionSheetController,
+        }).then(function (event) {
+            $scope.invokeListAction(event.actionItem, event.actionCode);
+        });
+    };
+
+    $scope.invokeListAction = function (actionItem, actionCode) {
+        switch (actionCode) {
+            case 'edit': $scope.editMedication(actionItem.id); break;
+            case 'delete': $scope.deleteMedication(actionItem.id); break;
+            default: app.log.error("Action not Supported !!");
+        }
+    };
+
     $scope.showHelp = function () {
         $scope.showOverlayHelp = true;
     };
@@ -36,6 +63,23 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
 
     $scope.newMedication = function () {
         $state.go("medicationForm", { patientID: $scope.currentPatient.id, parentState: 'activeMedicationslist' });
+    };
+
+    $scope.deleteMedication = function (medicationID) {        
+        var onDeleteSuccess = function (deletedRecord) {
+            $mdToast.show($mdToast.simple().content("Deleted successfully !!").position('bottom').hideDelay(app.config.toastAutoCloseDelay));
+            for (var i = 0; i < $scope.medicationsList.length; i++) {
+                if (($scope.medicationsList[i])._id == deletedRecord._id) {
+                    $scope.medicationsList.splice(i, 1);
+                    break;
+                }
+            }
+        };
+        var onDeleteFail = function () {
+            $mdToast.show($mdToast.simple().content("Delete Failed !!").position('bottom').hideDelay(app.config.toastAutoCloseDelay));
+        };
+        var deleteMedicationDataPromise = MedicationsStore.remove(medicationID);
+        deleteMedicationDataPromise.then(onDeleteSuccess, onDeleteFail);
     };
 
     $scope.activateMenuItem = function (menuItemId) {
@@ -67,6 +111,8 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
         $ionicSideMenuDelegate.toggleLeft();
     };
 
+
+
     //Action Methods
     $scope.navigateBack = function () {
         // transition to previous state
@@ -80,7 +126,7 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
 
 
 
-medicationsModule.controller('MedicationFormController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, medication, currentPatient, MedicationsStore) {
+medicationsModule.controller('MedicationFormController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $mdToast, $state, $stateParams, medication, currentPatient, MedicationsStore) {
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = MedicationsStore.enums;
@@ -109,13 +155,9 @@ medicationsModule.controller('MedicationFormController', function ($scope, $ioni
         $mdDialog.show(confirmReminder).then(function () {
             // User clicked Yes, set reminder
             MedicationsStore.setMedicationReminder(medication.id).then(function (reminder_status) {
-                $mdDialog.show($mdDialog.alert()
-                               .title("Medication Reminder!!")
-                               .content(reminder_status)
-                               .ariaLabel(reminder_status)
-                               .ok('OK!')).finally(function () {
-                                   $scope.changeState(medication);
-                               });
+                // Notify user & Change state
+                $mdToast.show($mdToast.simple().content(reminder_status).position('bottom').hideDelay(app.config.toastAutoCloseDelay));
+                $scope.changeState(medication);
             });
         }, function () {
             // User clicked No, do not set reminder

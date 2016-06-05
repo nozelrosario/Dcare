@@ -17,10 +17,10 @@
 			<ion-content>
                 <md-list>
                     <md-item ng-repeat="reminder in remindersList" >
-                        <md-item-content >
-                            <md-button menu-close ng-click="editReminder(reminder.id)" class="button-full menu-button">
+                        <md-item-content on-hold="onLongPress(reminder, $event)">
+                            <md-button menu-close on-tap="editReminder(reminder.id)" class="button-full menu-button">
                                 <div layout="row" class="list-row">
-                                    <img  ng-src="{{enums.reminderType[reminder.reminderType].image}}" style="height:50px;width:50px;margin:10px">
+                                    <img ng-src="{{enums.reminderType[reminder.reminderType].image}}" style="height:50px;width:50px;margin:10px">
                                     <div layout="column" layout-align="center start">
                                         <div class="menu-title">{{reminder.title}}</div>
                                         <div class="menu-sub-title">{{reminder.text}}::{{reminder.startdate | prettifyDate:reminder.frequency:((enums['frequencyUnit'])[reminder.frequencyUnit]).label}}</div>
@@ -39,16 +39,16 @@
             <ion-content>
                 <md-list>
                     <md-item ng-repeat="menuItem in menuItems" >
-                        <md-item-content >
-                        <md-button menu-close ng-click="activateMenuItem(menuItem.id)" class="button-full menu-button">
-                            <div layout="row" class="list-row">
-                                <img ng-src="{{menuItem.icon}}" class="list-icon" />
-                                <div layout="column">
-                                    <div class="menu-title">{{menuItem.title}}</div>
-                                    <div class="menu-sub-title">{{menuItem.subTitle}}</div>
+                        <md-item-content>
+                            <md-button menu-close ng-click="activateMenuItem(menuItem.id)" class="button-full menu-button">
+                                <div layout="row" class="list-row">
+                                    <img ng-src="{{menuItem.icon}}" class="list-icon" />
+                                    <div layout="column">
+                                        <div class="menu-title">{{menuItem.title}}</div>
+                                        <div class="menu-sub-title">{{menuItem.subTitle}}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </md-button>
+                            </md-button>
                         </md-item-content>
                     </md-item>
                 </md-list>

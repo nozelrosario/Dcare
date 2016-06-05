@@ -15,8 +15,8 @@
 			<ion-content>
                 <md-list>
                     <md-item ng-repeat="vitals in vitalsList">
-                        <md-item-content>
-                            <md-button menu-close ng-click="editVitals(vitals.id)" class="button-full menu-button">
+                        <md-item-content on-hold="onLongPress(vitals, $event)">
+                            <md-button menu-close on-tap="editVitals(vitals.id)" class="button-full menu-button">
                                 <div layout="row" class="list-row">
                                     <date-time-box ng-model="vitals.datetime" box-size="20px" box-positioning="inline-flex" class=""></date-time-box>
                                     <div flex layout="column" layout-align="center start">
