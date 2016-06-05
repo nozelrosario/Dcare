@@ -22,13 +22,16 @@
         "cordova-plugin-device": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },
-        "de.appplant.cordova.plugin.email-composer": {
-            "PACKAGE_NAME": "com.nozel.dcare"
-        },
         "cordova-plugin-inappbrowser": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "com.nozel.dcare"
+        },
         "cordova-plugin-x-socialsharing": {
+            "PACKAGE_NAME": "com.nozel.dcare"
+        },
+        "de.appplant.cordova.plugin.email-composer": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },
         "de.appplant.cordova.plugin.local-notification": {

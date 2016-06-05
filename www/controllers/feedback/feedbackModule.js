@@ -11,7 +11,7 @@ remindersModule.controller('FeedbackController', function ($scope, $state, $stat
                         { seq: 2, id: 'about', title: 'About D-Care', subTitle: 'Short info about this project', icon: 'img/info.png' },
                         { seq: 3, id: 'share', title: 'Share', subTitle: 'Share this app among your friends', icon: 'img/share.png' },
                         { seq: 4, id: 'rate', title: 'Rate this app', subTitle: 'Rate this app on app store', icon: 'img/rating.png' },
-                        { seq: 5, id: 'close', title: 'Close', subTitle: 'Close feedback go & back to Dashboard', icon: 'img/home-dashboard.png' }
+                        { seq: 5, id: 'close', title: 'Back to Dashboard', subTitle: 'Close feedback go & back to Dashboard', icon: 'img/home-dashboard.png' }
                        ];
 
     // Init Data

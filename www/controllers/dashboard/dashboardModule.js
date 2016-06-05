@@ -5,7 +5,7 @@ var dashboardModule = angular.module('dCare.dashboard', ['ionic',
                                                          'dCare.datePrettify']);
 
 //Controllers
-dashboardModule.controller('DashboardController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams,
+dashboardModule.controller('DashboardController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $mdToast, $state, $stateParams,
                                                             allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData,notificationsData,
                                                             PatientsStore, VitalsStore, GlucoseStore, NotificationsStore) {
 
@@ -36,6 +36,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
     $scope.isVitalsExpanded = false;
     $scope.showOverlayHelp = app.config.isFirstDashboardView;
     app.config.isFirstDashboardView = false;
+    $scope.isExitConfirmed = false;
 
     if (!defaultPatient) {
         $scope.currentPatient = allPatients[0];
@@ -214,18 +215,33 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
         //});
     };
     $scope.$on("navigate-back", function (event, data) {
-        var confirmToggle = $mdDialog.confirm()
+        
+        if (app.config.confirmOnExit) {
+            var confirmToggle = $mdDialog.confirm()
                   .title('Exit Application ?')
                   .content('Are you sure you want to close application ?')
                   .ariaLabel('Are you sure you want to close application ??')
                   .ok('Yes')
                   .cancel('No');
-        $mdDialog.show(confirmToggle).then(function () {
-            // Exit App
-            ionic.Platform.exitApp();
-        }, function () {
-            // Do Nothing
-        });
+            $mdDialog.show(confirmToggle).then(function () {
+                // Exit App
+                ionic.Platform.exitApp();
+            }, function () {
+                // Do Nothing
+            });
+        } else {
+            if ($scope.isExitConfirmed) {
+                ionic.Platform.exitApp();
+            } else {
+                //Notify exit
+                $mdToast.show($mdToast.simple().content('Press "Back" again to exit').position('bottom').hideDelay(1000));
+                $scope.isExitConfirmed = true;
+                setTimeout(function () {
+                    $scope.isExitConfirmed = false;
+                }, 3000);
+            }
+        }
+        
 
 
     });

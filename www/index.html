@@ -159,7 +159,9 @@
     <script src="models/reminders/reminderService.js"></script>
     <script src="models/meals/mealsStore.js"></script>     
        
-    
+    <script>
+        if (navigator && navigator.splashscreen) navigator.splashscreen.hide();
+    </script>
   </head>
   <body ng-app="dCare" ng-controller="InitApp">
      <div ui-view>

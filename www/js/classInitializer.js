@@ -16,7 +16,8 @@ app = function () {
         LOG_APPENDER: new log4javascript.BrowserConsoleAppender(),   //NR: Can use other Appenders when needed
         log: null,                           //NR: Holds the instance of log writer
         config: {                            //NR: Can be used to hold app wide shared data/preferenced.
-            isFirstDashboardView: false
+            isFirstDashboardView: false,
+            confirmOnExit: false
         },
         info: {
             developers: ['nozelrosario@gmail.com'],

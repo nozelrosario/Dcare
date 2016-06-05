@@ -8,17 +8,21 @@
       Nozel M. Rosario
     </author>
   <content src="index.html"/>
-  <access origin="*"/>
+  <access origin="*"/>  
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
   <preference name="BackupWebStorage" value="none"/>
-  <preference name="SplashScreen" value="screen"/>
-  <preference name="SplashScreenDelay" value="1000"/>
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>
-  <platform name="android">
+  <icon src="resources\android\icon\drawable-xhdpi-icon.png"/>
+  <preference name="SplashScreen" value="screen" />
+  <preference name="SplashScreenDelay" value="10000"/>   <!-- 0 to disable-->
+  <platform name="android">    
+	<preference name="AutoHideSplashScreen" value="false" />
+	<preference name="SplashMaintainAspectRatio" value="true" />
+	<preference name="SplashShowOnlyFirstTime" value="false" />
 	<preference name="android-minSdkVersion" value="14" />
 	<preference name="android-targetSdkVersion" value="20" />
     <icon src="resources\android\icon\drawable-ldpi-icon.png" density="ldpi"/>
@@ -40,5 +44,8 @@
     <splash src="resources\android\splash\drawable-port-xxhdpi-screen.png" density="port-xxhdpi"/>
     <splash src="resources\android\splash\drawable-port-xxxhdpi-screen.png" density="port-xxxhdpi"/>
   </platform>
-  <icon src="resources\android\icon\drawable-xhdpi-icon.png"/>
+  <platform name="ios">
+    <preference name="FadeSplashScreen" value="false"/>
+    <preference name="FadeSplashScreenDuration" value="0"/>  <!-- 0 to disable-->
+  </platform>
 </widget>
