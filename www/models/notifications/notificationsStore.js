@@ -51,7 +51,7 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
 
             if (notification.frequencyUnit) {
                 delete nativeNotificationCofig.at;
-                nativeNotificationCofig.firstAt = notification.startdate;
+                nativeNotificationCofig.firstAt = new Date(notification.startdate);
                 switch (notification.frequencyUnit) {
                     case 1: //Yearly
                         nativeNotificationCofig.every = "year";
@@ -72,8 +72,12 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
                 }
             } else {
                 delete nativeNotificationCofig.firstAt;
-                nativeNotificationCofig.at = notification.startdate;
+                nativeNotificationCofig.at = new Date(notification.startdate);
             }
+            if (notification.notificationType && (enums.notificationType[notification.notificationType]).image) {
+                nativeNotificationCofig.icon = "file://" + (enums.notificationType[notification.notificationType]).image
+            }
+
 
         NotificationService.scheduleNotification(nativeNotificationCofig).then(function () {
                 deferredScheduleNotification.resolve(notification);

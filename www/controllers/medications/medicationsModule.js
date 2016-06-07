@@ -3,7 +3,9 @@ var medicationsModule = angular.module('dCare.medications', ['ionic',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng']);
 
 //Controllers
-medicationsModule.controller('MedicationsListController', function ($scope, $ionicSideMenuDelegate, $mdToast, $mdBottomSheet, $state, $stateParams, medicationsList, currentPatient, MedicationsStore) {
+medicationsModule.controller('MedicationsListController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdToast, $mdBottomSheet, $state, $stateParams, medicationsList, currentPatient, MedicationsStore) {
+
+    $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -12,9 +14,9 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
                         { seq: 1, id:'dashboard', title: 'Dashboard', subTitle: 'Your summary page', icon: 'img/home-dashboard.png' },
                         { seq: 3, id:'add-new', title: 'Add New', subTitle: 'Add a new medication', icon: 'img/add-new.png' },
                         { seq: 2, id:'active-medications', title: 'Active Medications', subTitle: 'Show only Active medications', icon: 'img/active-list.png' },
-                        { seq: 4, id:'all-medications', title: 'All Medications', subTitle: 'Show all medications (active & inactive)', icon: 'img/list.png' },
-                        { seq: 5, id:'alerts', title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' },
-                        { seq: 6, id:'settings', title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
+                        { seq: 4, id:'all-medications', title: 'All Medications', subTitle: 'Show all medications (active & inactive)', icon: 'img/list.png' }//,
+                        //{ seq: 5, id:'alerts', title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' },
+                        //{ seq: 6, id:'settings', title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
     ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
@@ -126,7 +128,7 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
 
 
 
-medicationsModule.controller('MedicationFormController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $mdToast, $state, $stateParams, medication, currentPatient, MedicationsStore) {
+medicationsModule.controller('MedicationFormController', function ($scope, $mdDialog, $mdToast, $state, $stateParams, medication, currentPatient, MedicationsStore) {
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = MedicationsStore.enums;

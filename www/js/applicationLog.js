@@ -4,6 +4,7 @@ switch (app.LOGGING_LEVEL) {
     case "off":
         app.log.setLevel(log4javascript.Level.OFF);
         console.log("Application Logging is OFF");
+        console.log = function () { /* Supress the console logger function */ };
         break;
     case "all":
         app.log.setLevel(log4javascript.Level.ALL);

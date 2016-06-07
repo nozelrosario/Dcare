@@ -5,9 +5,11 @@ var dashboardModule = angular.module('dCare.dashboard', ['ionic',
                                                          'dCare.datePrettify']);
 
 //Controllers
-dashboardModule.controller('DashboardController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $mdToast, $state, $stateParams,
+dashboardModule.controller('DashboardController', function ($scope, $ionicSideMenuDelegate,$ionicHistory, $mdDialog, $mdToast, $state, $stateParams,
                                                             allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData,notificationsData,
                                                             PatientsStore, VitalsStore, GlucoseStore, NotificationsStore) {
+
+    $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
     // Init Menu
     $scope.menuItems = [
@@ -18,7 +20,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
                         { seq: 5, id: "medications", title: 'Medications', subTitle: 'Medications', icon: 'img/medications.png' },
                         { seq: 6, id: "reminders", title: 'Reminders', subTitle: 'Your reminders', icon: 'img/reminders.png' },
                         { seq: 7, id: "fooddiary", title: 'Food Diary', subTitle: 'Your Meals', icon: 'img/food-diary.png' },
-                        { seq: 8, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' },
+                        //{ seq: 8, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' },
                         { seq: 9, id: "feedback", title: 'Feedback', subTitle: 'Give feedback & know more about D-Care', icon: 'img/info.png' }
                        ];
 

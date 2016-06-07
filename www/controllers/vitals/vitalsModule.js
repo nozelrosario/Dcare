@@ -3,7 +3,9 @@ var vitalsModule = angular.module('dCare.vitals', ['ionic',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng', 'dCare.jqueryDynameterDirectives', 'dCare.mobiscrollDirectives', 'dCare.jqueryKnobDirectives', 'dCare.addclearDirectives']);
 
 //Controllers
-vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, latestVitals, currentPatient, VitalsStore) {
+vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $state, $stateParams, latestVitals, currentPatient, VitalsStore) {
+
+    $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -15,9 +17,9 @@ vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicSideM
                         { seq: 4, id: "height_trend", title: 'See Height Trend', subTitle: 'Height values graph', icon: 'img/chart.png' },
                         { seq: 5, id: "weight_trend", title: 'See Weight Trend', subTitle: 'Weight values graph', icon: 'img/chart.png' },
                         { seq: 6, id: "bmi_trend", title: 'See BMI Trend', subTitle: 'BMI values graph', icon: 'img/chart.png' },
-                        { seq: 7, id: "bp_trend", title: 'See BP Trend', subTitle: 'Blood pressure values graph', icon: 'img/chart.png' },
-                        { seq: 8, id: "alerts", title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' },
-                        { seq: 9, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
+                        { seq: 7, id: "bp_trend", title: 'See BP Trend', subTitle: 'Blood pressure values graph', icon: 'img/chart.png' }//,
+                        //{ seq: 8, id: "alerts", title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' }//,
+                        //{ seq: 9, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
@@ -92,7 +94,9 @@ vitalsModule.controller('VitalsSummaryController', function ($scope, $ionicSideM
 
 });
 
-vitalsModule.controller('VitalsListController', function ($scope, $ionicSideMenuDelegate, $mdToast, $mdBottomSheet, $state, $stateParams, vitalsList, currentPatient, VitalsStore) {
+vitalsModule.controller('VitalsListController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdToast, $mdBottomSheet, $state, $stateParams, vitalsList, currentPatient, VitalsStore) {
+
+    $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'vitalsSummary';
 
@@ -104,9 +108,9 @@ vitalsModule.controller('VitalsListController', function ($scope, $ionicSideMenu
                         { seq: 4, id: "height_trend", title: 'See Height Trend', subTitle: 'Height values graph', icon: 'img/chart.png' },
                         { seq: 5, id: "weight_trend", title: 'See Weight Trend', subTitle: 'Weight values graph', icon: 'img/chart.png' },
                         { seq: 6, id: "bmi_trend", title: 'See BMI Trend', subTitle: 'BMI values graph', icon: 'img/chart.png' },
-                        { seq: 7, id: "bp_trend", title: 'See BP Trend', subTitle: 'Blood pressure values graph', icon: 'img/chart.png' },
-                        { seq: 8, id: "alerts", title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' },
-                        { seq: 9, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
+                        { seq: 7, id: "bp_trend", title: 'See BP Trend', subTitle: 'Blood pressure values graph', icon: 'img/chart.png' }//,
+                        //{ seq: 8, id: "alerts", title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' }//,
+                        //{ seq: 9, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
     ];
 
     $scope.activateMenuItem = function (menuItemId) {
@@ -329,7 +333,7 @@ vitalsModule.controller('VitalsFormController', function ($scope, $ionicLoading,
 });
 
 
-vitalsModule.controller('VitalsTrendController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, vitalsTrendData, currentPatient, VitalsStore) {
+vitalsModule.controller('VitalsTrendController', function ($scope, $state, $stateParams, vitalsTrendData, currentPatient, VitalsStore) {
 
     // Init Menu
 
@@ -433,7 +437,6 @@ vitalsModule.config(function ($stateProvider, $urlRouterProvider) {
                     latestVitals: function (VitalsStore, $stateParams) { return VitalsStore.getLatestVitalsForPatient($stateParams.patientID); },
                     currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
                 },
-                //url: '/identificationInfo',  // cannot use as using params[]
                 templateUrl: 'views/vitals/vitals_summary.html',
                 controller: 'VitalsSummaryController',
                 params: { 'patientID': null, 'parentState': null }
@@ -443,7 +446,6 @@ vitalsModule.config(function ($stateProvider, $urlRouterProvider) {
                   vitalsList: function (VitalsStore, $stateParams) { return VitalsStore.getAllVitalsForPatient($stateParams.patientID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
-              //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/vitals/list.html',
               controller: 'VitalsListController',
               params: { 'patientID': null, 'parentState': null }
@@ -454,7 +456,6 @@ vitalsModule.config(function ($stateProvider, $urlRouterProvider) {
                   latestVitals: function (VitalsStore, $stateParams) { return VitalsStore.getLatestVitalsForPatient($stateParams.patientID); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
-              //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/vitals/new_entry.html',
               controller: 'VitalsFormController',
               params: { 'patientID': null, 'vitalsID': null, 'parentState': null }
@@ -472,14 +473,23 @@ vitalsModule.config(function ($stateProvider, $urlRouterProvider) {
                       } else {
                           alert("TrendType empty for Vitals Trend.");
                       }
-                      
+
                   },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
               },
-              //url: '/identificationInfo',  // cannot use as using params[]
               templateUrl: 'views/vitals/trend.html',
               controller: 'VitalsTrendController',
               params: { 'patientID': null, 'parentState': null, 'trendType': null, 'unit': null }
           });
+    //NR: Re-Think about following implementation
+        //.state('vitalsAlertsList', {
+        //    resolve: {
+        //        notificationsList: function (NotificationsStore, $stateParams) { return NotificationsStore.getAllVitalsForPatient($stateParams.patientID); }//,
+        //        //currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
+        //    },
+        //    templateUrl: 'views/vitals/list.html',
+        //    controller: 'VitalsListController',
+        //    params: { 'patientID': null, 'parentState': null }
+        //});
 
 });

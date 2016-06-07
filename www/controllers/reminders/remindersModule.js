@@ -4,7 +4,9 @@ var remindersModule = angular.module('dCare.reminders', ['ionic',
                                                      'dCare.datePrettify']);
 
 //Controllers
-remindersModule.controller('RemindersListController', function ($scope, $ionicSideMenuDelegate, $mdToast, $mdBottomSheet, $state, $stateParams, currentPatient, RemindersStore, remindersList) {
+remindersModule.controller('RemindersListController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdToast, $mdBottomSheet, $state, $stateParams, currentPatient, RemindersStore, remindersList) {
+
+    $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -14,8 +16,8 @@ remindersModule.controller('RemindersListController', function ($scope, $ionicSi
                         { seq: 2, id: 'activeReminders', title: 'Active Reminders', subTitle: 'Currently active reminders', icon: 'img/active-list.png' },
                         { seq: 3, id: 'pastReminders', title: 'Past Reminders', subTitle: 'Past / Inactive reminders', icon: 'img/inactive-list.png' },
                         { seq: 4, id: 'allReminders', title: 'All Reminders', subTitle: 'All reminders', icon: 'img/list.png' },
-                        { seq: 5, id: 'newReminder', title: 'Add New', subTitle: 'Add a new reminder', icon: 'img/add-new.png' },
-                        { seq: 6, id: 'settings', title: 'Settings', subTitle: 'Change reminder preferences', icon: 'img/settings.png' }
+                        { seq: 5, id: 'newReminder', title: 'Add New', subTitle: 'Add a new reminder', icon: 'img/add-new.png' }//,
+                        //{ seq: 6, id: 'settings', title: 'Settings', subTitle: 'Change reminder preferences', icon: 'img/settings.png' }
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
@@ -124,7 +126,7 @@ remindersModule.controller('RemindersListController', function ($scope, $ionicSi
 
 
 
-remindersModule.controller('ReminderFormController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, reminder, currentPatient, RemindersStore) {
+remindersModule.controller('ReminderFormController', function ($scope, $state, $stateParams, reminder, currentPatient, RemindersStore) {
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = RemindersStore.enums;

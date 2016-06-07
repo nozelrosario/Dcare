@@ -3,7 +3,9 @@ var glucoseModule = angular.module('dCare.glucose', ['ionic',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng']);
 
 //Controllers
-glucoseModule.controller('GlucoseListController', function ($scope, $ionicSideMenuDelegate, $mdToast, $mdBottomSheet, $state, $stateParams, glucoseList, currentPatient, GlucoseStore) {
+glucoseModule.controller('GlucoseListController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdToast, $mdBottomSheet, $state, $stateParams, glucoseList, currentPatient, GlucoseStore) {
+
+    $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -11,9 +13,9 @@ glucoseModule.controller('GlucoseListController', function ($scope, $ionicSideMe
     $scope.menuItems = [
                         { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'img/home-dashboard.png' },
                         { id: 2, title: 'Add New', subTitle: 'Add a new glucose measurement', icon: 'img/add-new.png' },
-                        { id: 3, title: 'See Trend', subTitle: 'Blood glucose graph', icon: 'img/chart.png' },
-                        { id: 4, title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' },
-                        { id: 5, title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
+                        { id: 3, title: 'See Trend', subTitle: 'Blood glucose graph', icon: 'img/chart.png' }//,
+                        //{ id: 4, title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' },
+                        //{ id: 5, title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
@@ -81,6 +83,7 @@ glucoseModule.controller('GlucoseListController', function ($scope, $ionicSideMe
         deleteGlucoseDataPromise.then(onDeleteSuccess, onDeleteFail);
     };
 
+    
     $scope.activateMenuItem = function (menuItemId) {
         switch (menuItemId) {
             case 1:
@@ -122,7 +125,7 @@ glucoseModule.controller('GlucoseListController', function ($scope, $ionicSideMe
 
 
 
-glucoseModule.controller('GlucoseFormController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, glucose, currentPatient, GlucoseStore, MealsStore) {
+glucoseModule.controller('GlucoseFormController', function ($scope, $mdDialog, $state, $stateParams, glucose, currentPatient, GlucoseStore, MealsStore) {
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = GlucoseStore.enums;
@@ -221,7 +224,7 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $ionicSideMe
 });
 
 
-glucoseModule.controller('GlucoseLinkedMealController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, meal, currentPatient, MealsStore) {
+glucoseModule.controller('GlucoseLinkedMealController', function ($scope, $mdDialog, $state, $stateParams, meal, currentPatient, MealsStore) {
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = MealsStore.enums;
@@ -341,7 +344,7 @@ glucoseModule.controller('GlucoseLinkedMealController', function ($scope, $ionic
 });
 
 
-glucoseModule.controller('GlucoseTrendController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, glucoseTrendData, currentPatient, GlucoseStore) {
+glucoseModule.controller('GlucoseTrendController', function ($scope, $state, $stateParams, glucoseTrendData, currentPatient, GlucoseStore) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'glucoselist';
 

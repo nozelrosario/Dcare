@@ -3,7 +3,9 @@ var mealsModule = angular.module('dCare.meals', ['ionic',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng']);
 
 //Controllers
-mealsModule.controller('MealsListController', function ($scope, $ionicSideMenuDelegate, $mdToast, $mdBottomSheet, $state, $stateParams, mealsList, currentPatient, MealsStore) {
+mealsModule.controller('MealsListController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdToast, $mdBottomSheet, $state, $stateParams, mealsList, currentPatient, MealsStore) {
+
+    $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'dashboard';
 
@@ -11,9 +13,9 @@ mealsModule.controller('MealsListController', function ($scope, $ionicSideMenuDe
     $scope.menuItems = [
                         { id: 1, title: 'Dashboard', subTitle: 'Your summary page', icon: 'img/home-dashboard.png' },
                         { id: 2, title: 'Add New', subTitle: 'Add a new meal entry', icon: 'img/add-new.png' },
-                        { id: 3, title: 'See Trend', subTitle: 'Calories consumption graph', icon: 'img/chart.png' },
-                        { id: 4, title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' },
-                        { id: 5, title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
+                        { id: 3, title: 'See Trend', subTitle: 'Calories consumption graph', icon: 'img/chart.png' }//,
+                        //{ id: 4, title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' },
+                        //{ id: 5, title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
                        ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
@@ -122,7 +124,7 @@ mealsModule.controller('MealsListController', function ($scope, $ionicSideMenuDe
 
 
 
-mealsModule.controller('MealsFormController', function ($scope, $ionicSideMenuDelegate, $mdDialog, $state, $stateParams, meal, currentPatient, MealsStore) {
+mealsModule.controller('MealsFormController', function ($scope, $mdDialog, $state, $stateParams, meal, currentPatient, MealsStore) {
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = MealsStore.enums;
@@ -240,7 +242,7 @@ mealsModule.controller('MealsFormController', function ($scope, $ionicSideMenuDe
 });
 
 
-mealsModule.controller('MealsTrendController', function ($scope, $ionicSideMenuDelegate, $state, $stateParams, caloriesTrendData, currentPatient, MealsStore) {
+mealsModule.controller('MealsTrendController', function ($scope, $state, $stateParams, caloriesTrendData, currentPatient, MealsStore) {
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'mealslist';
 
