@@ -1,6 +1,6 @@
 app.classes.data.adapters.IDbAdapter = new Class({
-	initialize: function(config) {},
-	openDataStore : function(dataStoreName) {},
+    initialize: function (dataStoreName, config) { },
+	openDataStore : function() {},
 	getDataStore: function () {},
     /** 
     * @public
@@ -16,12 +16,13 @@ app.classes.data.adapters.IDbAdapter = new Class({
     */
 	insertOrUpdate : function (data) {},
 	getDataByID : function (id) {},
-	deleteByID: function (id) {},
+	remove: function (id) {},
 	getRowsCount : function () {},
     /** 
     * @public
     * getAllRows : Gets all rows from DB
     */
     getAllRows : function () {},
-	search : function (query) {},
+    search: function (query) { },
+    find: function (query) { }
 });

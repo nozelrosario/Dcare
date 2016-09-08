@@ -10,10 +10,10 @@ app.classes.data.DataAdapterFactory = new Singleton({
 	register: function (adapterName, adapterClass) {
 		this.registeredAdapters[adapterName] = adapterClass;
 	},
-	getAdapter: function(adapterName, adapterConfig) {
+	getAdapter: function(adapterName, dataStoreName, adapterConfig) {
 		var adapter ;
 		if(this.registeredAdapters[adapterName]) {
-			adapter = new (this.registeredAdapters[adapterName])(adapterConfig);
+		    adapter = new (this.registeredAdapters[adapterName])(dataStoreName, adapterConfig);
 		} else {
 			app.log.error("Data Adapter '" + adapterName +"' unavailable !! ");
 			adapter = null;

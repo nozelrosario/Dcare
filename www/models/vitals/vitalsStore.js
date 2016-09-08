@@ -61,7 +61,7 @@ angular.module('dCare.Services.VitalsStore', [])
     return {
         init: function () {
             var deferredInit = $q.defer();
-            if (vitalsDataStore.getDataStore()) {
+            if (vitalsDataStore.getClusteredDataStore()) {
                 deferredInit.resolve();
             } else {
                 deferredInit.reject();
@@ -69,7 +69,7 @@ angular.module('dCare.Services.VitalsStore', [])
             return deferredInit.promise;
         },
         getCount: function (patientID) {
-            return vitalsDataStore.getDataStore().search({
+            return vitalsDataStore.getClusteredDataStore().search({
                 select: 'count(id)',
                 where: "patientID = " + patientID
             });
@@ -80,13 +80,13 @@ angular.module('dCare.Services.VitalsStore', [])
                 var query = "patientID=" + patientID;
                 if (fromDate) query += " and datetime >=" + fromDate;
                 if (toDate) query += " and datetime <=" + toDate;
-                dataPromise = vitalsDataStore.getDataStore().search({
+                dataPromise = vitalsDataStore.getClusteredDataStore().search({
                     select: '*',
                     where: query + ""
                 });
 
             } else {
-                dataPromise = vitalsDataStore.getDataStore().search({
+                dataPromise = vitalsDataStore.getClusteredDataStore().search({
                     select: '*',
                     where: "patientID=" + patientID + ""
                 });
@@ -94,7 +94,7 @@ angular.module('dCare.Services.VitalsStore', [])
             return dataPromise;
         },
         getVitalByID: function (vitalsID) {
-            return vitalsDataStore.getDataStore().getDataByID(vitalsID);
+            return vitalsDataStore.getClusteredDataStore().getDataByID(vitalsID);
         },
         getGraphDataForHeight: function (patientID, fromDate, toDate) {
             var deferredFetch = $q.defer();
@@ -128,7 +128,7 @@ angular.module('dCare.Services.VitalsStore', [])
         },
         getLatestVitalsForPatient: function (patientID) {
             var deferredFetch = $q.defer();
-            vitalsDataStore.getDataStore().find({
+            vitalsDataStore.getClusteredDataStore().find({
                 fields: ['datetime', 'patientID'],
                 selector: { datetime: { '$exists': true }, patientID: {"$eq" : parseInt(patientID)} },
                 sort: [{ 'datetime': 'desc' }],
@@ -139,10 +139,10 @@ angular.module('dCare.Services.VitalsStore', [])
             return deferredFetch.promise;
         },
         save: function (vitals) {
-            return vitalsDataStore.getDataStore().save(vitals);
+            return vitalsDataStore.getClusteredDataStore().save(vitals);
         },
         remove: function (vitalsID) {
-            return vitalsDataStore.getDataStore().remove(vitalsID);
+            return vitalsDataStore.getClusteredDataStore().remove(vitalsID);
         }
 
     }

@@ -5,7 +5,7 @@
     var performSync = function (clusterID) {
         //NR: TODO: Stop any sync operation in progress, and restart
         //NR: TODO: update sync status upon sync start. [Detect if its an initial-Sync call or a Regular Sync. Based on it update both sync statuses]
-        //NR: TODO: make dummy calls to local DB so as to create all the right Clustered-DB instances
+        //NR: TODO: make dummy calls to local DB so as to create all the right Clustered-DB instances [Call DatastoreServices.init()]
     };
 
     var doInitialSync = function (clusterID,backgroundMode) {

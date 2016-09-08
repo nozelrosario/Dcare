@@ -5,7 +5,7 @@
 */
 .factory('UserStore', function ($q, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
     // Using normal Data store [non-synced, non-clustered]
-    var userDataStore = new DataStore({
+    var userDataStore = new DataStoreFactory({
         dataStoreName: 'User',
         dataAdapter: 'pouchDB',
         adapterConfig: { auto_compaction: true }

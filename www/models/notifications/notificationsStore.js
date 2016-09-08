@@ -94,7 +94,7 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
         enums: enums,
         init: function () {
             var deferredInit = $q.defer();
-            if (notificationsDataStore.getDataStore()) {
+            if (notificationsDataStore.getClusteredDataStore()) {
                 deferredInit.resolve();
             } else {
                 deferredInit.reject();
@@ -102,31 +102,31 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
             return deferredInit.promise;
         },
         getCount: function (patientID) {
-            return notificationsDataStore.getDataStore().search({
+            return notificationsDataStore.getClusteredDataStore().search({
                 select: 'count(id)',
                 where: "patientID = " + patientID
             });
         },
         getAllNotificationsForPatient: function (patientID) {
-            return notificationsDataStore.getDataStore().search({
+            return notificationsDataStore.getClusteredDataStore().search({
                 select: '*',
                 where: "patientID=" + patientID + ""
             });
         },
         getActiveNotificationsForPatient: function (patientID) {
-            return notificationsDataStore.getDataStore().search({
+            return notificationsDataStore.getClusteredDataStore().search({
                 select: '*',
                 where: "patientID=" + patientID + " and status= 'active'" + "and ((startdate >= " + castToLongDate(new Date()) + ") or (frequency>0 and (enddate >=" + castToLongDate(new Date()) + " or enddate='')))"
             });
         },
         getNotificationForReminder: function (reminderID) {
-            return notificationsDataStore.getDataStore().search({
+            return notificationsDataStore.getClusteredDataStore().search({
                 select: '*',
                 where: "status= 'active' and reminderID=" + reminderID + ""
             });
         },
         getNotificationByID: function (notificationID) {
-            return notificationsDataStore.getDataStore().getDataByID(notificationID);
+            return notificationsDataStore.getClusteredDataStore().getDataByID(notificationID);
         },
         remove: function (notificationID) {
             // Just delete the notification & its native counter-part
@@ -134,7 +134,7 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
             var me = this; 
             this.getNotificationByID(notificationID).then(function (notificationToBeDeleted) {
                 if (notificationToBeDeleted && notificationToBeDeleted.id > 0) {
-                    notificationsDataStore.getDataStore().remove(notificationToBeDeleted.id).then(function () {     // Delete current notification from data store
+                    notificationsDataStore.getClusteredDataStore().remove(notificationToBeDeleted.id).then(function () {     // Delete current notification from data store
                             if (NotificationService.isNotificationServiceAvailable()) {                     // Delete native counter-part
                                 NotificationService.removeNotification(notificationToBeDeleted.id);
                             }
@@ -155,7 +155,7 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
         save: function (notification) {
             var deferredSave = $q.defer();
             if (notification.status && notification.status === "expired") {
-                notificationsDataStore.getDataStore().save(notification).then(function (notificationSavedData) {
+                notificationsDataStore.getClusteredDataStore().save(notification).then(function (notificationSavedData) {
                     if (notificationSavedData.id > 0) {
                         if (NotificationService.isNotificationServiceAvailable()) {                     // Delete native counter-part
                             NotificationService.removeNotification(notificationSavedData.id);
@@ -167,7 +167,7 @@ angular.module('dCare.Services.NotificationsStore', ['dCare.Services.Notificatio
                 });
             } else {
                 notification.status = "active";
-                notificationsDataStore.getDataStore().save(notification).then(function (notificationSavedData) {
+                notificationsDataStore.getClusteredDataStore().save(notification).then(function (notificationSavedData) {
                         scheduleNativeNotification(notificationSavedData).then(function () {                // Add a native counter-part
                         deferredSave.resolve(notificationSavedData);
                     }).catch(function (err) {                        

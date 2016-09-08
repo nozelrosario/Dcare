@@ -134,7 +134,7 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
     };
 
     // Trigger remove reminder upon Delete
-    medicationsDataStore.getDataStore().addTrigger("after-delete", "trigger_remove_reminder", function (evtData) {
+    medicationsDataStore.getClusteredDataStore().addTrigger("after-delete", "trigger_remove_reminder", function (evtData) {
         var deletedMedication = evtData.data;
         removeMedicationReminder(deletedMedication.id);        
     });
@@ -143,7 +143,7 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
         enums: enums,
         init: function () {
             var deferredInit = $q.defer();
-            if (medicationsDataStore.getDataStore()) {
+            if (medicationsDataStore.getClusteredDataStore()) {
                 deferredInit.resolve();
             } else {
                 deferredInit.reject();
@@ -151,33 +151,33 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
             return deferredInit.promise;
         },
         getCount: function (patientID) {
-            return medicationsDataStore.getDataStore().search({
+            return medicationsDataStore.getClusteredDataStore().search({
                 select: 'count(id)',
                 where: "patientID = " + patientID
             });
         },
         getAllMedicationsForPatient: function (patientID) {
-            return medicationsDataStore.getDataStore().search({
+            return medicationsDataStore.getClusteredDataStore().search({
                 select: '*',
                 where: "patientID=" + patientID + ""
             });
         },
         getActiveMedicationsForPatient: function (patientID) {
-            return medicationsDataStore.getDataStore().search({
+            return medicationsDataStore.getClusteredDataStore().search({
                 select: '*',
                 where: "patientID=" + patientID + " and status= 'active'"
             });
         },
         getMedicationByID: function (medicationID) {
-            return medicationsDataStore.getDataStore().getDataByID(medicationID);
+            return medicationsDataStore.getClusteredDataStore().getDataByID(medicationID);
         },
         save: function (medication) {
-            return medicationsDataStore.getDataStore().save(medication);
+            return medicationsDataStore.getClusteredDataStore().save(medication);
         },
         setMedicationReminder: setMedicationReminder,
         removeMedicationReminder: removeMedicationReminder,
         remove: function (medicationID) {
-            return medicationsDataStore.getDataStore().remove(medicationID);
+            return medicationsDataStore.getClusteredDataStore().remove(medicationID);
         }
     }
 });

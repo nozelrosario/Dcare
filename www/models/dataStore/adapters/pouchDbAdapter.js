@@ -1,16 +1,16 @@
 // Implements IDBAdapter
 app.classes.data.adapters.PouchDbAdapter = new Class({
     include: app.classes.data.eventTriggers,
-	initialize: function(config) {
-        var defaultConfig = {};
+    initialize: function (dataStoreName, config) {
+	    var defaultConfig = {};
+	    this.dataStoreName = (dataStoreName) ? dataStoreName : app.log.error("DataStore Name cannot be empty"),
 		this.adapterConfig = $.extend(defaultConfig,config);
 		this.dataStore = null;
 		
     },
-	openDataStore : function(dataStoreName) {
+	openDataStore : function() {
 		if(!this.dataStore){
-			this.dataStoreName = dataStoreName;
-			this.dataStore = new PouchDB(dataStoreName,this.adapterConfig);
+			this.dataStore = new PouchDB(this.dataStoreName, this.adapterConfig);
 		}
 	},
 	getDataStore: function () {
@@ -176,7 +176,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
         }
         return deferredFetch;
 	},
-	deleteByID: function (id) {
+	remove: function (id) {
 	    var deferredDelete = $.Deferred(),
 	        me = this;
 	    this.getDataByID(id).then(function (data) {
@@ -292,21 +292,27 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
     */
 
     syncTo: function (remoteHost) {
-
+        var remoteDB = remoteHost + '/' + this.dataStoreName;
+        var syncOptions = {};
+        this.getDataStore().replicate.to(remoteDB, syncOptions);
     },
     /*
     * Server => Device Sync
     */
 
     syncFrom: function (remoteHost) {
-
+        var remoteDB = remoteHost + '/' + this.dataStoreName;
+        var syncOptions = {};
+        this.getDataStore().replicate.from(remoteDB, syncOptions);
     },
     /*
     * Device <=> Server Sync
     */
 
     sync: function (remoteHost) {
-
+        var remoteDB = remoteHost + '/' + this.dataStoreName;
+        var syncOptions = {};
+        this.getDataStore().sync(remoteDB, syncOptions);
     }
 });
 

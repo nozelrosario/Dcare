@@ -22,7 +22,7 @@ angular.module('dCare.Services.PatientsStore', [])
     return {
         init: function () {
             var deferredInit = $q.defer();
-            if (patientDataStore.getDataStore()) {
+            if (patientDataStore.getClusteredDataStore()) {
                 deferredInit.resolve();
             } else {
                 deferredInit.reject();
@@ -30,16 +30,16 @@ angular.module('dCare.Services.PatientsStore', [])
             return deferredInit.promise;
         },
         getCount: function () {
-            return patientDataStore.getDataStore().getRowsCount();
+            return patientDataStore.getClusteredDataStore().getRowsCount();
         },
         getAllPatients: function () {
-            return patientDataStore.getDataStore().getAllRows();
+            return patientDataStore.getClusteredDataStore().getAllRows();
         },
         getPatientByID: function (patientID) {
-            return patientDataStore.getDataStore().getDataByID(patientID);
+            return patientDataStore.getClusteredDataStore().getDataByID(patientID);
         },
         save: function (patient) {
-            return patientDataStore.getDataStore().save(patient);
+            return patientDataStore.getClusteredDataStore().save(patient);
         }
 
     }

@@ -46,7 +46,7 @@
         enums: enums,
         init: function () {
             var deferredInit = $q.defer();
-            if (mealsDataStore.getDataStore()) {
+            if (mealsDataStore.getClusteredDataStore()) {
                 deferredInit.resolve();
             } else {
                 deferredInit.reject();
@@ -54,7 +54,7 @@
             return deferredInit.promise;
         },
         getCount: function (patientID) {
-            return mealsDataStore.getDataStore().search({
+            return mealsDataStore.getClusteredDataStore().search({
                 select: 'count(id)',
                 where: "patientID = " + patientID
             });
@@ -65,13 +65,13 @@
                 var query = "patientID=" + patientID;
                 if (fromDate) query += " and datetime >=" + fromDate;
                 if (toDate) query += " and datetime <=" + toDate;
-                dataPromise = mealsDataStore.getDataStore().search({
+                dataPromise = mealsDataStore.getClusteredDataStore().search({
                     select: '*',
                     where: query + ""
                 });
 
             } else {
-                dataPromise = mealsDataStore.getDataStore().search({
+                dataPromise = mealsDataStore.getClusteredDataStore().search({
                     select: '*',
                     where: "patientID=" + patientID + ""
                 });
@@ -79,11 +79,11 @@
             return dataPromise;
         },
         getMealByID: function (mealID) {
-            return mealsDataStore.getDataStore().getDataByID(mealID);
+            return mealsDataStore.getClusteredDataStore().getDataByID(mealID);
         },
         getLatestMealForPatient: function (patientID) {
             var deferredFetch = $q.defer();
-            mealsDataStore.getDataStore().find({
+            mealsDataStore.getClusteredDataStore().find({
                 fields: ['datetime', 'patientID'],
                 selector: { datetime: { '$exists': true }, patientID: { "$eq": parseInt(patientID) } },
                 sort: [{ 'datetime': 'desc' }],
@@ -112,10 +112,10 @@
             return deferredFetch.promise;
         },
         save: function (meal) {
-            return mealsDataStore.getDataStore().save(meal);
+            return mealsDataStore.getClusteredDataStore().save(meal);
         },
         remove: function (mealID) {
-            return mealsDataStore.getDataStore().remove(mealID);
+            return mealsDataStore.getClusteredDataStore().remove(mealID);
         }
 
     }
