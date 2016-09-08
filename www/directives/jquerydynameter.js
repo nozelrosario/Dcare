@@ -7,10 +7,10 @@ jqueryDynameterDirectives.directive('jqueryDynameter', function ($parse, $timeou
             var linkFunction = function (scope, element, attrs) {
                 var dynameterConfig = scope.$eval(attrs.jqueryDynameterConfig);
                 var dynameterWidget = $(element).dynameter(dynameterConfig);
-                $timeout(function () {
-                    dynameterWidget.trigger('change');
-                    dynameterWidget.css("display", "inherit");
-                }, 200);  // NR: Hack to re-paint knob when renderedfirst time.
+                //$timeout(function () {
+                //    dynameterWidget.trigger('change');
+                //    dynameterWidget.css("display", "inherit");
+                //}, 200);  // NR: Hack to re-paint knob when renderedfirst time.
 
                 //NR: update know when scope value changes
                 scope.$watch(attrs.ngModel, function (newValue, oldValue) {

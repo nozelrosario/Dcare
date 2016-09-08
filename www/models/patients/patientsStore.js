@@ -5,7 +5,7 @@ angular.module('dCare.Services.PatientsStore', [])
 */
 .factory('PatientsStore', function ($q, $filter) {
     // Will call data store api for storing/retriving patient data and returns a JSON 
-    var patientDataStore = new DataStore({
+    var patientDataStore = new DataStoreFactory({
         dataStoreName: 'Patients',
         dataAdapter: 'pouchDB',
         adapterConfig: { auto_compaction: true }
@@ -20,20 +20,26 @@ angular.module('dCare.Services.PatientsStore', [])
 	//               ];
 
     return {
+        init: function () {
+            var deferredInit = $q.defer();
+            if (patientDataStore.getDataStore()) {
+                deferredInit.resolve();
+            } else {
+                deferredInit.reject();
+            }
+            return deferredInit.promise;
+        },
         getCount: function () {
-            return patientDataStore.getRowsCount();
+            return patientDataStore.getDataStore().getRowsCount();
         },
         getAllPatients: function () {
-            return patientDataStore.getAllRows();
+            return patientDataStore.getDataStore().getAllRows();
         },
         getPatientByID: function (patientID) {
-            return patientDataStore.getDataByID(patientID);
+            return patientDataStore.getDataStore().getDataByID(patientID);
         },
         save: function (patient) {
-            // Before Save dat manupulation
-            patient.name = patient.firstname + " " + patient.lastname;
-            patient.photo = "img/ionic.png";
-            return patientDataStore.save(patient);
+            return patientDataStore.getDataStore().save(patient);
         }
 
     }

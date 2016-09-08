@@ -4,13 +4,13 @@ angular.module('dCare.Services.GlucoseStore', [])
 * A Patient Store service that returns patient data.
 */
 .factory('GlucoseStore', function ($q, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
-    // Will call phonegap api for storing/retriving patient data and returns a JSON array
-    var glucoseDataStore = new DataStore({
+
+    var glucoseDataStore = new DataStoreFactory({
         dataStoreName: 'Glucose',
         dataAdapter: 'pouchDB',
         adapterConfig: { auto_compaction: true }
-    });  // Initialize Glucose  DataStore
-
+    });
+    
     var enums = {
         glucoseTypes: {
             'fasting': { label: 'Fasting blood sugar (FBS) / Before Meal', short_label: 'Fasting', value: 'fasting' },
@@ -41,8 +41,17 @@ angular.module('dCare.Services.GlucoseStore', [])
     };
     return {
         enums: enums,
+        init: function () {
+            var deferredInit = $q.defer();
+            if (glucoseDataStore.getDataStore()) {
+                deferredInit.resolve();
+            } else {
+                deferredInit.reject();
+            }
+            return deferredInit.promise;
+        },
         getCount: function (patientID) {
-            return glucoseDataStore.search({
+            return glucoseDataStore.getDataStore().search({
                 select: 'count(id)',
                 where: "patientID = " + patientID
             });
@@ -53,13 +62,13 @@ angular.module('dCare.Services.GlucoseStore', [])
                 var query = "patientID=" + patientID;
                 if (fromDate) query += " and datetime >=" + fromDate;
                 if (toDate) query += " and datetime <=" + toDate;
-                dataPromise = glucoseDataStore.search({
+                dataPromise = glucoseDataStore.getDataStore().search({
                     select: '*',
                     where: query + ""
                 });
 
             } else {
-                dataPromise = glucoseDataStore.search({
+                dataPromise = glucoseDataStore.getDataStore().search({
                     select: '*',
                     where: "patientID=" + patientID + ""
                 });
@@ -67,7 +76,7 @@ angular.module('dCare.Services.GlucoseStore', [])
             return dataPromise;
         },
         getGlucoseByID: function (glucoseID) {
-            return glucoseDataStore.getDataByID(glucoseID);
+            return glucoseDataStore.getDataStore().getDataByID(glucoseID);
         },
         glucoseSparklineData: function (patientID) {
             // Search on patients
@@ -90,7 +99,7 @@ angular.module('dCare.Services.GlucoseStore', [])
             };
             ////NR:TODO:  Mock  ////
             var deferredFetch = $q.defer();
-            glucoseDataStore.find({
+            glucoseDataStore.getDataStore().find({
                 fields: ['datetime', 'glucoseType', 'patientID'],
                 selector: { datetime: { '$exists': true }, patientID: { "$eq": parseInt(patientID) }, glucoseType: {"$eq":"fasting"}},
                 sort: [{ 'datetime': 'desc' }],
@@ -130,7 +139,7 @@ angular.module('dCare.Services.GlucoseStore', [])
         },
         getLatestGlucoseForPatient: function (patientID) {
             var deferredFetch = $q.defer();
-            glucoseDataStore.find({
+            glucoseDataStore.getDataStore().find({
                 fields: ['datetime', 'patientID'],
                 selector: { datetime: { '$exists': true }, patientID: { "$eq": parseInt(patientID) } },
                 sort: [{ 'datetime': 'desc' }],
@@ -146,7 +155,7 @@ angular.module('dCare.Services.GlucoseStore', [])
         },
         getNextGlucoseForPatient: function (patientID, datetime) {
             var deferredFetch = $q.defer();
-            glucoseDataStore.find({
+            glucoseDataStore.getDataStore().find({
                 fields: ['datetime', 'patientID'],
                 selector: { patientID: { "$eq": parseInt(patientID) }, datetime: {"$gt":datetime}},
                 sort: [{ 'datetime': 'asc' }],
@@ -162,7 +171,7 @@ angular.module('dCare.Services.GlucoseStore', [])
         },
         getPreviousGlucoseForPatient: function (patientID, datetime) {
             var deferredFetch = $q.defer();
-            glucoseDataStore.find({
+            glucoseDataStore.getDataStore().find({
                 fields: ['glucoseType', 'datetime', 'patientID'],
                 selector : {    $and: [
                                         { datetime: { "$lte": datetime } },
@@ -184,10 +193,10 @@ angular.module('dCare.Services.GlucoseStore', [])
             return deferredFetch.promise;
         },
         save: function (glucose) {
-            return glucoseDataStore.save(glucose);
+            return glucoseDataStore.getDataStore().save(glucose);
         },
         remove: function (glucoseID) {
-            return glucoseDataStore.remove(glucoseID);
+            return glucoseDataStore.getDataStore().remove(glucoseID);
         }
 
     }

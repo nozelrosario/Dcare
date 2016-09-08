@@ -5,7 +5,7 @@
 */
 .factory('MealsStore', function ($q, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
     // Will call phonegap api for storing/retriving patient data and returns a JSON array
-    var mealsDataStore = new DataStore({
+    var mealsDataStore = new DataStoreFactory({
         dataStoreName: 'Meals',
         dataAdapter: 'pouchDB',
         adapterConfig: { auto_compaction: true }
@@ -44,8 +44,17 @@
 
     return {
         enums: enums,
+        init: function () {
+            var deferredInit = $q.defer();
+            if (mealsDataStore.getDataStore()) {
+                deferredInit.resolve();
+            } else {
+                deferredInit.reject();
+            }
+            return deferredInit.promise;
+        },
         getCount: function (patientID) {
-            return mealsDataStore.search({
+            return mealsDataStore.getDataStore().search({
                 select: 'count(id)',
                 where: "patientID = " + patientID
             });
@@ -56,13 +65,13 @@
                 var query = "patientID=" + patientID;
                 if (fromDate) query += " and datetime >=" + fromDate;
                 if (toDate) query += " and datetime <=" + toDate;
-                dataPromise = mealsDataStore.search({
+                dataPromise = mealsDataStore.getDataStore().search({
                     select: '*',
                     where: query + ""
                 });
 
             } else {
-                dataPromise = mealsDataStore.search({
+                dataPromise = mealsDataStore.getDataStore().search({
                     select: '*',
                     where: "patientID=" + patientID + ""
                 });
@@ -70,11 +79,11 @@
             return dataPromise;
         },
         getMealByID: function (mealID) {
-            return mealsDataStore.getDataByID(mealID);
+            return mealsDataStore.getDataStore().getDataByID(mealID);
         },
         getLatestMealForPatient: function (patientID) {
             var deferredFetch = $q.defer();
-            mealsDataStore.find({
+            mealsDataStore.getDataStore().find({
                 fields: ['datetime', 'patientID'],
                 selector: { datetime: { '$exists': true }, patientID: { "$eq": parseInt(patientID) } },
                 sort: [{ 'datetime': 'desc' }],
@@ -103,10 +112,10 @@
             return deferredFetch.promise;
         },
         save: function (meal) {
-            return mealsDataStore.save(meal);
+            return mealsDataStore.getDataStore().save(meal);
         },
         remove: function (mealID) {
-            return mealsDataStore.remove(mealID);
+            return mealsDataStore.getDataStore().remove(mealID);
         }
 
     }

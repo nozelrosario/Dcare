@@ -1,21 +1,35 @@
-angular.module('dCare.init', ['ionic', 'dCare.Services.PatientsStore'])
+angular.module('dCare.init', ['ionic', 'dCare.Services.UserStore', 'dCare.SyncManager', 'dCare.Authentication', 'dCare.user'])
 
-.controller('StarterController', function ($scope, $rootScope, $ionicLoading, $ionicPlatform, PatientsStore, $state) {
+.controller('StarterController', function ($scope, $rootScope, $ionicLoading, $ionicPlatform, $mdDialog, UserStore, SyncManagerService, AuthenticationService, $state) {
 
-    $scope.changeState = function (patientCount) {
-        if (patientCount < 1) {
+    $scope.changeState = function (patient) {
+        if (!patient) {
             app.config.guidanceMode = true;
-            $state.go("registration", {isFirstRun:true});
-            //$state.go("registration", { isFirstRun:false, patientID: 2 });   //[Test] load specific patient
+            $state.go("registration", {isFirstRun:true});            
         } else {
-            app.config.guidanceMode = false;
-            $state.go("dashboard", { patientID:1 });
+            app.config.guidanceMode = false;            
+            SyncManagerService.doInitialSync(patient.guid).then(function () {
+                app.context.clusterID = patient.guid;
+                $state.go("dashboard", { patientID: 1 });  //@NR: TODO: Remove this workaround and Patient ID no longer required.
+            }).fail(function () {
+                //@NR: TODO: make a gracefull end / Or give retry option manual mode, currently this is a abrupt stop.
+                $mdDialog.show($mdDialog.alert()
+                               .title('Something went wrong :(')
+                               .content('Sync Operation Failed !!..')
+                               .ariaLabel(errorMessage)
+                               .ok('OK!'));
+            });
+            
         }
     };
     
     $scope.isFirstRun = false;
-    var getCountPromise = PatientsStore.getCount();
-    getCountPromise.then($scope.changeState);
+    AuthenticationService.checkLogin().then(function () {
+        UserStore.getDefaultPatient().then($scope.changeState);
+    }).catch(function () {
+        $state.go("login");
+    });
+
 
     // Initialize "Back button Listener"
     $ionicPlatform.registerBackButtonAction(function () {

@@ -2,7 +2,12 @@ app.classes.data.DataAdapterFactory = new Singleton({
 	initialize: function() {
         this.registeredAdapters = {};
     },
-	register: function(adapterName, adapterClass) {
+    /**
+    * Rgisters a new Data adapter
+    * @params: adapterName: {String} : Adapter name (unique identifier for adapter)
+    *          adapterClass: {IDBAdapter} : Class Definition for Creating instance of respective Data Adapter
+    */
+	register: function (adapterName, adapterClass) {
 		this.registeredAdapters[adapterName] = adapterClass;
 	},
 	getAdapter: function(adapterName, adapterConfig) {

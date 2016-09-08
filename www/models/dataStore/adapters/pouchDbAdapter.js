@@ -1,3 +1,4 @@
+// Implements IDBAdapter
 app.classes.data.adapters.PouchDbAdapter = new Class({
     include: app.classes.data.eventTriggers,
 	initialize: function(config) {
@@ -14,7 +15,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 	},
 	getDataStore: function () {
 	    if (!this.dataStore) {
-	        app.log.error("Data store on open, please open datastore before use.");
+	        app.log.error("Data store not open, please open datastore before use.");
 	    }
 	    return (this.dataStore);
 	},
@@ -41,7 +42,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
     *  @params: data: {object} json data to be saved
     *           config : {Object} Save config. Eg.{ keyFields : [field1, field2], saveEmptyValues: true,...  } }
                          optional parameter that control the data save process w.r.t insert/update , persist empty values etc.
-                                keyFields : {Array} specifies an array of fieldnames that will be matched to decide whether to insert new record or update.
+                                keyFields : {Array} specifies an array of fieldnames that will be matched to decide whether to insert new record or update.(Default is 'id')
                                 saveEmptyValues : {bool} Specifies if to save/overwrite null/empty values while updating record. Eg.
                                     when set false & oldData = {'a': 1, 'b': 2, 'c': 3 } newData = {'a': 4, 'b': 5, 'd':6 } => resultantData = {'a': 4, 'b': 5, 'd':6, 'c': 3 }
                                     when set  true & oldData = {'a': 1, 'b': 2, 'c': 3 } newData = {'a': 4, 'b': 5, 'd':6 } => resultantData = {'a': 4, 'b': 5, 'd':6 } 
@@ -284,8 +285,29 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
             deferredQuery.resolve(null);
         });
         return deferredQuery;
-    }
+    },
 
+    /*
+    * Device => Server Sync
+    */
+
+    syncTo: function (remoteHost) {
+
+    },
+    /*
+    * Server => Device Sync
+    */
+
+    syncFrom: function (remoteHost) {
+
+    },
+    /*
+    * Device <=> Server Sync
+    */
+
+    sync: function (remoteHost) {
+
+    }
 });
 
 DataAdapterFactory.register("pouchDB", app.classes.data.adapters.PouchDbAdapter);

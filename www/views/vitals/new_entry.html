@@ -50,9 +50,9 @@
                     <div layout="row" layout-sm="row" layout-align="center center" class="padding ">
                         <md-input-container class="large-input">
                             <label>(bpm)</label>
-                            <input ng-model="vitals.heartRate">
+                            <input type="number" ng-model="vitals.heartRate">
                         </md-input-container>
-                        <md-icon ng-click="getHeartRate()" md-svg-src="img\heart-rate.svg" style="display:inline-block;height:45px;width:45px;"></md-icon>
+                        <md-icon ng-show="false" ng-click="getHeartRate()" md-svg-src="img\heart-rate.svg" style="display:inline-block;height:45px;width:45px;"></md-icon>
                     </div>
                 </div>
                 
@@ -64,7 +64,7 @@
                         <i class="icon ion-plus-circled"></i>
                     </div>
                     <h1>
-                        <b><input ng-model="vitals.temperature" add-clear add-clear-config="{returnFocus:false, showOnLoad:true, hidOnBlur:false }" style="border-bottom: 1px solid rgb(163, 157, 157) !important; width: 150px; background-color:#ffffff; border:none; text-align:center;font-weight:bold;" /></b>
+                        <b><input ng-model="vitals.temperature" add-clear add-clear-config="{returnFocus:false, showOnLoad:true, hidOnBlur:false }" style="border-bottom: 1px solid rgb(163, 157, 157) !important; width: 150px; background-color:#ffffff; border:none; text-align:center;font-weight:bold;display:inline-block;" /></b>
                         <select disabled>
                             <option selected>Celcius</option>
                             <option>Farhenite</option>                            

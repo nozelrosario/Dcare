@@ -1,13 +1,13 @@
 var dashboardModule = angular.module('dCare.dashboard', ['ionic',
-                                                         'dCare.Services.PatientsStore', 'dCare.Services.VitalsStore', 'dCare.Services.GlucoseStore', 'dCare.Services.NotificationsStore',
+                                                         'dCare.Services.PatientsStore', 'dCare.Services.VitalsStore', 'dCare.Services.GlucoseStore', 'dCare.Services.NotificationsStore', 'dCare.Services.UserStore',
                                                          'dCare.glucose', 'dCare.medications','dCare.vitals','dCare.reminders', 'dCare.meals', 'dCare.feedback',
                                                          'dCare.dateTimeBoxDirectives', 'dCare.jqSparklineDirectives',
                                                          'dCare.datePrettify']);
 
 //Controllers
-dashboardModule.controller('DashboardController', function ($scope, $ionicSideMenuDelegate,$ionicHistory, $mdDialog, $mdToast, $state, $stateParams,
+dashboardModule.controller('DashboardController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdDialog, $mdToast, $state, $stateParams,
                                                             allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData,notificationsData,
-                                                            PatientsStore, VitalsStore, GlucoseStore, NotificationsStore) {
+                                                            PatientsStore, VitalsStore, GlucoseStore, NotificationsStore, UserStore) {
 
     $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
@@ -95,33 +95,44 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
         }
     };
 
-    $scope.switchDashboardForPatient = function (patientID) {
-        if (patientID === "newPatient") {
+    $scope.reloadDashboardData = function () {
+        var patientID = 1; //@NR: TODO: Remove this workaround and Patient ID no longer required.
+        var vitalsDataPromise = VitalsStore.getLatestVitalsForPatient(patientID);
+        vitalsDataPromise.then(function (vitals) {
+            $scope.vitals = vitals;
+        });
+
+        var patientDataPromise = PatientsStore.getPatientByID(patientID);
+        patientDataPromise.then(function (patient) {
+            $scope.currentPatient = patient;
+        });
+
+        var glucoseDataPromise = GlucoseStore.getLatestGlucoseForPatient(patientID);
+        glucoseDataPromise.then(function (glucose) {
+            $scope.glucose = glucose;
+        });
+
+        var glucoseTrendDataPromise = GlucoseStore.glucoseSparklineData(patientID);
+        glucoseTrendDataPromise.then(function (glucoseSparklineData) {
+            $scope.glucoseTrend = glucoseSparklineData;
+        });
+
+        var notificationsDataPromise = NotificationsStore.getActiveNotificationsForPatient(patientID);
+        notificationsDataPromise.then(function (notificationsData) {
+            $scope.notificationsList = notificationsData;
+        });
+    };
+
+    $scope.switchDashboardForPatient = function (patientGUID) {
+        if (patientGUID === "newPatient") {
             $state.go("registration", { parentPatientID: $scope.currentPatient.id, isFirstRun: false, parentState: "dashboard" });
         } else {
-            var vitalsDataPromise = VitalsStore.getLatestVitalsForPatient(patientID);
-            vitalsDataPromise.then(function (vitals) {
-                $scope.vitals = vitals;
-            });
-
-            var patientDataPromise = PatientsStore.getPatientByID(patientID);
-            patientDataPromise.then(function (patient) {
-                $scope.currentPatient = patient;
-            });
-
-            var glucoseDataPromise = GlucoseStore.getLatestGlucoseForPatient(patientID);
-            glucoseDataPromise.then(function (glucose) {
-                $scope.glucose = glucose;
-            });
-
-            var glucoseTrendDataPromise = GlucoseStore.glucoseSparklineData(patientID);
-            glucoseTrendDataPromise.then(function (glucoseSparklineData) {
-                $scope.glucoseTrend = glucoseSparklineData;
-            });
-
-            var notificationsDataPromise = NotificationsStore.getActiveNotificationsForPatient(patientID);
-            notificationsDataPromise.then(function (notificationsData) {
-                $scope.notificationsList = notificationsData;
+            SyncManager.doInitialSync(patientGUID).then(function () {
+                //@NR: Switch Cluster and reload Dashboard data
+                app.context.clusterID = patientGUID;
+                $scope.reloadDashboardData();
+            }).fail(function () {
+                // Data not Synced, hence cannot switch to Patient
             });
         }
     };
@@ -260,7 +271,7 @@ dashboardModule.config(function ($stateProvider, $urlRouterProvider) {
         .state('dashboard', {
             resolve: {
                 defaultPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); },
-                allPatients: function (PatientsStore) { return PatientsStore.getAllPatients(); },
+                allPatients: function (UserStore) { return UserStore.getAllPatients(); },
                 latestVitals: function (VitalsStore, $stateParams) { return VitalsStore.getLatestVitalsForPatient($stateParams.patientID); },
                 latestGlucose: function (GlucoseStore, $stateParams) { return GlucoseStore.getLatestGlucoseForPatient($stateParams.patientID); },
                 glucoseSparklineData: function (GlucoseStore, $stateParams) { return GlucoseStore.glucoseSparklineData($stateParams.patientID); },
@@ -269,7 +280,7 @@ dashboardModule.config(function ($stateProvider, $urlRouterProvider) {
             //url: '/identificationInfo',  // cannot use as using params[]
             templateUrl: 'views/dashboard/dashboard.html',
             controller: 'DashboardController',
-            params: { 'patientID': null }
+            params: { 'patientID': 1 }   //@NR: TODO: Remove this workaround and Patient ID no longer required.
         });
 
 });

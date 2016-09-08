@@ -5,7 +5,7 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
 */
 .factory('MedicationsStore', function ($q, $filter, RemindersStore) {  //NR: $filter is used for MOCK, remove it if not required later
     // Will call phonegap api for storing/retriving patient data and returns a JSON array
-    var medicationsDataStore = new DataStore({
+    var medicationsDataStore = new DataStoreFactory({
         dataStoreName: 'Medications',
         dataAdapter: 'pouchDB',
         adapterConfig: { auto_compaction: true }
@@ -134,41 +134,50 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
     };
 
     // Trigger remove reminder upon Delete
-    medicationsDataStore.addTrigger("after-delete", "trigger_remove_reminder", function (evtData) {
+    medicationsDataStore.getDataStore().addTrigger("after-delete", "trigger_remove_reminder", function (evtData) {
         var deletedMedication = evtData.data;
         removeMedicationReminder(deletedMedication.id);        
     });
 
     return {
         enums: enums,
+        init: function () {
+            var deferredInit = $q.defer();
+            if (medicationsDataStore.getDataStore()) {
+                deferredInit.resolve();
+            } else {
+                deferredInit.reject();
+            }
+            return deferredInit.promise;
+        },
         getCount: function (patientID) {
-            return medicationsDataStore.search({
+            return medicationsDataStore.getDataStore().search({
                 select: 'count(id)',
                 where: "patientID = " + patientID
             });
         },
         getAllMedicationsForPatient: function (patientID) {
-            return medicationsDataStore.search({
+            return medicationsDataStore.getDataStore().search({
                 select: '*',
                 where: "patientID=" + patientID + ""
             });
         },
         getActiveMedicationsForPatient: function (patientID) {
-            return medicationsDataStore.search({
+            return medicationsDataStore.getDataStore().search({
                 select: '*',
                 where: "patientID=" + patientID + " and status= 'active'"
             });
         },
         getMedicationByID: function (medicationID) {
-            return medicationsDataStore.getDataByID(medicationID);
+            return medicationsDataStore.getDataStore().getDataByID(medicationID);
         },
         save: function (medication) {
-            return medicationsDataStore.save(medication);
+            return medicationsDataStore.getDataStore().save(medication);
         },
         setMedicationReminder: setMedicationReminder,
         removeMedicationReminder: removeMedicationReminder,
         remove: function (medicationID) {
-            return medicationsDataStore.remove(medicationID);
+            return medicationsDataStore.getDataStore().remove(medicationID);
         }
     }
 });

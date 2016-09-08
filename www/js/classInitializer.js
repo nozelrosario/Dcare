@@ -18,7 +18,8 @@ app = function () {
         config: {                            //NR: Can be used to hold app wide shared data/preferenced.
             isFirstDashboardView: false,
             confirmOnExit: false,
-            toastAutoCloseDelay: 2000   //ms
+            toastAutoCloseDelay: 2000,   //ms
+            syncTimeout: 600000          // ms [10min]
         },
         info: {
             developers: ['nozelrosario@gmail.com'],
@@ -28,6 +29,9 @@ app = function () {
                 android: "market://details?id=com.google.android.gm&hl=en",
                 windows: ""
             }
+        },
+        context: {
+            clusterID: ''
         }
     };
 }();

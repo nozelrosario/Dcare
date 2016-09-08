@@ -1,5 +1,5 @@
 var registrationModule = angular.module('dCare.registration', ['ionic',
-                                                                'dCare.Services.PatientsStore', 'dCare.Services.VitalsStore',
+                                                                'dCare.Services.UserStore', 'dCare.Services.PatientsStore', 'dCare.Services.VitalsStore',
                                                                 'dCare.jqueryDynameterDirectives', 'dCare.mobiscrollDirectives', 'dCare.jqueryKnobDirectives', 'dCare.addclearDirectives']);
 
 // Controllers
@@ -58,7 +58,7 @@ registrationModule.controller('RegistrationController', function ($scope, $mdDia
 * Identification Information
 * [FirstName, Last Name, email, Phone ]
 */
-registrationModule.controller('IdentificationInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore, patient) {
+registrationModule.controller('IdentificationInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore, UserStore, patient) {
     if (!patient) {
         // new patient
         $scope.patient = {};
@@ -79,10 +79,25 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
                                .ok('OK!'));
     };
 
+    var addPatientToUserInfo = function (patient) {
+        var userPatientEntry = {};
+        userPatientEntry.fullName = patient.name;
+        userPatientEntry.photo = patient.photo;
+        return UserStore.savePatient(userPatientEntry);
+    };
+
     $scope.proceed = function () {
         if ($scope.identification_info_form.$valid) {
-            var savePatientDataPromise = PatientsStore.save($scope.patient);
-            savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
+            // @NR: TODO: Remove Dirty defaulting, Implement this pending functionality
+            $scope.patient.name = patient.firstname + " " + patient.lastname;
+            $scope.patient.photo = "img/ionic.png";
+
+            addPatientToUserInfo($scope.patient).then(function (patientEntry) {
+                // Switch Cluster to new Patient Scope & Push Patient Data
+                app.context.clusterID = patientEntry.guid;
+                var savePatientDataPromise = PatientsStore.save($scope.patient);
+                savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
+            }).fail($scope.saveFailed);
         }        
     };
 
