@@ -9,9 +9,9 @@ angular.module('dCare.init', ['ionic', 'dCare.Services.UserStore', 'dCare.SyncMa
         } else {
             app.config.guidanceMode = false;            
             SyncManagerService.doInitialSync(patient.guid).then(function () {
-                app.context.clusterID = patient.guid;
+                app.context.setCurrentCluster(patient.guid);
                 $state.go("dashboard", { patientID: 1 });  //@NR: TODO: Remove this workaround and Patient ID no longer required.
-            }).fail(function () {
+            }).catch(function () {
                 //@NR: TODO: make a gracefull end / Or give retry option manual mode, currently this is a abrupt stop.
                 $mdDialog.show($mdDialog.alert()
                                .title('Something went wrong :(')

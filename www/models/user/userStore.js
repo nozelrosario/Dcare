@@ -6,8 +6,8 @@
 .factory('UserStore', function ($q, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
     // Using normal Data store [non-synced, non-clustered]
     var userDataStore = new DataStoreFactory({
-        dataStoreName: 'User',
-        dataAdapter: 'pouchDB',
+        dataStoreName: 'user',
+        dataAdapter: app.context.defaultDataAdapter,
         adapterConfig: { auto_compaction: true }
     });  // Initialize meals  DataStore
 
@@ -28,8 +28,8 @@
                       photo: 'img/ionic.png', 
                       authToken: '_T_O_K_E_N_', 
                       tokenExpiryDate:'1288323623006', 
-                      patients:[ { guid:'_G_U_I_D_1', isEdited:'false', isDefault:'true', fullName:'Nozel Rosario', photo: 'img/ionic.png', initialSyncStatus:"complete", syncStatus:"busy" syncStartDate:'1288323623006', syncEndDate:'1288323623006' },
-                                 { guid:'_G_U_I_D_2', isEdited:'true', isDefault:'false', fullName:'Michael Rosario', photo: 'img/ionic.png', initialSyncStatus:"error",syncStatus:"error" syncStartDate:'1288323623006', syncEndDate:'1288323623006'}
+                      patients:[ { guid:'_G_U_I_D_1', isEdited:'false', isDefault:'true', fullName:'Nozel Rosario', photo: 'img/ionic.png', initialSyncStatus:"complete", syncStatus:"busy" syncStartDate:'1288323623006', syncEndDate:'1288323623006'},
+                                 { guid:'_G_U_I_D_2', isEdited:'true', isDefault:'false', fullName:'Michael Rosario', photo: 'img/ionic.png', initialSyncStatus:"error", syncStatus:"error" syncStartDate:'1288323623006', syncEndDate:'1288323623006'}
                                ],
                       loginDatetime: '1288323623006' }                   
     ];*/
@@ -143,8 +143,32 @@
         savePatient: function (patient) {
             var deferredSave = $q.defer();
             var generatePatientGUID = function () {
-                //@NR: TODO: Write a good GUID generator function
-                return (Math.random()).toString();
+                /**
+                * Based on Math.uuid.js (v1.4)
+                *   http://www.broofa.com
+                *   mailto:robert@broofa.com
+                *   Copyright (c) 2010 Robert Kieffer
+                *   Dual licensed under the MIT and GPL licenses.
+                */
+                //NR: GUID used as part of DB name so following constraints applies. 
+                //    => Only lowercase characters (a-z), digits (0-9)
+                //    => Any of the characters _, $, (, ), +, -, and / are allowed. 
+                
+                var CHARS = '0123456789abcdefghijklmnopqrstuvwxyz$'.split('');
+                var generateUUID = function (len, radix) {
+                    var chars = CHARS, uuid = [], i;
+                    radix = radix || chars.length;
+
+                    if (len) {
+                        // Compact form
+                        for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix];
+                    } else {
+                        app.log.error("Length argument required for GUID generation");
+                    }
+                    return uuid.join('');
+                };
+
+                return generateUUID(20).toString();
             };
             var me = this;
 
@@ -177,6 +201,53 @@
                 deferredSave.reject(err);
              });
             return deferredSave.promise;
+        },
+        setSyncStatus: function (guid, syncStatus) {
+            // initialSyncStatus:"complete", syncStatus:"busy" syncStartDate:'1288323623006', syncEndDate:'1288323623006'
+            var deferredfetch = $q.defer();
+            var defaultPatient = null, patientExists = false;
+            var me = this;
+            this.getUser().then(function (user) {
+                if (user.patients.length > 0) {
+                    for (var i = 0; i < user.patients.length; i++) {
+                        if ((user.patients[i]).guid === guid) {
+                            patientExists = true;
+                            if (syncStatus.initialSyncStatus) {
+                                (user.patients[i]).initialSyncStatus = syncStatus.initialSyncStatus;
+                            }
+
+                            if(syncStatus.syncStatus){
+                                (user.patients[i]).syncStatus = syncStatus.syncStatus;
+                            }
+
+                            if(syncStatus.syncStartDate){
+                                (user.patients[i]).syncStartDate = syncStatus.syncStartDate;
+                            }
+
+                            if (syncStatus.syncEndDate) {
+                                (user.patients[i]).syncEndDate = syncStatus.syncEndDate;
+                            }
+
+                            me.save(user).then(function () {
+                                deferredfetch.resolve();
+                            }).fail(function () {
+                                deferredfetch.reject();
+                            });
+
+                            break;
+                        }
+                    }
+                    if (!patientExists) {
+                        // Patient not found, Reject.
+                        deferredfetch.reject();
+                    }
+                } else {
+                    deferredfetch.reject();
+                }
+            }).fail(function (err) {
+                deferredfetch.reject();
+            });
+            return deferredfetch.promise;
         },
         save: function (user) {
             return userDataStore.getDataStore().save(user);

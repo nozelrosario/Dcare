@@ -17,7 +17,7 @@
                     <md-input-container class="md-icon-float md-icon-right large-input">
                         <label>First Name</label>
                         <md-icon class="ion-person"></md-icon>
-                        <input type="text" md-maxlength="30" required name="firstname" ng-model="patient.firstname">
+                        <input type="text" md-maxlength="30" required name="firstname" ng-model="user.firstname">
                         <div ng-messages="identification_info_form.firstname.$error">
                             <div ng-message="required">This is required.</div>
                             <div ng-message="md-maxlength">The name has to be less than 30 characters long.</div>
@@ -26,7 +26,7 @@
                     <md-input-container class="md-icon-float md-icon-right large-input">
                         <label>Last Name</label>
                         <md-icon class="ion-person"></md-icon>
-                        <input type="text" md-maxlength="30" required name="lastname" ng-model="patient.lastname">
+                        <input type="text" md-maxlength="30" required name="lastname" ng-model="user.lastname">
                         <div ng-messages="identification_info_form.lastname.$error">
                             <div ng-message="required">This is required.</div>
                             <div ng-message="md-maxlength">The name has to be less than 30 characters long.</div>
@@ -37,12 +37,12 @@
                     <md-input-container class="md-icon-float md-icon-right large-input">
                         <label>Phone</label>
                         <md-icon class="ion-ios-telephone"></md-icon>
-                        <input name="phone" type="tel" ng-model="patient.phone">
+                        <input name="phone" type="tel" ng-model="user.phone">
                     </md-input-container>
                     <md-input-container class="md-icon-float md-icon-right large-input">
                         <label>Email (This will be you login ID)</label>
                         <md-icon class="ion-email"></md-icon>
-                        <input type="email" name="email" ng-model="patient.email">
+                        <input type="email" name="email" ng-model="user.email">
                         <div ng-messages="identification_info_form.email.$error">
                             <div ng-message="email">Invalid Email.</div>
                         </div>

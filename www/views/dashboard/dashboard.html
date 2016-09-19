@@ -161,11 +161,11 @@
                             </md-item>
                             <md-item ng-repeat="patient in patients | filter:searchText">
                                 <md-item-content>
-                                    <md-button menu-close ng-click="switchDashboardForPatient(patient.id)" class="button-full menu-button">
+                                    <md-button menu-close ng-click="switchDashboardForPatient(patient.guid)" class="button-full menu-button">
                                         <div layout="row" class="list-row">
                                             <img flex="20" ng-src="{{patient.photo}}" style="height:70px;width:70px;margin:10px">
                                             <div layout="column" layout-align="center start">
-                                                <div class="menu-title">{{patient.name}}</div>
+                                                <div class="menu-title">{{patient.fullName}}</div>
                                                 <!--div class="menu-sub-title">{{patient.gender}} - {{patient.age}}</div--> <!--@NR: TODO: see if this info is required, currently not available, as data comes from User Info-->
                                             </div>
                                         </div>

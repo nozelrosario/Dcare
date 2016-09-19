@@ -89,15 +89,15 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
     $scope.proceed = function () {
         if ($scope.identification_info_form.$valid) {
             // @NR: TODO: Remove Dirty defaulting, Implement this pending functionality
-            $scope.patient.name = patient.firstname + " " + patient.lastname;
+            $scope.patient.name = $scope.patient.firstname + " " + $scope.patient.lastname;
             $scope.patient.photo = "img/ionic.png";
 
             addPatientToUserInfo($scope.patient).then(function (patientEntry) {
                 // Switch Cluster to new Patient Scope & Push Patient Data
-                app.context.clusterID = patientEntry.guid;
+                app.context.setCurrentCluster(patientEntry.guid);
                 var savePatientDataPromise = PatientsStore.save($scope.patient);
                 savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
-            }).fail($scope.saveFailed);
+            }, $scope.saveFailed);
         }        
     };
 

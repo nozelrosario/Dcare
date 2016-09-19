@@ -6,8 +6,8 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
 .factory('MedicationsStore', function ($q, $filter, RemindersStore) {  //NR: $filter is used for MOCK, remove it if not required later
     // Will call phonegap api for storing/retriving patient data and returns a JSON array
     var medicationsDataStore = new DataStoreFactory({
-        dataStoreName: 'Medications',
-        dataAdapter: 'pouchDB',
+        dataStoreName: 'medications',
+        dataAdapter: app.context.defaultDataAdapter,
         adapterConfig: { auto_compaction: true }
     });  // Initialize Medications  DataStore
 
@@ -134,7 +134,7 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
     };
 
     // Trigger remove reminder upon Delete
-    medicationsDataStore.getClusteredDataStore().addTrigger("after-delete", "trigger_remove_reminder", function (evtData) {
+    medicationsDataStore.getDataStore(app.context.getCurrentCluster()).addTrigger("after-delete", "trigger_remove_reminder", function (evtData) {
         var deletedMedication = evtData.data;
         removeMedicationReminder(deletedMedication.id);        
     });
@@ -143,7 +143,7 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
         enums: enums,
         init: function () {
             var deferredInit = $q.defer();
-            if (medicationsDataStore.getClusteredDataStore()) {
+            if (medicationsDataStore.getDataStore(app.context.getCurrentCluster())) {
                 deferredInit.resolve();
             } else {
                 deferredInit.reject();
@@ -151,33 +151,33 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
             return deferredInit.promise;
         },
         getCount: function (patientID) {
-            return medicationsDataStore.getClusteredDataStore().search({
+            return medicationsDataStore.getDataStore(app.context.getCurrentCluster()).search({
                 select: 'count(id)',
                 where: "patientID = " + patientID
             });
         },
         getAllMedicationsForPatient: function (patientID) {
-            return medicationsDataStore.getClusteredDataStore().search({
+            return medicationsDataStore.getDataStore(app.context.getCurrentCluster()).search({
                 select: '*',
                 where: "patientID=" + patientID + ""
             });
         },
         getActiveMedicationsForPatient: function (patientID) {
-            return medicationsDataStore.getClusteredDataStore().search({
+            return medicationsDataStore.getDataStore(app.context.getCurrentCluster()).search({
                 select: '*',
                 where: "patientID=" + patientID + " and status= 'active'"
             });
         },
         getMedicationByID: function (medicationID) {
-            return medicationsDataStore.getClusteredDataStore().getDataByID(medicationID);
+            return medicationsDataStore.getDataStore(app.context.getCurrentCluster()).getDataByID(medicationID);
         },
         save: function (medication) {
-            return medicationsDataStore.getClusteredDataStore().save(medication);
+            return medicationsDataStore.getDataStore(app.context.getCurrentCluster()).save(medication);
         },
         setMedicationReminder: setMedicationReminder,
         removeMedicationReminder: removeMedicationReminder,
         remove: function (medicationID) {
-            return medicationsDataStore.getClusteredDataStore().remove(medicationID);
+            return medicationsDataStore.getDataStore(app.context.getCurrentCluster()).remove(medicationID);
         }
     }
 });

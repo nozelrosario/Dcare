@@ -6,8 +6,8 @@ angular.module('dCare.Services.VitalsStore', [])
 .factory('VitalsStore', function ($q, $log, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
     // Will call data store api for storing/retriving patient data and returns a JSON 
     var vitalsDataStore = new DataStoreFactory({
-        dataStoreName: 'Vitals',
-        dataAdapter: 'pouchDB',
+        dataStoreName: 'vitals',
+        dataAdapter: app.context.defaultDataAdapter,
         adapterConfig: { auto_compaction: true }
     });  // Initialize Vitals  DataStore
     // Some fake testing data
@@ -61,7 +61,7 @@ angular.module('dCare.Services.VitalsStore', [])
     return {
         init: function () {
             var deferredInit = $q.defer();
-            if (vitalsDataStore.getClusteredDataStore()) {
+            if (vitalsDataStore.getDataStore(app.context.getCurrentCluster())) {
                 deferredInit.resolve();
             } else {
                 deferredInit.reject();
@@ -69,7 +69,7 @@ angular.module('dCare.Services.VitalsStore', [])
             return deferredInit.promise;
         },
         getCount: function (patientID) {
-            return vitalsDataStore.getClusteredDataStore().search({
+            return vitalsDataStore.getDataStore(app.context.getCurrentCluster()).search({
                 select: 'count(id)',
                 where: "patientID = " + patientID
             });
@@ -80,13 +80,13 @@ angular.module('dCare.Services.VitalsStore', [])
                 var query = "patientID=" + patientID;
                 if (fromDate) query += " and datetime >=" + fromDate;
                 if (toDate) query += " and datetime <=" + toDate;
-                dataPromise = vitalsDataStore.getClusteredDataStore().search({
+                dataPromise = vitalsDataStore.getDataStore(app.context.getCurrentCluster()).search({
                     select: '*',
                     where: query + ""
                 });
 
             } else {
-                dataPromise = vitalsDataStore.getClusteredDataStore().search({
+                dataPromise = vitalsDataStore.getDataStore(app.context.getCurrentCluster()).search({
                     select: '*',
                     where: "patientID=" + patientID + ""
                 });
@@ -94,7 +94,7 @@ angular.module('dCare.Services.VitalsStore', [])
             return dataPromise;
         },
         getVitalByID: function (vitalsID) {
-            return vitalsDataStore.getClusteredDataStore().getDataByID(vitalsID);
+            return vitalsDataStore.getDataStore(app.context.getCurrentCluster()).getDataByID(vitalsID);
         },
         getGraphDataForHeight: function (patientID, fromDate, toDate) {
             var deferredFetch = $q.defer();
@@ -128,7 +128,7 @@ angular.module('dCare.Services.VitalsStore', [])
         },
         getLatestVitalsForPatient: function (patientID) {
             var deferredFetch = $q.defer();
-            vitalsDataStore.getClusteredDataStore().find({
+            vitalsDataStore.getDataStore(app.context.getCurrentCluster()).find({
                 fields: ['datetime', 'patientID'],
                 selector: { datetime: { '$exists': true }, patientID: {"$eq" : parseInt(patientID)} },
                 sort: [{ 'datetime': 'desc' }],
@@ -139,10 +139,10 @@ angular.module('dCare.Services.VitalsStore', [])
             return deferredFetch.promise;
         },
         save: function (vitals) {
-            return vitalsDataStore.getClusteredDataStore().save(vitals);
+            return vitalsDataStore.getDataStore(app.context.getCurrentCluster()).save(vitals);
         },
         remove: function (vitalsID) {
-            return vitalsDataStore.getClusteredDataStore().remove(vitalsID);
+            return vitalsDataStore.getDataStore(app.context.getCurrentCluster()).remove(vitalsID);
         }
 
     }

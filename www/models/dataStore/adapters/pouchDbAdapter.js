@@ -19,6 +19,9 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 	    }
 	    return (this.dataStore);
 	},
+	getDataStoreName: function () {
+	    return this.dataStoreName;
+	},
 	__generateNewID: function() {
 	    var deferredGenerate = $.Deferred();
         var maxID,newID;
@@ -129,15 +132,18 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
                         me.trigger("after-save", { data: data });                   // Trigger After-Save Event
                         deferredSave.resolve(data);
                     } else {
+                        app.log.error("Failed response from insert on Data Store [" + me.getDataStoreName() + "]");
                         app.log.error(err);
                         deferredSave.reject(response);
                     }
                     
                 }).catch(function (err) {
+                    app.log.error("Failed call to insert on Data Store [" + me.getDataStoreName() + "]");
                     app.log.error(err);
                     deferredSave.reject(err);
                 });
             }).fail(function (err) {
+                app.log.error("Failed __generateNewID() while insert on Data Store [" + me.getDataStoreName() + "]");
                 app.log.error(err);
                 deferredSave.reject(err);
             });
@@ -150,10 +156,12 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
                     me.trigger("after-save", { data: data });                       // Trigger After-Save Event
                     deferredSave.resolve(data);                    
                 } else {
+                    app.log.error("Failed response from update on Data Store [" + me.getDataStoreName() + "]");
                     app.log.error(err);
                     deferredSave.reject(response);
                 }
             }).catch(function (err) {
+                app.log.error("Failed call to update on Data Store [" + me.getDataStoreName() + "]");
                 app.log.error(err);
                 deferredSave.reject(err);
             });
@@ -167,7 +175,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
             this.getDataStore().get(id.toString()).then(function (data) {
                 deferredFetch.resolve(data);
             }).catch(function (err) {
-                app.log.error("DataStore.getDataByID : error occured while querying " + me.dataStoreName + " [Error: " + err + "]");
+                app.log.error("DataStore.getDataByID : error occured while querying " + me.getDataStoreName() + " [Error: " + err + "]");
                 deferredFetch.resolve(null);
             });
         } else {
@@ -183,7 +191,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 	        me.trigger("before-delete", { data: data });                     // Trigger Before-Delete Event
 	        me.getDataStore().remove(data, function (err, response) {
 	            if (err) {
-	                app.log.error("DataStore.deleteByID : failed to delete data from" + me.dataStoreName + " [Error: " + err + "]");
+	                app.log.error("DataStore.deleteByID : failed to delete data from" + me.getDataStoreName() + " [Error: " + err + "]");
 	                deferredDelete.reject(err);
 	            } else {
 	                me.trigger("after-delete", { data: data });              // Trigger After-Detele Event
@@ -191,7 +199,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 	            }
 	        });	        
 	    }).fail(function (err) {
-	        app.log.error("DataStore.deleteByID : failed to delete data, Unable to find specified record");
+	        app.log.error("DataStore.deleteByID on " + me.getDataStoreName() + " : failed to delete data, Unable to find specified record");
 	        deferredDelete.reject(err);
 	    });
 	    return deferredDelete;
@@ -292,27 +300,84 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
     */
 
     syncTo: function (remoteHost) {
+        var deferredSync = $.Deferred();
         var remoteDB = remoteHost + '/' + this.dataStoreName;
-        var syncOptions = {};
-        this.getDataStore().replicate.to(remoteDB, syncOptions);
+        var syncOptions = app.config.syncOptions;
+        var me = this;
+        var syncInfo = { remoteURI: remoteDB, dataStoreName: this.dataStoreName, mode: "push", startTime: castToLongDate(new Date()) };
+        me.trigger("sync-started", { syncInfo: syncInfo }).then(function () {     // Trigger Sync-Started Event
+            me.getDataStore().replicate.to(remoteDB, syncOptions).then(function (syncResult) {
+                syncInfo.result = syncResult;
+                syncInfo.endTime = castToLongDate(new Date());
+                me.trigger("sync-complete", { syncInfo: syncInfo });              // Trigger Sync-Complete Event
+                deferredSync.resolve(syncResult);
+            }).catch(function (error) {
+                syncInfo.error = error;
+                syncInfo.endTime = castToLongDate(new Date());
+                me.trigger("sync-error", { syncInfo: syncInfo });                // Trigger Sync-Error Event
+                deferredSync.reject(error);
+            });
+        }).fail(function () {
+            deferredSync.reject();
+        });
+        
+        return deferredSync;
     },
     /*
     * Server => Device Sync
     */
 
     syncFrom: function (remoteHost) {
+        var deferredSync = $.Deferred();
         var remoteDB = remoteHost + '/' + this.dataStoreName;
-        var syncOptions = {};
-        this.getDataStore().replicate.from(remoteDB, syncOptions);
+        var syncOptions = app.config.syncOptions;
+        var me = this;
+        var syncInfo = { remoteURI: remoteDB, dataStoreName: this.dataStoreName, mode: "pull", startTime: castToLongDate(new Date()) };
+        me.trigger("sync-started", { syncInfo: syncInfo }).then(function () {     // Trigger Sync-Started Event
+            me.getDataStore().replicate.from(remoteDB, syncOptions).then(function (syncResult) {
+                syncInfo.result = syncResult;
+                syncInfo.endTime = castToLongDate(new Date());
+                me.trigger("sync-complete", { syncInfo: syncInfo });              // Trigger Sync-Complete Event
+                deferredSync.resolve(syncResult);
+            }).catch(function (error) {
+                syncInfo.error = error;
+                syncInfo.endTime = castToLongDate(new Date());
+                me.trigger("sync-error", { syncInfo: syncInfo });                 // Trigger Sync-Error Event
+                deferredSync.reject(error);
+            });
+        }).fail(function () {
+            deferredSync.reject();
+        });
+        
+        return deferredSync;
     },
     /*
     * Device <=> Server Sync
     */
 
     sync: function (remoteHost) {
+        var deferredSync = $.Deferred();
         var remoteDB = remoteHost + '/' + this.dataStoreName;
-        var syncOptions = {};
-        this.getDataStore().sync(remoteDB, syncOptions);
+        var syncOptions = app.config.syncOptions;
+        var me = this;
+        var syncInfo = { remoteURI: remoteDB, dataStoreName: this.dataStoreName, mode: "push-pull", startTime: castToLongDate(new Date()) };
+        me.trigger("sync-started", { syncInfo: syncInfo }).then(function () {     // Trigger Sync-Started Event
+            me.getDataStore().replicate.sync(remoteDB, syncOptions).then(function (syncResult) {
+                syncInfo.result = syncResult;
+                syncInfo.endTime = castToLongDate(new Date());
+                me.trigger("sync-complete", { syncInfo: syncInfo });              // Trigger Sync-Complete Event
+                deferredSync.resolve(syncResult);
+            }).catch(function (error) {
+                syncInfo.error = error;
+                syncInfo.endTime = castToLongDate(new Date());
+                me.trigger("sync-error", { syncInfo: syncInfo });                 // Trigger Sync-Error Event
+                deferredSync.reject(error);
+            });
+        }).fail(function () {
+            deferredSync.reject();
+        });
+        
+        return deferredSync;
     }
 });
 

@@ -6,8 +6,8 @@ angular.module('dCare.Services.PatientsStore', [])
 .factory('PatientsStore', function ($q, $filter) {
     // Will call data store api for storing/retriving patient data and returns a JSON 
     var patientDataStore = new DataStoreFactory({
-        dataStoreName: 'Patients',
-        dataAdapter: 'pouchDB',
+        dataStoreName: 'patients',
+        dataAdapter: app.context.defaultDataAdapter,
         adapterConfig: { auto_compaction: true }
     });   // Initialize Patients DataStore
 
@@ -22,7 +22,7 @@ angular.module('dCare.Services.PatientsStore', [])
     return {
         init: function () {
             var deferredInit = $q.defer();
-            if (patientDataStore.getClusteredDataStore()) {
+            if (patientDataStore.getDataStore(app.context.getCurrentCluster())) {
                 deferredInit.resolve();
             } else {
                 deferredInit.reject();
@@ -30,16 +30,16 @@ angular.module('dCare.Services.PatientsStore', [])
             return deferredInit.promise;
         },
         getCount: function () {
-            return patientDataStore.getClusteredDataStore().getRowsCount();
+            return patientDataStore.getDataStore(app.context.getCurrentCluster()).getRowsCount();
         },
         getAllPatients: function () {
-            return patientDataStore.getClusteredDataStore().getAllRows();
+            return patientDataStore.getDataStore(app.context.getCurrentCluster()).getAllRows();
         },
         getPatientByID: function (patientID) {
-            return patientDataStore.getClusteredDataStore().getDataByID(patientID);
+            return patientDataStore.getDataStore(app.context.getCurrentCluster()).getDataByID(patientID);
         },
         save: function (patient) {
-            return patientDataStore.getClusteredDataStore().save(patient);
+            return patientDataStore.getDataStore(app.context.getCurrentCluster()).save(patient);
         }
 
     }

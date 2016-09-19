@@ -6,8 +6,8 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
 .factory('RemindersStore', function ($q, $filter, NotificationsStore) {  //NR: $filter is used for MOCK, remove it if not required later
     // Will call phonegap api for storing/retriving patient data and returns a JSON array
     var remindersDataStore = new DataStoreFactory({
-        dataStoreName: 'Reminders',
-        dataAdapter: 'pouchDB',
+        dataStoreName: 'reminders',
+        dataAdapter: app.context.defaultDataAdapter,
         adapterConfig: { auto_compaction: true }
     });  // Initialize Reminders  DataStore
 
@@ -39,7 +39,7 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
 
     // ===== TRIGGERS ======
     // Trigger new notification upon insert
-    remindersDataStore.getClusteredDataStore().addTrigger("after-insert", "trigger_new_notification", function (evtData) {
+    remindersDataStore.getDataStore(app.context.getCurrentCluster()).addTrigger("after-insert", "trigger_new_notification", function (evtData) {
         var reminderData = evtData.data;
         var notification = { 
             patientID: reminderData.patientID,
@@ -58,7 +58,7 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
     });
 
     // Trigger update notification upon reminder Update/re-configure
-    remindersDataStore.getClusteredDataStore().addTrigger("after-update", "trigger_update_notification", function (evtData) {
+    remindersDataStore.getDataStore(app.context.getCurrentCluster()).addTrigger("after-update", "trigger_update_notification", function (evtData) {
         var reminderData = evtData.data;
         NotificationsStore.getNotificationForReminder(reminderData.id).then(function (matching_Notifications) {            
             var new_Notification = {                
@@ -88,7 +88,7 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
     });
 
     // Trigger remove notification upon Delete
-    remindersDataStore.getClusteredDataStore().addTrigger("after-delete", "trigger_remove_notification", function (evtData) {
+    remindersDataStore.getDataStore(app.context.getCurrentCluster()).addTrigger("after-delete", "trigger_remove_notification", function (evtData) {
         var reminderData = evtData.data;
         NotificationsStore.getNotificationForReminder(reminderData.id).then(function (existing_Notifications) {
             if (existing_Notifications) {
@@ -106,7 +106,7 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
         enums: enums,
         init: function () {
             var deferredInit = $q.defer();
-            if (remindersDataStore.getClusteredDataStore()) {
+            if (remindersDataStore.getDataStore(app.context.getCurrentCluster())) {
                 deferredInit.resolve();
             } else {
                 deferredInit.reject();
@@ -114,43 +114,43 @@ angular.module('dCare.Services.RemindersStore', ['dCare.Services.NotificationsSt
             return deferredInit.promise;
         },
         getCount: function (patientID) {
-            return remindersDataStore.getClusteredDataStore().search({
+            return remindersDataStore.getDataStore(app.context.getCurrentCluster()).search({
                 select: 'count(id)',
                 where: "patientID = " + patientID
             });
         },
         getAllRemindersForPatient: function (patientID) {
-            return remindersDataStore.getClusteredDataStore().search({
+            return remindersDataStore.getDataStore(app.context.getCurrentCluster()).search({
                 select: '*',
                 where: "patientID=" + patientID + ""
             });
         },
         getActiveRemindersForPatient: function (patientID) {
-            return remindersDataStore.getClusteredDataStore().search({
+            return remindersDataStore.getDataStore(app.context.getCurrentCluster()).search({
                 select: '*',
                 where: "patientID=" + patientID + " and status= 'active'" + "and ((startdate >= " + castToLongDate(new Date()) + ") or (isRecursive=true and (enddate >=" + castToLongDate(new Date()) + " or enddate='')))"
             });
         },
         getPastRemindersForPatient: function (patientID) {
-            return remindersDataStore.getClusteredDataStore().search({
+            return remindersDataStore.getDataStore(app.context.getCurrentCluster()).search({
                 select: '*',
                 where: "patientID=" + patientID + " and startdate <" + castToLongDate(new Date()) + " and enddate <" + castToLongDate(new Date()) + ""
             });
         },
         getReminderBySourceID: function (sourceID) {
-            return remindersDataStore.getClusteredDataStore().search({
+            return remindersDataStore.getDataStore(app.context.getCurrentCluster()).search({
                 select: '*',
                 where: "status= 'active'" + " and sourceID ='" + sourceID + "'"       //TODO: check if PatientID constraint is required here for security reasons.
             });
         },
         getReminderByID: function (reminderID) {
-            return remindersDataStore.getClusteredDataStore().getDataByID(reminderID);
+            return remindersDataStore.getDataStore(app.context.getCurrentCluster()).getDataByID(reminderID);
         },
         save: function (reminder,config) {
-            return remindersDataStore.getClusteredDataStore().save(reminder, config);
+            return remindersDataStore.getDataStore(app.context.getCurrentCluster()).save(reminder, config);
         },
         remove: function (reminderID) {
-            return remindersDataStore.getClusteredDataStore().remove(reminderID);
+            return remindersDataStore.getDataStore(app.context.getCurrentCluster()).remove(reminderID);
         }
 
     }

@@ -1,13 +1,13 @@
 var dashboardModule = angular.module('dCare.dashboard', ['ionic',
                                                          'dCare.Services.PatientsStore', 'dCare.Services.VitalsStore', 'dCare.Services.GlucoseStore', 'dCare.Services.NotificationsStore', 'dCare.Services.UserStore',
-                                                         'dCare.glucose', 'dCare.medications','dCare.vitals','dCare.reminders', 'dCare.meals', 'dCare.feedback',
+                                                         'dCare.glucose', 'dCare.medications', 'dCare.vitals', 'dCare.reminders', 'dCare.meals', 'dCare.feedback', 'dCare.SyncManager',
                                                          'dCare.dateTimeBoxDirectives', 'dCare.jqSparklineDirectives',
                                                          'dCare.datePrettify']);
 
 //Controllers
 dashboardModule.controller('DashboardController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdDialog, $mdToast, $state, $stateParams,
                                                             allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData,notificationsData,
-                                                            PatientsStore, VitalsStore, GlucoseStore, NotificationsStore, UserStore) {
+                                                            PatientsStore, VitalsStore, GlucoseStore, NotificationsStore, UserStore, SyncManagerService) {
 
     $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
@@ -20,7 +20,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
                         { seq: 5, id: "medications", title: 'Medications', subTitle: 'Medications', icon: 'img/medications.png' },
                         { seq: 6, id: "reminders", title: 'Reminders', subTitle: 'Your reminders', icon: 'img/reminders.png' },
                         { seq: 7, id: "fooddiary", title: 'Food Diary', subTitle: 'Your Meals', icon: 'img/food-diary.png' },
-                        //{ seq: 8, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' },
+                        { seq: 8, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' },
                         { seq: 9, id: "feedback", title: 'Feedback', subTitle: 'Give feedback & know more about D-Care', icon: 'img/info.png' }
                        ];
 
@@ -85,7 +85,11 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
                 $state.go("mealslist", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
                 break;
             case "settings":
-                alert('Settings');
+                SyncManagerService.performSync(app.context.getCurrentCluster(), "parallel", false).then(function () {
+                    app.log.info("Sync Done");
+                }).catch(function () {
+                    app.log.info("Sync Failed");
+                });
                 break;
             case "feedback":
                 $state.go("feedback", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
@@ -127,11 +131,11 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
         if (patientGUID === "newPatient") {
             $state.go("registration", { parentPatientID: $scope.currentPatient.id, isFirstRun: false, parentState: "dashboard" });
         } else {
-            SyncManager.doInitialSync(patientGUID).then(function () {
+            SyncManagerService.doInitialSync(patientGUID).then(function () {
                 //@NR: Switch Cluster and reload Dashboard data
-                app.context.clusterID = patientGUID;
+                app.context.setCurrentCluster(patientGUID);
                 $scope.reloadDashboardData();
-            }).fail(function () {
+            }).catch(function () {
                 // Data not Synced, hence cannot switch to Patient
             });
         }

@@ -24,5 +24,8 @@ app.classes.data.adapters.IDbAdapter = new Class({
     */
     getAllRows : function () {},
     search: function (query) { },
-    find: function (query) { }
+    find: function (query) { },
+    sync: function (remoteHost) { },
+    syncFrom: function (remoteHost) { },
+    syncTo: function (remoteHost) { }
 });

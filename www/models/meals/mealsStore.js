@@ -6,8 +6,8 @@
 .factory('MealsStore', function ($q, $filter) {  //NR: $filter is used for MOCK, remove it if not required later
     // Will call phonegap api for storing/retriving patient data and returns a JSON array
     var mealsDataStore = new DataStoreFactory({
-        dataStoreName: 'Meals',
-        dataAdapter: 'pouchDB',
+        dataStoreName: 'meals',
+        dataAdapter: app.context.defaultDataAdapter,
         adapterConfig: { auto_compaction: true }
     });  // Initialize meals  DataStore
 
@@ -46,7 +46,7 @@
         enums: enums,
         init: function () {
             var deferredInit = $q.defer();
-            if (mealsDataStore.getClusteredDataStore()) {
+            if (mealsDataStore.getDataStore(app.context.getCurrentCluster())) {
                 deferredInit.resolve();
             } else {
                 deferredInit.reject();
@@ -54,7 +54,7 @@
             return deferredInit.promise;
         },
         getCount: function (patientID) {
-            return mealsDataStore.getClusteredDataStore().search({
+            return mealsDataStore.getDataStore(app.context.getCurrentCluster()).search({
                 select: 'count(id)',
                 where: "patientID = " + patientID
             });
@@ -65,13 +65,13 @@
                 var query = "patientID=" + patientID;
                 if (fromDate) query += " and datetime >=" + fromDate;
                 if (toDate) query += " and datetime <=" + toDate;
-                dataPromise = mealsDataStore.getClusteredDataStore().search({
+                dataPromise = mealsDataStore.getDataStore(app.context.getCurrentCluster()).search({
                     select: '*',
                     where: query + ""
                 });
 
             } else {
-                dataPromise = mealsDataStore.getClusteredDataStore().search({
+                dataPromise = mealsDataStore.getDataStore(app.context.getCurrentCluster()).search({
                     select: '*',
                     where: "patientID=" + patientID + ""
                 });
@@ -79,11 +79,11 @@
             return dataPromise;
         },
         getMealByID: function (mealID) {
-            return mealsDataStore.getClusteredDataStore().getDataByID(mealID);
+            return mealsDataStore.getDataStore(app.context.getCurrentCluster()).getDataByID(mealID);
         },
         getLatestMealForPatient: function (patientID) {
             var deferredFetch = $q.defer();
-            mealsDataStore.getClusteredDataStore().find({
+            mealsDataStore.getDataStore(app.context.getCurrentCluster()).find({
                 fields: ['datetime', 'patientID'],
                 selector: { datetime: { '$exists': true }, patientID: { "$eq": parseInt(patientID) } },
                 sort: [{ 'datetime': 'desc' }],
@@ -112,10 +112,10 @@
             return deferredFetch.promise;
         },
         save: function (meal) {
-            return mealsDataStore.getClusteredDataStore().save(meal);
+            return mealsDataStore.getDataStore(app.context.getCurrentCluster()).save(meal);
         },
         remove: function (mealID) {
-            return mealsDataStore.getClusteredDataStore().remove(mealID);
+            return mealsDataStore.getDataStore(app.context.getCurrentCluster()).remove(mealID);
         }
 
     }

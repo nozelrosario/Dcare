@@ -5,6 +5,7 @@
 
 app.classes.data.eventTriggers = new Module({
     supportedTriggers: {
+        // DB Related
         "before-save": true,
         "after-save": true,
         "before-insert": true,
@@ -12,7 +13,11 @@ app.classes.data.eventTriggers = new Module({
         "before-update": true,
         "after-update": true,
         "before-delete": true,
-        "after-delete": true
+        "after-delete": true,
+        // Sync Relate
+        "sync-started": true,
+        "sync-complete": true,
+        "sync-error": true
     },
     /* Add a event trigger [Supports multiple Actions for a single trigger event, just call method 
      *   multiple times]
@@ -67,15 +72,26 @@ app.classes.data.eventTriggers = new Module({
     trigger: function (trigger, eventData) {
         "use strict";
         var registeredActions;
+        var deferredTrigger = $.Deferred();
         if (!this.triggers) this.triggers = {}; //Create an empty Dynamic Object to hold Trigger Actions
         if (!eventData) eventData = {};     // create Event Data object if its null
         eventData.trigger = trigger;
         if (this.triggers[trigger] && this.triggers[trigger].length > 0) {
             registeredActions = this.triggers[trigger];
+            var unifiedTriggerInvoker = [];
             for (var i = 0; i < registeredActions.length; i++) {
                 eventData.triggerName = (registeredActions[i]).name;
-                (registeredActions[i]).action.call(this, eventData);
+                app.log.info("Executing trigger [" + eventData.triggerName + "] on [" + eventData.trigger + "]");
+                unifiedTriggerInvoker.push((registeredActions[i]).action.call(this, eventData));
             }
+            $.when.apply($, unifiedTriggerInvoker).then(function () {
+                // All trigger executions succeded [results in argument object]
+                deferredTrigger.resolve();
+            }).fail(function () {
+                //Some/all trigger executions failed  [results in argument object]
+                deferredTrigger.reject();
+            });
         }
+        return deferredTrigger;
     }
 });
