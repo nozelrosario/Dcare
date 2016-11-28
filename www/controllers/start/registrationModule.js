@@ -83,6 +83,7 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
         var userPatientEntry = {};
         userPatientEntry.fullName = patient.name;
         userPatientEntry.photo = patient.photo;
+        userPatientEntry.guid = patient.guid;
         return UserStore.savePatient(userPatientEntry);
     };
 
@@ -95,6 +96,7 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
             addPatientToUserInfo($scope.patient).then(function (patientEntry) {
                 // Switch Cluster to new Patient Scope & Push Patient Data
                 app.context.setCurrentCluster(patientEntry.guid);
+                $scope.patient.guid = patientEntry.guid;        //NR: Set guid in patient Table too.
                 var savePatientDataPromise = PatientsStore.save($scope.patient);
                 savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
             }, $scope.saveFailed);

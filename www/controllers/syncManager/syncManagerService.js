@@ -1,10 +1,10 @@
 ﻿angular.module('dCare.SyncManager', ['ionic',
-                                     'dCare.Services.UserStore'])
+                                     'dCare.Services.UserStore', 'dCare.ApiInvoker', 'dCare.Authentication'])
 
-.factory("SyncManagerService", function ($q, UserStore, $ionicLoading, $mdDialog) {
+.factory("SyncManagerService", function ($q, UserStore, ApiInvokerService, AuthenticationService, $ionicLoading, $mdDialog) {
     var performSync = function (clusterID, executionMode, isInitialSync) {
-        var deferedSync = $q.defer();        
-        
+        var deferedSync = $q.defer();
+
         var getDataStoreforSync = function (dataStoreName, clusterID) {
             var dataStore = new DataStoreFactory({
                 dataStoreName: dataStoreName,
@@ -16,15 +16,16 @@
 
         var initiateClusterSync = function (clusterID, mode) {
             var deferedClusterSync = $q.defer();
-            var dataStoresToSync = app.config.syncedDataStores;            
+            var dataStoresToSync = app.config.syncedDataStores;
             var syncMethod = (isInitialSync) ? "syncFrom" : "sync";
             if (dataStoresToSync.length > 0) {
                 if (mode === "sequential") {
                     var sequentialSyncInvoker = function (_dataStoresToSync, index, deferedCaller) {
                         var dataStoreToSync = getDataStoreforSync(_dataStoresToSync[index], clusterID);
                         ((dataStoreToSync[syncMethod]).call(dataStoreToSync, app.config.syncURI)).then(function () {
-                            if (index < _dataStoresToSync.length-1) {
-                                sequentialSyncInvoker(_dataStoresToSync, index + 1, deferedCaller);
+                            index = index + 1;
+                            if (index < _dataStoresToSync.length) {
+                                sequentialSyncInvoker(_dataStoresToSync, index, deferedCaller);
                             } else {
                                 deferedCaller.resolve();
                             }
@@ -52,7 +53,7 @@
                         deferedClusterSync.reject();
                     });
                 }
-                
+
             }
             return deferedClusterSync.promise;
         };
@@ -97,58 +98,161 @@
         return deferedSync.promise;
     };
 
-    var doInitialSync = function (patientGuid,backgroundMode) {
+    var doInitialSync = function (patientGuid, backgroundMode) {
         var deferedSync = $q.defer();
+        //NR: Get patient(Cluster) for Sync
         UserStore.getPatient(patientGuid).then(function (patientEntry) {
             var syncStatus;
+            //NR: Check if initial Sync required.
             if (patientEntry.initialSyncStatus != "complete") {
-                if (patientEntry.initialSyncStatus == "error") {
-                    syncStatus = "There was an Error while Data Sync, Retrying Sync again...";
-                } else if (patientEntry.initialSyncStatus == "busy") {
-                    // If timeout passed, stop & attempt sync again
-                    if (((castToLongDate(new Date())) - patientEntry.syncStartDate) > app.config.syncTimeout) {
-                        syncStatus = "Data Sync timed out, Retrying Sync again...";
+                //NR: Obtain Refreshed Auth Token Before invoking Sync.
+                AuthenticationService.refreshToken().then(function () {
+                    if (patientEntry.initialSyncStatus == "error") {
+                        syncStatus = "There was an Error while Data Sync, Retrying Sync again...";
+                    } else if (patientEntry.initialSyncStatus == "busy") {
+                        // If timeout passed, stop & attempt sync again
+                        if (((castToLongDate(new Date())) - patientEntry.syncStartDate) > app.config.syncTimeout) {
+                            syncStatus = "Data Sync timed out, Retrying Sync again...";
+                        } else {
+                            syncStatus = "Data Sync is in progress, Please Wait...";
+                        }
                     } else {
                         syncStatus = "Data Sync is in progress, Please Wait...";
                     }
-                } else {
-                    syncStatus = "Data Sync is in progress, Please Wait...";                    
-                }
 
-                performSync(patientGuid, "sequential", true).then(function () {
-                    if (!backgroundMode) $ionicLoading.hide();
-                    deferedSync.resolve();
+                    if (patientEntry.isEdited) {
+                        //NR: This will hit in scenario when sync is inturrupted & mean while patient data is modified.
+                        //NR: If isEdited == true possiblity => new patient added / update existing ptient)
+                        //    Start db-sync only after patient is saved remotely & cluster is setup on remote db. [else will face authentication issue]
+                        performPatientSync().then(function () {
+                            performSync(patientGuid, "sequential", true).then(function () {
+                                if (!backgroundMode) $ionicLoading.hide();
+                                deferedSync.resolve();
+                            }).catch(function () {
+                                if (!backgroundMode) $ionicLoading.hide();
+                                deferedSync.reject();
+                            });
+                        }).catch(function (err) {
+                            app.log.error("Patient Sync failed, thereby terminating DB-Sync. [Error]-" + err);
+                            if (!backgroundMode) $ionicLoading.hide();
+                            deferedSync.reject();
+                        });
+                    } else {
+                        performSync(patientGuid, "sequential", true).then(function () {
+                            if (!backgroundMode) $ionicLoading.hide();
+                            deferedSync.resolve();
+                        }).catch(function () {
+                            if (!backgroundMode) $ionicLoading.hide();
+                            deferedSync.reject();
+                        });
+                    }
+
+                    if (backgroundMode) {
+                        if (backgroundMode !== "silent") {   //NR: For 'silent' mode do not show nitification.
+                            $mdDialog.show($mdDialog.alert()
+                                       .title('Data Sync..')
+                                       .content(syncStatus)
+                                       .ariaLabel(syncStatus)
+                                       .ok('OK!'));
+                        }
+                        deferedSync.reject();
+                        //NR: Reject immediately to indicate sync not complete.
+                    } else {
+                        $ionicLoading.show({ template: '<md-progress-circular md-mode="indeterminate" md-diameter="70"><label style="color:white;">' + syncStatus + '</label></md-progress-circular>', noBackdrop: false });
+                    }
                 }).catch(function () {
-                    if (!backgroundMode) $ionicLoading.hide();
+                    app.log.info("Sync Failed [Authentication Error]");
                     deferedSync.reject();
                 });
-
-                if (backgroundMode) {
-                    if (backgroundMode !== "silent") {   //NR: For 'silent' mode do not show nitification.
-                        $mdDialog.show($mdDialog.alert()
-                                   .title('Data Sync..')
-                                   .content(syncStatus)
-                                   .ariaLabel(syncStatus)
-                                   .ok('OK!'));
-                    }
-                    deferedSync.reject();
-                    //NR: Reject to indicate sync not complete.
-                } else {
-                    $ionicLoading.show({ template: '<md-progress-circular md-mode="indeterminate" md-diameter="70">' + syncStatus + '</md-progress-circular>', noBackdrop: false });
-                }
-
             } else {
                 deferedSync.resolve();
             }
         }).catch(function () {
             deferedSync.reject();
+        });        
+        
+        return deferedSync.promise;
+    };
+
+    var performPatientSync = function () {
+        var deferedSync = $q.defer();
+        UserStore.getUser().then(function (userData) {
+            var userDataPayload = {
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                email: userData.email,
+                photo: userData.photo,
+                patients: userData.patients
+            };
+            ApiInvokerService.syncPatient(userDataPayload).then(function () {
+                deferedSync.resolve();
+            }).catch(function (error) {
+                deferedSync.reject();
+            });
+        }).fail(function (error) {
+            deferedSync.reject();
         });
         return deferedSync.promise;
     };
 
+    var doFullSync = function () {
+        var deferedSync = $q.defer();
+        //NR: Obtain Refreshed Auth Token Before inviking Sync.
+        AuthenticationService.refreshToken().then(function () {
+            var patientEntry;
+            //NR: Get all patients for syncing 
+            UserStore.getAllPatients().then(function (allPatients) {
+                if (allPatients) {
+                    for (var i = 0; i < allPatients.length; i++) {
+                        patientEntry = allPatients[i];
+                        if (patientEntry.isEdited) {
+                            //NR: If isEdited == true possiblity => new patient added / update existing ptient)
+                            //    Start db-sync only after patient is saved remotely & cluster is setup on remote db. [else will face authentication issue]
+                            performPatientSync().then(function () {
+                                //TODO: NR: Do sync DB unconditionally. If required bellow 4 conditions can be applied for Optimization. 
+                                performSync(patientEntry.guid, "sequential", false).then(function () {
+                                    deferedSync.resolve();
+                                }).catch(function () {
+                                    deferedSync.reject();
+                                });
+                            }).catch(function () {
+                                app.log.error("Patient Sync failed, thereby terminating DB-Sync.");
+                                deferedSync.reject();
+                            });
+                        } else if ((app.context.forceSync)          //NR: Sync Condition 1 : If Overriden
+                                   || (patientEntry.syncStatus === "complete" && ((castToLongDate(new Date())) - patientEntry.syncStartDate) > app.config.syncInterval)         //NR: Sync Condition 2 : If last sync time exceeds the interval
+                                   || (patientEntry.syncStatus === "busy" && ((castToLongDate(new Date())) - patientEntry.syncStartDate) > app.config.syncTimeout)              //NR: Sync Condition 3 : If last sync exceeds the timeout [hung or didnot finish in time]
+                                   || (patientEntry.syncStatus === "error")         //NR: Sync Condition 4 : If last sync resulted an error
+                                  ) {
+                            performSync(patientEntry.guid, "sequential", false).then(function () {
+                                deferedSync.resolve();
+                            }).catch(function () {
+                                deferedSync.reject();
+                            });
+                        } else {
+                            app.log.info("Sync will be attempted later.");
+                            deferedSync.resolve();
+                        }
+                    }
+                } else {
+                    app.log.info("No Patients to sync !!");
+                    deferedSync.resolve();
+                }
+
+            }).catch(function (err) {
+                app.log.error("Error on Full sync !! [Error]" + err);
+                deferedSync.resolve();
+            });
+        }).catch(function () {
+            app.log.info("Sync Failed [Authentication Error]");
+            deferedSync.reject();
+        });
+        return deferedSync.promise;
+    };
 
     return {
         performSync: performSync,
-        doInitialSync: doInitialSync
+        doInitialSync: doInitialSync,
+        doFullSync: doFullSync
     };
 });

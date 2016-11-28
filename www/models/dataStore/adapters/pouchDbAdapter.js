@@ -2,7 +2,7 @@
 app.classes.data.adapters.PouchDbAdapter = new Class({
     include: app.classes.data.eventTriggers,
     initialize: function (dataStoreName, config) {
-	    var defaultConfig = {};
+        var defaultConfig = { cache: false };
 	    this.dataStoreName = (dataStoreName) ? dataStoreName : app.log.error("DataStore Name cannot be empty"),
 		this.adapterConfig = $.extend(defaultConfig,config);
 		this.dataStore = null;
@@ -300,9 +300,13 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
     */
 
     syncTo: function (remoteHost) {
-        var deferredSync = $.Deferred();
-        var remoteDB = remoteHost + '/' + this.dataStoreName;
+        var deferredSync = $.Deferred();        
         var syncOptions = app.config.syncOptions;
+        var dbAuthCookie = app.context.dbAuthCookie;
+        var remoteDB_URI = remoteHost + '/' + this.dataStoreName;
+        var remoteDB = new PouchDB(remoteDB_URI, {
+            ajax: { headers: { 'x-access-token': dbAuthCookie } }
+        });
         var me = this;
         var syncInfo = { remoteURI: remoteDB, dataStoreName: this.dataStoreName, mode: "push", startTime: castToLongDate(new Date()) };
         me.trigger("sync-started", { syncInfo: syncInfo }).then(function () {     // Trigger Sync-Started Event
@@ -329,8 +333,12 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 
     syncFrom: function (remoteHost) {
         var deferredSync = $.Deferred();
-        var remoteDB = remoteHost + '/' + this.dataStoreName;
         var syncOptions = app.config.syncOptions;
+        var dbAuthCookie = app.context.dbAuthCookie;
+        var remoteDB_URI = remoteHost + '/' + this.dataStoreName;
+        var remoteDB = new PouchDB(remoteDB_URI, {
+            ajax: { headers: { 'x-access-token': dbAuthCookie } }
+        });
         var me = this;
         var syncInfo = { remoteURI: remoteDB, dataStoreName: this.dataStoreName, mode: "pull", startTime: castToLongDate(new Date()) };
         me.trigger("sync-started", { syncInfo: syncInfo }).then(function () {     // Trigger Sync-Started Event
@@ -357,8 +365,12 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
 
     sync: function (remoteHost) {
         var deferredSync = $.Deferred();
-        var remoteDB = remoteHost + '/' + this.dataStoreName;
         var syncOptions = app.config.syncOptions;
+        var dbAuthCookie = app.context.dbAuthCookie;
+        var remoteDB_URI = remoteHost + '/' + this.dataStoreName;
+        var remoteDB = new PouchDB(remoteDB_URI, {
+            ajax: { headers: { 'x-access-token': dbAuthCookie } }
+        });
         var me = this;
         var syncInfo = { remoteURI: remoteDB, dataStoreName: this.dataStoreName, mode: "push-pull", startTime: castToLongDate(new Date()) };
         me.trigger("sync-started", { syncInfo: syncInfo }).then(function () {     // Trigger Sync-Started Event

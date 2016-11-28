@@ -1,0 +1,48 @@
+<ion-pane>
+    <overlay-help show="showOverlayHelp" top-left-info="Tap here to open Menu" top-right-info="Tap here make a new Glucose entry" mid-left-info="Or Swipe right to open Menu" ></overlay-help>
+    <ion-side-menus>       
+        <!-- Center content -->
+	    <ion-side-menu-content>
+            <ion-header-bar class="bar bar-header bar-energized">
+                <div class="buttons">
+                    <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
+                </div>
+                <h1 class="title"><center><b>Sync Summary</b></center></h1>
+                <div class="buttons">
+                    <md-icon class="icon ion-help" style="font-size: 25px; margin-right: 15px;" ng-click="showHelp()"></md-icon> 
+                    <button class="button " ng-click="syncAll()"><i class="icon ion-android-sync"></i></button>
+                </div>
+            </ion-header-bar>
+			<ion-content>
+                <div ng-repeat="patient in allPatients">
+                    <h2>{{patient.fullName}}</h2>
+                    <div ng-repeat="syncEntry in syncSummary| filter : { dataCluster:patient.guid}">
+                        <div>{{syncEntry.dataStoreName}}  :: {{syncEntry.syncMode}}:: {{syncEntry.syncStatus}}</div>
+                    </div>
+                </div>
+			</ion-content>  
+        </ion-side-menu-content>
+
+        <!-- Left menu -->
+        <ion-side-menu side="left">
+            <!--Dashboard left menu containing patient specific actions [Add medical data, appointments, medications e.t.c]-->
+            <ion-content>
+                <md-list>
+                    <md-item ng-repeat="menuItem in menuItems" >
+                        <md-item-content >
+                        <md-button menu-close ng-click="activateMenuItem(menuItem.id)" class="button-full menu-button">
+                            <div layout="row" class="list-row">
+                                <img ng-src="{{menuItem.icon}}" class="list-icon" />
+                                <div layout="column">
+                                    <div class="menu-title">{{menuItem.title}}</div>
+                                    <div class="menu-sub-title">{{menuItem.subTitle}}</div>
+                                </div>
+                            </div>
+                        </md-button>
+                        </md-item-content>
+                    </md-item>
+                </md-list>
+            </ion-content>
+        </ion-side-menu>
+    </ion-side-menus>
+</ion-pane>

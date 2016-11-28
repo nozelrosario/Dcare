@@ -1,13 +1,13 @@
 var dashboardModule = angular.module('dCare.dashboard', ['ionic',
                                                          'dCare.Services.PatientsStore', 'dCare.Services.VitalsStore', 'dCare.Services.GlucoseStore', 'dCare.Services.NotificationsStore', 'dCare.Services.UserStore',
-                                                         'dCare.glucose', 'dCare.medications', 'dCare.vitals', 'dCare.reminders', 'dCare.meals', 'dCare.feedback', 'dCare.SyncManager',
+                                                         'dCare.glucose', 'dCare.medications', 'dCare.vitals', 'dCare.reminders', 'dCare.meals', 'dCare.feedback', 'dCare.syncCockpit',
                                                          'dCare.dateTimeBoxDirectives', 'dCare.jqSparklineDirectives',
                                                          'dCare.datePrettify']);
 
 //Controllers
 dashboardModule.controller('DashboardController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdDialog, $mdToast, $state, $stateParams,
                                                             allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData,notificationsData,
-                                                            PatientsStore, VitalsStore, GlucoseStore, NotificationsStore, UserStore, SyncManagerService) {
+                                                            PatientsStore, VitalsStore, GlucoseStore, NotificationsStore, UserStore) {
 
     $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
@@ -85,11 +85,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
                 $state.go("mealslist", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
                 break;
             case "settings":
-                SyncManagerService.performSync(app.context.getCurrentCluster(), "parallel", false).then(function () {
-                    app.log.info("Sync Done");
-                }).catch(function () {
-                    app.log.info("Sync Failed");
-                });
+                $state.go("syncCockpit", { patientID: $scope.currentPatient.id, parentState: 'dashboard' });
                 break;
             case "feedback":
                 $state.go("feedback", { patientID: $scope.currentPatient.id, parentState: "dashboard" });

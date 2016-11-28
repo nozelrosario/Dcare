@@ -68,7 +68,7 @@
             var deferredfetch = $q.defer();
             var patient = {};
             this.getUser().then(function (user) {
-                if (user.patients.length > 0) {
+                if (user.patients && user.patients.length > 0) {
                     for (var i = 0; i < user.patients.length; i++) {
                         if ((user.patients[i]).guid == guid) {
                             patient = user.patients[i]                            
@@ -86,7 +86,7 @@
             var deferredfetch = $q.defer();
             var defaultPatient = null, isDefaultSet = false;
             this.getUser().then(function (user) {
-                if (user.patients.length > 0) {
+                if (user.patients && user.patients.length > 0) {
                     for (var i = 0; i < user.patients.length; i++) {
                         if ((user.patients[i]).isDefault === true) {
                             defaultPatient = user.patients[i];
@@ -109,7 +109,7 @@
             var deferredSet = $q.defer();
             var defaultPatient = null, isPatientFound = false;
             this.getUser().then(function (user) {
-                if (user.patients.length > 0) {
+                if (user.patients && user.patients.length > 0) {
                     for (var i = 0; i < user.patients.length; i++) {
                         if ((user.patients[i]).guid === guid) {
                             user.patients[i].isDefault = true;
@@ -171,7 +171,7 @@
                 return generateUUID(20).toString();
             };
             var me = this;
-
+            var isPatientFound = false;
             //@NR: Set General Defaults on Patient
             patient.isEdited = true;
             patient.syncStatus = "notSynced";
@@ -192,11 +192,22 @@
 
             this.getUser()
                 .then(function (user) {
-                if (user.patients.length >= 0) {
-                    user.patients.push(patient);
+                    if (user.patients && user.patients.length >= 0) {
+                        for (var i = 0; i < user.patients.length; i++) {    //NR: Find the Patient with supplied guid.
+                            if ((user.patients[i]).guid === patient.guid) {                                
+                                isPatientFound = true;
+                                user.patients[i] = patient;     //NR: Update existing Patient
+                                break;
+                            }
+                        }
+                        if (!isPatientFound) {
+                            user.patients.push(patient);        //NR: New Patient Addition
+                        }
+                    } else {
+                        user.patients = [patient];              //NR: Fresh DB, Add First Patient
+                    }
                     //@NR: Save
                     me.save(user).then(function () { deferredSave.resolve(patient); }).fail(function () { deferredSave.reject(); });
-                }
              }).fail(function (err) {
                 deferredSave.reject(err);
              });
@@ -208,7 +219,7 @@
             var defaultPatient = null, patientExists = false;
             var me = this;
             this.getUser().then(function (user) {
-                if (user.patients.length > 0) {
+                if (user.patients && user.patients.length > 0) {
                     for (var i = 0; i < user.patients.length; i++) {
                         if ((user.patients[i]).guid === guid) {
                             patientExists = true;

@@ -15,11 +15,11 @@ angular.module('dCare.init', ['ionic', 'dCare.Services.UserStore', 'dCare.SyncMa
                 //@NR: TODO: make a gracefull end / Or give retry option manual mode, currently this is a abrupt stop.
                 $mdDialog.show($mdDialog.alert()
                                .title('Something went wrong :(')
-                               .content('Sync Operation Failed !!..')
-                               .ariaLabel(errorMessage)
+                               .content('Sync Operation Failed !! Please try again.')
+                               .ariaLabel('Sync Operation Failed !!..')
                                .ok('OK!'));
             });
-            
+            $state.go("login");
         }
     };
     

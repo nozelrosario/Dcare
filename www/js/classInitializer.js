@@ -21,7 +21,9 @@ app = function () {
             toastAutoCloseDelay: 2000,   //ms
             syncedDataStores: ['glucose', 'meals', 'medications', 'notifications', 'patients', 'reminders', 'vitals'],
             syncTimeout: 600000,          // ms [10min]
-            syncURI: 'http://localhost:5984/',
+            syncInterval: 600000,          // ms [10min]
+            syncURI: 'http://localhost:5050/dbProxy',
+            apiBaseURL: 'http://localhost:5050/',
             syncOptions: { live:false, retry:false, timeout: 500000, batch_size: 100, batches_limit:10 }
         },
         info: {
@@ -35,6 +37,7 @@ app = function () {
         },
         context: {
             defaultDataAdapter: 'pouchDB',
+            dbAuthCookie: '',
             clusterID: '',
             getCurrentCluster: function () {
                 return app.context.clusterID;
@@ -42,6 +45,7 @@ app = function () {
             setCurrentCluster: function (clusterID) {
                 app.context.clusterID = clusterID;
             },
+            forceSync: true
         }
     };
 }();
