@@ -15,6 +15,12 @@ userModule.controller('LoginController', function ($scope, $mdDialog, $statePara
             }).catch(function (err) {
                 // Do not change state, Login Failed try login again.
                 $scope.loginError = err;
+                $mdDialog.show($mdDialog.alert()
+                               .title('Error while login :(')
+                               .content(err + '. Please Try again.')
+                               .ariaLabel(err)
+                               .theme('warn')
+                               .ok('OK!'));
             });
         }
     };

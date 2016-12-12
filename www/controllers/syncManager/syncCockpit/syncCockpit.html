@@ -1,26 +1,89 @@
 <ion-pane>
-    <overlay-help show="showOverlayHelp" top-left-info="Tap here to open Menu" top-right-info="Tap here make a new Glucose entry" mid-left-info="Or Swipe right to open Menu" ></overlay-help>
-    <ion-side-menus>       
+    <overlay-help show="showOverlayHelp" top-left-info="Tap here to open Menu" top-right-info="Tap here make a new Glucose entry" mid-left-info="Or Swipe right to open Menu"></overlay-help>
+    <ion-side-menus>
         <!-- Center content -->
-	    <ion-side-menu-content>
+        <ion-side-menu-content>
             <ion-header-bar class="bar bar-header bar-energized">
                 <div class="buttons">
                     <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
                 </div>
                 <h1 class="title"><center><b>Sync Summary</b></center></h1>
                 <div class="buttons">
-                    <md-icon class="icon ion-help" style="font-size: 25px; margin-right: 15px;" ng-click="showHelp()"></md-icon> 
+                    <md-icon class="icon ion-help" style="font-size: 25px; margin-right: 15px;" ng-click="showHelp()"></md-icon>
                     <button class="button " ng-click="syncAll()"><i class="icon ion-android-sync"></i></button>
                 </div>
             </ion-header-bar>
-			<ion-content>
-                <div ng-repeat="patient in allPatients">
-                    <h2>{{patient.fullName}}</h2>
-                    <div ng-repeat="syncEntry in syncSummary| filter : { dataCluster:patient.guid}">
-                        <div>{{syncEntry.dataStoreName}}  :: {{syncEntry.syncMode}}:: {{syncEntry.syncStatus}}</div>
-                    </div>
-                </div>
-			</ion-content>  
+            <ion-content>
+                <md-list>
+                    <md-subheader class="md-sticky"><h2>Automatic Sync Interval</h2></md-subheader>
+                    <md-item>
+                        <md-item-content>
+                            <div layout="column" layout-sm="column">
+                                <md-slider flex="70" ng-model="syncInterval" min="0" max="10" aria-label="syncInterval" id="syncInterval" class="md-accent padding">
+                                </md-slider>
+                                <md-input-container>
+                                    <center ng-if="syncInterval > 0">
+                                        <h1>
+                                            <b><input flex="20" ng-model="syncInterval" style="border-bottom: 1px solid rgb(163, 157, 157) !important; width: 50px; background-color:#ffffff; border:none; text-align:center;font-weight:bold;display:inline-block;" /></b>
+                                            Minutes
+                                        </h1>
+                                    </center>
+                                    <center ng-if="!syncInterval || syncInterval <= 0">
+                                        <h1>
+                                            <b style="color:red">
+                                                Auto Sync is OFF
+                                            </b>
+                                        </h1>
+                                    </center>
+                                </md-input-container>
+                            </div>
+                        </md-item-content>
+                    </md-item>
+                    <md-subheader class="md-sticky"><h2>Sync Status</h2></md-subheader>
+                    <md-item>
+                        <md-item-content>
+                            <div layout="row" layout-sm="row" layout-align="start center">
+                                <div flex="20" class="padding " style="height:120px">
+                                    <md-icon class="icon ion-android-phone-portrait" style="font-size: 100px; margin-right: 5px;"></md-icon>
+                                </div>
+                                <div flex="50" ng-if="syncStatus === 'busy'" style="margin-bottom:60px;">
+                                    <center><md-button class="md-ink" ng-disabled="true" md-no-ink>Sync In Progress</md-button></center>
+                                    <md-progress-linear md-mode="indeterminate" style="padding: 5px"></md-progress-linear>
+                                    <md-progress-linear md-mode="indeterminate" style="padding: 5px; transform: scaleX(-1);"></md-progress-linear>
+                                </div>
+                                <div flex="50" ng-if="syncStatus !== 'busy'" style="margin-bottom:60px;">
+                                    <center>
+                                        <md-button class="md-raised md-accent md-cornered" ng-click="syncAll()">
+                                            <md-icon style="font-size: 32px; margin-bottom: 12px;" class="ion-android-sync"></md-icon>
+                                            <label><b>&nbsp;Perform Full Sync&nbsp;</b></label>
+                                        </md-button>
+                                    </center>
+                                    <div style="padding: 3px; width: 100%; overflow: hidden; position: relative; height: 2px; top: 5px; transition: all .3s linear; background-color: rgb(179,179,179); "></div>
+                                    <div style="padding: 3px; width: 100%; overflow: hidden; position: relative; height: 2px; top: 5px; transition: all .3s linear; background-color: rgb(179,179,179); "></div>
+                                </div>
+                                <div flex="20" class="padding " style="height:120px">
+                                    <md-icon class="icon ion-android-cloud-outline" style="font-size: 100px; margin-left: 5px;"></md-icon>
+                                </div>
+                            </div>
+                        </md-item-content>
+                    </md-item>
+                    <md-subheader class="md-no-sticky"><h2>Sync Status per patient</h2></md-subheader>
+                    <md-item ng-repeat="patient in allPatients">
+                        <md-item-content>
+                            <md-button menu-close on-tap="showSyncDetail(patient)" class="button-full menu-button">
+                                <div layout="row" class="list-row">
+                                    <img ng-src="{{enums.syncStatus[patient.syncStatus].image}}" style="height:50px;width:50px;margin:5px">
+                                    <div layout="column" layout-align="center start">
+                                        <div class="menu-title">{{patient.fullName}}</div>
+                                        <div class="menu-sub-title">{{enums.syncStatus[patient.syncStatus].label}}</div>
+                                    </div>
+                                </div>
+                            </md-button>
+                            
+                        </md-item-content>
+                    </md-item>
+                </md-list>
+            </ion-content>
         </ion-side-menu-content>
 
         <!-- Left menu -->
@@ -28,17 +91,17 @@
             <!--Dashboard left menu containing patient specific actions [Add medical data, appointments, medications e.t.c]-->
             <ion-content>
                 <md-list>
-                    <md-item ng-repeat="menuItem in menuItems" >
-                        <md-item-content >
-                        <md-button menu-close ng-click="activateMenuItem(menuItem.id)" class="button-full menu-button">
-                            <div layout="row" class="list-row">
-                                <img ng-src="{{menuItem.icon}}" class="list-icon" />
-                                <div layout="column">
-                                    <div class="menu-title">{{menuItem.title}}</div>
-                                    <div class="menu-sub-title">{{menuItem.subTitle}}</div>
+                    <md-item ng-repeat="menuItem in menuItems">
+                        <md-item-content>
+                            <md-button menu-close ng-click="activateMenuItem(menuItem.id)" class="button-full menu-button">
+                                <div layout="row" class="list-row">
+                                    <img ng-src="{{menuItem.icon}}" class="list-icon" />
+                                    <div layout="column">
+                                        <div class="menu-title">{{menuItem.title}}</div>
+                                        <div class="menu-sub-title">{{menuItem.subTitle}}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </md-button>
+                            </md-button>
                         </md-item-content>
                     </md-item>
                 </md-list>

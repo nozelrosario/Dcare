@@ -12,7 +12,7 @@ app = function () {
                 eventTriggers: {}
             }
         },
-        LOGGING_LEVEL: "all",               //NR: possible values : ["off", "all", "trace", "debug", "info", "warn", "error", "fatal"]
+        LOGGING_LEVEL: "off",               //NR: possible values : ["off", "all", "trace", "debug", "info", "warn", "error", "fatal"]
         LOG_APPENDER: new log4javascript.BrowserConsoleAppender(),   //NR: Can use other Appenders when needed
         log: null,                           //NR: Holds the instance of log writer
         config: {                            //NR: Can be used to hold app wide shared data/preferenced.
@@ -45,7 +45,8 @@ app = function () {
             setCurrentCluster: function (clusterID) {
                 app.context.clusterID = clusterID;
             },
-            forceSync: true
+            forceSync: true,
+            syncStatus: "not-started"
         }
     };
 }();

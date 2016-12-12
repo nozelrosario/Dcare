@@ -62,6 +62,7 @@
         var syncStatusBusyInfo = {};
         syncStatusBusyInfo[syncStatusPropertyName] = "busy";
         syncStatusBusyInfo["syncStartDate"] = (castToLongDate(new Date()));
+        app.context.syncStatus = syncStatusBusyInfo[syncStatusPropertyName];
         UserStore.setSyncStatus(clusterID, syncStatusBusyInfo).then(function () {
             initiateClusterSync(clusterID, executionMode).then(function () {
                 app.log.info("Sync Complete cluster [" + clusterID + "]");
@@ -76,6 +77,7 @@
                     //NR: Sync Status update Failed, reject main Promise
                     deferedSync.reject();
                 });
+                app.context.syncStatus = syncStatusBusyInfo[syncStatusPropertyName];
             }).catch(function () {
                 app.log.info("Sync Failed cluster [" + clusterID + "]");
                 //NR: Update the Sync Error status in User Info
@@ -89,10 +91,12 @@
                     //NR: Sync Status update Failed, reject main Promise
                     deferedSync.reject();
                 });
+                app.context.syncStatus = syncStatusBusyInfo[syncStatusPropertyName];
             });
         }).catch(function () {
             app.log.info("Unable to update sync status for cluster [" + clusterID + "]");
             deferedSync.reject();
+            app.context.syncStatus = 'error';
         });
         //NR: TODO: Stop any sync operation in progress, and restart
         return deferedSync.promise;
@@ -100,6 +104,7 @@
 
     var doInitialSync = function (patientGuid, backgroundMode) {
         var deferedSync = $q.defer();
+        app.context.syncStatus = 'busy';
         //NR: Get patient(Cluster) for Sync
         UserStore.getPatient(patientGuid).then(function (patientEntry) {
             var syncStatus;
@@ -136,6 +141,7 @@
                             app.log.error("Patient Sync failed, thereby terminating DB-Sync. [Error]-" + err);
                             if (!backgroundMode) $ionicLoading.hide();
                             deferedSync.reject();
+                            app.context.syncStatus = 'error';
                         });
                     } else {
                         performSync(patientGuid, "sequential", true).then(function () {
@@ -163,12 +169,15 @@
                 }).catch(function () {
                     app.log.info("Sync Failed [Authentication Error]");
                     deferedSync.reject();
+                    app.context.syncStatus = 'error';
                 });
             } else {
                 deferedSync.resolve();
+                app.context.syncStatus = 'complete';
             }
         }).catch(function () {
             deferedSync.reject();
+            app.context.syncStatus = 'error';
         });        
         
         return deferedSync.promise;
@@ -176,6 +185,7 @@
 
     var performPatientSync = function () {
         var deferedSync = $q.defer();
+        app.context.syncStatus = 'busy';
         UserStore.getUser().then(function (userData) {
             var userDataPayload = {
                 firstName: userData.firstName,
@@ -186,8 +196,10 @@
             };
             ApiInvokerService.syncPatient(userDataPayload).then(function () {
                 deferedSync.resolve();
+                app.context.syncStatus = 'complete';
             }).catch(function (error) {
                 deferedSync.reject();
+                app.context.syncStatus = 'error';
             });
         }).fail(function (error) {
             deferedSync.reject();

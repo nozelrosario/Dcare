@@ -1,13 +1,13 @@
 var dashboardModule = angular.module('dCare.dashboard', ['ionic',
                                                          'dCare.Services.PatientsStore', 'dCare.Services.VitalsStore', 'dCare.Services.GlucoseStore', 'dCare.Services.NotificationsStore', 'dCare.Services.UserStore',
-                                                         'dCare.glucose', 'dCare.medications', 'dCare.vitals', 'dCare.reminders', 'dCare.meals', 'dCare.feedback', 'dCare.syncCockpit',
+                                                         'dCare.glucose', 'dCare.medications', 'dCare.vitals', 'dCare.reminders', 'dCare.meals', 'dCare.feedback', 'dCare.syncCockpit', 'dCare.SyncManager',
                                                          'dCare.dateTimeBoxDirectives', 'dCare.jqSparklineDirectives',
                                                          'dCare.datePrettify']);
 
 //Controllers
 dashboardModule.controller('DashboardController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdDialog, $mdToast, $state, $stateParams,
                                                             allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData,notificationsData,
-                                                            PatientsStore, VitalsStore, GlucoseStore, NotificationsStore, UserStore) {
+                                                            PatientsStore, VitalsStore, GlucoseStore, NotificationsStore, UserStore, SyncManagerService) {
 
     $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 

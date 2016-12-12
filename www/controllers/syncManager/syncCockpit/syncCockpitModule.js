@@ -2,7 +2,7 @@ var syncCockpitModule = angular.module('dCare.syncCockpit', ['ionic',
                                                              'dCare.SyncManager', 'dCare.Services.UserStore']);
 
 //Controllers
-syncCockpitModule.controller('SyncCockpitController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdToast, $state, $stateParams, UserStore, SyncManagerService, syncSummary, currentPatient, allPatients) {
+syncCockpitModule.controller('SyncCockpitController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdDialog, $state, $stateParams, UserStore, SyncManagerService, syncSummary, currentPatient, allPatients) {
 
     $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
@@ -24,6 +24,8 @@ syncCockpitModule.controller('SyncCockpitController', function ($scope, $ionicSi
     $scope.syncSummary = syncSummary;
     $scope.currentPatient = currentPatient;
     $scope.allPatients = allPatients;
+    $scope.syncStatus = app.context.syncStatus;
+    $scope.syncInterval = 3;
 
     // Action Methods
     $scope.showHelp = function () {
@@ -35,33 +37,51 @@ syncCockpitModule.controller('SyncCockpitController', function ($scope, $ionicSi
             case 1:
                 $state.go("dashboard", { patientID: $stateParams.patientID });
                 break;
-            //case 2:
-            //    $scope.newGlucose();
-            //    break;
-            //case 3:
-            //    $state.go("glucosetrend", { patientID: $scope.currentPatient.id, parentState: 'glucoselist' });
-            //    break;
-            //case 4:
-            //    alert('Messages/Notificaions');
-            //    break;
-            //case 5:
-            //    alert('Settings');
-            //    break;
             default:
                 alert('No Match');
         }
     };
 
+    $scope.$watch(function () { return app.context.syncStatus; }, function (oldVal, newVal) {
+        $scope.syncStatus = newVal;
+    });
+
     $scope.syncAll = function () {
+        //app.context.syncStatus = "in-progress";
         SyncManagerService.doFullSync().then(function () {
             app.log.info("Sync Done");
+           // app.context.syncStatus = "complete";
         }).catch(function () {
             app.log.info("Sync Failed");
+           // app.context.syncStatus = "error";
         });
     };
 
     $scope.toggleActionsMenu = function () {
         $ionicSideMenuDelegate.toggleLeft();
+    };
+
+    $scope.showSyncDetail = function (patient) {        
+        var clusterSyncDetailController = function ($scope, $mdDialog, patient, syncSummary) {
+            $scope.patient = patient;
+            $scope.syncSummary = syncSummary;
+            $scope.closeDialog = function () {
+                isEditMode = false;
+                $mdDialog.hide();
+            };            
+        };
+
+        $mdDialog.show({
+            parent: angular.element(document.body),
+            scope: $scope,
+            preserveScope: true,
+            templateUrl: 'controllers/syncManager/syncCockpit/clusterSyncDetail.html',
+            locals: {
+                patient: patient,
+                syncSummary: syncSummary
+            },
+            controller: clusterSyncDetailController
+        });
     };
 
     //Action Methods
@@ -86,7 +106,6 @@ syncCockpitModule.config(function ($stateProvider, $urlRouterProvider) {
                   syncSummary: function ($stateParams) { return SyncRegistry.getSyncSummary(); },
                   allPatients: function ($stateParams, UserStore) { return UserStore.getAllPatients(); },
                   currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
-
               },
               templateUrl: 'controllers/syncManager/syncCockpit/syncCockpit.html',
               controller: 'SyncCockpitController',

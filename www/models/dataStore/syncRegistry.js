@@ -13,9 +13,10 @@ app.classes.data.SyncRegistry = new Singleton({
     //               ];
     enums: {
         syncStatus: {
-            'busy': { label: 'Data Sync is in progress', short_label: 'Busy', value: 'busy' },
-            'error': { label: 'Error occured while performing data sync', short_label: 'Error', value: 'error' },
-            'complete': { label: 'Data Sync complete', short_label: 'Complete', value: 'complete' }
+            'notSynced': { label: 'Sync not performed', short_label: 'Not Synced', value: 'notSynced', image: 'img/sync-not-done.png' },
+            'busy': { label: 'Data Sync is in progress', short_label: 'Busy', value: 'busy', image:'img/sync-busy.gif' },
+            'error': { label: 'Error occured while performing data sync', short_label: 'Error', value: 'error', image: 'img/sync-fail.png' },
+            'complete': { label: 'Data Sync complete', short_label: 'Complete', value: 'complete', image: 'img/sync-success.png' }
         }
     },
     registerSyncStatus: function (syncStatusInfo) {

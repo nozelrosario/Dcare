@@ -1,0 +1,28 @@
+<md-dialog aria-label="Cluster Sync" style="height:100%;width:100%;padding:0px;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Data Sync for {{patient.fullName}} </h2>
+            <span flex></span>
+            <md-button class="md-icon-button ion-close-round" ng-click="closeDialog()">
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content style="padding:5px;">
+        <div>
+            <md-list>
+                <md-item ng-repeat="syncEntry in syncSummary| filter : { dataCluster:patient.guid}">
+                    <div class="button-full menu-button">
+                        <div layout="row" class="list-row">
+                            <img ng-src="{{enums.syncStatus[patient.syncStatus].image}}" style="height:50px;width:50px;margin:5px">
+                            <div layout="column" layout-align="center start">
+                                <div class="menu-title">{{syncEntry.dataStoreName}}</div>
+                                <div class="menu-sub-title">{{enums.syncStatus[syncEntry.syncStatus].label}}</div>
+                                <div class="menu-sub-title">Sync Mode : {{syncEntry.syncMode}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </md-item>
+            </md-list>
+        </div>
+    </md-dialog-content>
+</md-dialog>

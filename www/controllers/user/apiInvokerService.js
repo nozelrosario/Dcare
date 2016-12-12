@@ -1,6 +1,6 @@
-﻿angular.module('dCare.ApiInvoker', ['dCare.Services.UserStore', 'dCare.user'])
+﻿angular.module('dCare.ApiInvoker', ['ionic', 'dCare.Services.UserStore', 'dCare.user'])
 
-.factory("ApiInvokerService", function ($q, $http, $state, UserStore) {
+.factory("ApiInvokerService", function ($q, $http, $state, $ionicLoading, UserStore) {
     var makeHTTPcall = function (config) {
         var deferedHttpCall = $q.defer();
         var httpConfig = {
@@ -21,7 +21,7 @@
                     if (response.status === 200) {
                         if (response.data && response.data.status === "error" && response.data.error === "Invalid Login") {
                             // Authentication Failure, redirect to login.
-                            deferedHttpCall.reject();
+                            deferedHttpCall.reject(response.data.message);
                             $state.go("login");
                         } else {
                             // Authentication Success
@@ -30,17 +30,17 @@
                     } else {
                         // Problem with Http Call
                         app.log.error("Http Response Error: [Error]-" + JSON.stringify(response));
-                        deferedHttpCall.reject();
+                        deferedHttpCall.reject("Unknown Error!!");
                     }              
                 }, function (responseError) {
                     // Http Call Failed
                     app.log.error("Http Call Failed: [Error]-" + JSON.stringify(responseError));
-                    deferedHttpCall.reject();
+                    deferedHttpCall.reject(JSON.stringify(responseError));
                 });
             }).fail(function (error) {
                 // Token fetch failed redirect to login
                 app.log.error("User DB read Failed: [Error]" + error);
-                deferedHttpCall.reject();
+                deferedHttpCall.reject(error);
                 $state.go("login");
             });
         } else {
@@ -49,14 +49,14 @@
                 if (response.status === 200) {
                     if (response.data && response.data.status === "error") {
                         //NR: API Failure
-                        deferedHttpCall.reject();
+                        deferedHttpCall.reject(response.data.message);
                     } else {                        
                         deferedHttpCall.resolve(response.data);
                     }
                 } else {
                     // Problem with Http Call
                     app.log.error("Http Response Error: [Error]-" + JSON.stringify(response));
-                    deferedHttpCall.reject();
+                    deferedHttpCall.reject(JSON.stringify(response));
                 }
             }, function (responseError) {
                 // Http Call Failed
@@ -70,6 +70,7 @@
 
     var invokeLogin = function (data) {
         var deferedLoginCall = $q.defer();
+        $ionicLoading.show({ template: '<md-progress-circular md-mode="indeterminate" md-diameter="70"></md-progress-circular>', noBackdrop: true });
         var loginApiURL = app.config.apiBaseURL + "login";
         makeHTTPcall({ secure: false, method: "POST", url: loginApiURL, data: data }).then(function (responseData) {
             //Api-responseData : { status: "error.success", error : obj, message: obj, data: obj }
@@ -81,10 +82,11 @@
                 app.log.error("[" + responseData.status + " ] -Error:" + responseData.error);
                 deferedLoginCall.reject(responseData.message);
             }
-            
+            $ionicLoading.hide();            
         }).catch(function (responseError) {
             app.log.error("Http Call For Login Failed: [Error]-" + JSON.stringify(responseError));
             deferedLoginCall.reject(responseError);
+            $ionicLoading.hide();
         });
         return deferedLoginCall.promise;
     };
@@ -113,6 +115,7 @@
 
     var invokeSignUp = function (data) {
         var deferedSignUpCall = $q.defer();
+        $ionicLoading.show({ template: '<md-progress-circular md-mode="indeterminate" md-diameter="70"></md-progress-circular>', noBackdrop: true });
         var signUpApiURL = app.config.apiBaseURL + "signup";
         makeHTTPcall({ secure: false, method: "POST", url: signUpApiURL, data: data }).then(function (responseData) {
             //Api-responseData : { status: "error.success", error : obj, message: obj, data: obj }
@@ -124,9 +127,11 @@
                 app.log.error("[" + responseData.status + " ] -Error:" + responseData.error);
                 deferedSignUpCall.reject(responseData.message);
             }
+            $ionicLoading.hide();
         }).catch(function (responseError) {
             app.log.error("Http Call For SignUp Failed: [Error]-" + JSON.stringify(responseError));
             deferedSignUpCall.reject(responseError);
+            $ionicLoading.hide();
         });
         return deferedSignUpCall.promise;
     };
