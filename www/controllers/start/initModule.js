@@ -1,6 +1,6 @@
-angular.module('dCare.init', ['ionic', 'dCare.Services.UserStore', 'dCare.SyncManager', 'dCare.Authentication', 'dCare.user'])
+angular.module('dCare.init', ['ionic', 'dCare.Services.UserStore', 'dCare.Services.SettingsStore', 'dCare.SyncManager', 'dCare.Authentication', 'dCare.user'])
 
-.controller('StarterController', function ($scope, $rootScope, $ionicLoading, $ionicPlatform, $mdDialog, UserStore, SyncManagerService, AuthenticationService, $state) {
+.controller('StarterController', function ($scope, $rootScope, $ionicLoading, $ionicPlatform, $mdDialog, UserStore, SettingsStore, SyncManagerService, AuthenticationService, $state) {
 
     $scope.changeState = function (patient) {
         if (!patient) {
@@ -28,6 +28,15 @@ angular.module('dCare.init', ['ionic', 'dCare.Services.UserStore', 'dCare.SyncMa
         UserStore.getDefaultPatient().then($scope.changeState);
     }).catch(function () {
         $state.go("login");
+    });
+
+    //Initialize application Settings
+    SettingsStore.exists('syncInterval').then(function (settingExists) {
+        if (settingExists) {
+            SettingsStore.get('syncInterval').then(function (settingValue) {               
+                app.config.syncInterval = settingValue;
+            });
+        }
     });
 
 

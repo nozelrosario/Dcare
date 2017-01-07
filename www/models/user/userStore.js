@@ -260,6 +260,45 @@
             });
             return deferredfetch.promise;
         },
+        resetPatientEditStatus: function (guid) {
+            // initialSyncStatus:"complete", syncStatus:"busy" syncStartDate:'1288323623006', syncEndDate:'1288323623006'
+            var deferredfetch = $q.defer();
+            var patientExists = false;
+            var me = this;
+            this.getUser().then(function (user) {
+                if (user.patients && user.patients.length > 0) {
+                    for (var i = 0; i < user.patients.length; i++) {
+                        if (guid) {
+                            //NR: Reset status only for specified patient
+                            if ((user.patients[i]).guid === guid) {
+                                patientExists = true;
+                                (user.patients[i]).isEdited = false;                                
+                            }
+                        } else {
+                            //NR: Reset status for all patients
+                            patientExists = true;
+                            (user.patients[i]).isEdited = false;
+                        }
+                    }
+                    if (patientExists) {
+                        //NR: SAve patient data
+                        me.save(user).then(function () {
+                            deferredfetch.resolve();
+                        }).fail(function () {
+                            deferredfetch.reject();
+                        });                        
+                    } else {
+                        // Patient not found, Reject.
+                        deferredfetch.reject();
+                    }
+                } else {
+                    deferredfetch.reject();
+                }
+            }).fail(function (err) {
+                deferredfetch.reject();
+            });
+            return deferredfetch.promise;
+        },
         save: function (user) {
             return userDataStore.getDataStore().save(user);
         },

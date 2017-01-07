@@ -56,8 +56,8 @@
             });
         }).catch(function (error) {
             // Login Service call Failed try login again.
-            app.log.error("Failed Login Call [Error]-" + error);
-            deferredLogin.reject(error);
+            app.log.error("Failed Login Call [Error]- " + JSON.stringify(error));
+            deferredLogin.reject("Unable to connect server !!");
         });
 
         return deferredLogin.promise;
@@ -93,8 +93,8 @@
             });
         }).fail(function (error) {
             // Login Service call Failed try login again.
-            app.log.error("Failed Token Refresh Call [Error]-" + error);
-            deferredLogin.reject(error);
+            app.log.error("Failed Token Refresh Call [Error]-" + JSON.stringify(error));
+            deferredLogin.reject("Unable to connect server !!");
         });
         return deferredLogin.promise;
     };

@@ -1,8 +1,8 @@
 var syncCockpitModule = angular.module('dCare.syncCockpit', ['ionic',
-                                                             'dCare.SyncManager', 'dCare.Services.UserStore']);
+                                                             'dCare.SyncManager', 'dCare.Services.UserStore', 'dCare.Services.SettingsStore']);
 
 //Controllers
-syncCockpitModule.controller('SyncCockpitController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdDialog, $state, $stateParams, UserStore, SyncManagerService, syncSummary, currentPatient, allPatients) {
+syncCockpitModule.controller('SyncCockpitController', function ($scope, SettingsStore, $ionicSideMenuDelegate, $ionicHistory, $mdDialog, $ionicLoading, $state, $stateParams, UserStore, SyncManagerService, syncSummary, currentPatient, allPatients) {
 
     $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
@@ -25,11 +25,33 @@ syncCockpitModule.controller('SyncCockpitController', function ($scope, $ionicSi
     $scope.currentPatient = currentPatient;
     $scope.allPatients = allPatients;
     $scope.syncStatus = app.context.syncStatus;
-    $scope.syncInterval = 3;
+    $scope.syncInterval = (app.config.syncInterval > 0)? (app.config.syncInterval / 1000): 0;
 
     // Action Methods
     $scope.showHelp = function () {
         $scope.showOverlayHelp = true;
+    };
+
+    $scope.refreshData = function () {
+        SyncRegistry.getSyncSummary().then(function (syncSummary) {
+            $scope.syncSummary = syncSummary;
+        });
+        UserStore.getAllPatients().then(function (allPatients) {
+            $scope.allPatients = allPatients;
+        });        
+    };
+
+    $scope.saveSyncInterval = function (value) {
+        $ionicLoading.show({ template: '<md-progress-circular md-mode="indeterminate" md-diameter="70"></md-progress-circular>', noBackdrop: true });
+        if (value > 0) {
+            value = value * 1000; //Save as milliseconds
+        }
+        SettingsStore.save('syncInterval', value).then(function () {
+            app.config.syncInterval = value;
+            $ionicLoading.hide();
+        }).catch(function () {
+            $ionicLoading.hide();
+        });
     };
    
     $scope.activateMenuItem = function (menuItemId) {
@@ -42,18 +64,19 @@ syncCockpitModule.controller('SyncCockpitController', function ($scope, $ionicSi
         }
     };
 
-    $scope.$watch(function () { return app.context.syncStatus; }, function (oldVal, newVal) {
-        $scope.syncStatus = newVal;
-    });
+   // $scope.$watch(function () { return app.context.syncStatus; }, function (oldVal, newVal) {
+    //    $scope.syncStatus = newVal;
+   // });
 
     $scope.syncAll = function () {
-        //app.context.syncStatus = "in-progress";
+        $scope.syncStatus = 'busy';
         SyncManagerService.doFullSync().then(function () {
+            $scope.syncStatus = 'complete';
+            $scope.refreshData();
             app.log.info("Sync Done");
-           // app.context.syncStatus = "complete";
         }).catch(function () {
+            $scope.syncStatus = 'error';
             app.log.info("Sync Failed");
-           // app.context.syncStatus = "error";
         });
     };
 
