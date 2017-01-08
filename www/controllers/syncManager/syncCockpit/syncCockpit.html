@@ -51,7 +51,7 @@
                                     <md-progress-linear md-mode="indeterminate" style="padding: 5px"></md-progress-linear>
                                     <md-progress-linear md-mode="indeterminate" style="padding: 5px; transform: scaleX(-1);"></md-progress-linear>
                                 </div>
-                                <div flex="50" ng-if="syncStatus === 'complete'" style="margin-bottom:60px;">
+                                <div flex="50" ng-if="syncStatus !== 'busy' && syncStatus !== 'error'" style="margin-bottom:60px;">
                                     <center>
                                         <md-button class="md-raised md-accent md-cornered" ng-click="syncAll()" style="border-radius: 15%;">
                                             <md-icon style="font-size: 32px; margin-bottom: 12px;" class="ion-android-sync"></md-icon>

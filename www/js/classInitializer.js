@@ -22,8 +22,8 @@ app = function () {
             syncedDataStores: ['glucose', 'meals', 'medications', 'notifications', 'patients', 'reminders', 'vitals'],
             syncTimeout: 600000,          // ms [10min]
             syncInterval: 600000,          // ms [10min]
-            syncURI: 'http://localhost:5050/dbProxy',
-            apiBaseURL: 'http://localhost:5050/',
+            syncURI: 'https://dcare-server-nozelrosario.c9users.io/dbProxy',//'http://localhost:5050/dbProxy',
+            apiBaseURL: 'https://dcare-server-nozelrosario.c9users.io/',//'http://localhost:5050/',
             syncOptions: { live:false, retry:false, timeout: 500000, batch_size: 100, batches_limit:10 }
         },
         info: {
@@ -46,7 +46,9 @@ app = function () {
                 app.context.clusterID = clusterID;
             },
             forceSync: true,
-            syncStatus: "not-started"
+            syncStatus: "not-started",
+            fullSyncStatus: "not-started",
+            autoSyncProcess: null
         }
     };
 }();

@@ -2,7 +2,7 @@ var syncCockpitModule = angular.module('dCare.syncCockpit', ['ionic',
                                                              'dCare.SyncManager', 'dCare.Services.UserStore', 'dCare.Services.SettingsStore']);
 
 //Controllers
-syncCockpitModule.controller('SyncCockpitController', function ($scope, SettingsStore, $ionicSideMenuDelegate, $ionicHistory, $mdDialog, $ionicLoading, $state, $stateParams, UserStore, SyncManagerService, syncSummary, currentPatient, allPatients) {
+syncCockpitModule.controller('SyncCockpitController', function ($scope,$interval, SettingsStore, $ionicSideMenuDelegate, $ionicHistory, $mdDialog, $ionicLoading, $state, $stateParams, UserStore, SyncManagerService, syncSummary, currentPatient, allPatients) {
 
     $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
@@ -25,7 +25,7 @@ syncCockpitModule.controller('SyncCockpitController', function ($scope, Settings
     $scope.currentPatient = currentPatient;
     $scope.allPatients = allPatients;
     $scope.syncStatus = app.context.syncStatus;
-    $scope.syncInterval = (app.config.syncInterval > 0)? (app.config.syncInterval / 1000): 0;
+    $scope.syncInterval = (app.config.syncInterval > 0)? (app.config.syncInterval / 60000): 0;
 
     // Action Methods
     $scope.showHelp = function () {
@@ -44,10 +44,17 @@ syncCockpitModule.controller('SyncCockpitController', function ($scope, Settings
     $scope.saveSyncInterval = function (value) {
         $ionicLoading.show({ template: '<md-progress-circular md-mode="indeterminate" md-diameter="70"></md-progress-circular>', noBackdrop: true });
         if (value > 0) {
-            value = value * 1000; //Save as milliseconds
+            value = value * 60000; //Save as milliseconds
         }
         SettingsStore.save('syncInterval', value).then(function () {
             app.config.syncInterval = value;
+            //NR: Stop the Auto Sunc Process & Re-Schedule
+            $interval.cancel(app.context.autoSyncProcess);
+            if (value > 0) {
+                app.context.autoSyncProcess = $interval(function () {
+                    SyncManagerService.doFullSync();
+                }, app.config.syncInterval);
+            }            
             $ionicLoading.hide();
         }).catch(function () {
             $ionicLoading.hide();

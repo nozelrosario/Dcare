@@ -1,6 +1,6 @@
 angular.module('dCare.init', ['ionic', 'dCare.Services.UserStore', 'dCare.Services.SettingsStore', 'dCare.SyncManager', 'dCare.Authentication', 'dCare.user'])
 
-.controller('StarterController', function ($scope, $rootScope, $ionicLoading, $ionicPlatform, $mdDialog, UserStore, SettingsStore, SyncManagerService, AuthenticationService, $state) {
+.controller('StarterController', function ($scope, $rootScope, $ionicLoading, $ionicPlatform, $mdDialog, $interval, UserStore, SettingsStore, SyncManagerService, AuthenticationService, $state) {
 
     $scope.changeState = function (patient) {
         if (!patient) {
@@ -30,13 +30,21 @@ angular.module('dCare.init', ['ionic', 'dCare.Services.UserStore', 'dCare.Servic
         $state.go("login");
     });
 
-    //Initialize application Settings
+    //Initialize Sync specific application Settings & Sync Deamon
     SettingsStore.exists('syncInterval').then(function (settingExists) {
         if (settingExists) {
             SettingsStore.get('syncInterval').then(function (settingValue) {               
                 app.config.syncInterval = settingValue;
             });
         }
+        //NR: Stop process in case already running
+        if (app.context.autoSyncProcess !== null) {
+            $interval.cancel(app.context.autoSyncProcess);
+        }
+        //NR: Schedule Sync Process as per configured interval
+        app.context.autoSyncProcess = $interval(function () {
+            SyncManagerService.doFullSync();
+        }, app.config.syncInterval);
     });
 
 
