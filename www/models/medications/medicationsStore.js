@@ -30,14 +30,22 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
             6: { label: 'Subcutaneous', short_label: 'An injection into the fat layer, underneath the skin', image: 'img/syringe.png', value: 6 },
             7: { label: 'Dermal', short_label: 'An injection into the upper skin layer', image: 'img/skin-hair.png', value: 7 },
             8: { label: 'Inhalation', short_label: 'Inhaled into lungs via nose/mouth', image: 'img/inhalator.png', value: 8 }
+        },
+        doseUnit: {
+            'mg': { label: 'MG', short_label: 'mg', value: 'mg' },
+            'ml': { label: 'ML', short_label: 'ml', value: 'ml' },
+            'teaspoon': { label: 'Tea Spoon', short_label: 't.Sp', value: 'teaspoon' },
+            'tablet': { label: 'Tablet(s)', short_label: 'tab', value: 'tablet' },
+            'drop': { label: 'Drop(s)', short_label: 'drop', value: 'drop' },
+            'ointment': { label: 'Ointment', short_label: 'ointment', value: 'ointment' }
         }
     };
     // Some fake testing data
     //var medicationList = [
-	//                { id: 0, patientID: '1', name: 'Crocin 250', dose: '1 tablet', dosefrequency: 1, startdate: '1288323623006', enddate: '1288323623006', route: 2, notes: '', status: 'active' },
-	//                { id: 1, patientID: '1', name: 'Ibuprofen 500', dose: '1/2 tablet', dosefrequency: 3, startdate: '1289323623006', enddate: '1288323623006', route: 3, notes: '', status: 'active' },
-	//                { id: 2, patientID: '2', name: 'Asprin', dose: '5ml', dosefrequency: 2, startdate: '1298323623006', enddate: '1288323623006', route: 4, notes: '', status: 'active' },
-	//                { id: 3, patientID: '4', name: 'Lanta Reflux li', dose: '1 drop', dosefrequency: 1, startdate: '1288523623006', enddate: '1288323623006', route: 3, notes: '', status: 'active' }
+    //                { id: 0, patientID: '1', name: 'Crocin 250', dose: '1', doseunit: 'tablet', dosefrequency: 1, startdate: '1288323623006', enddate: '1288323623006', route: 2, notes: '', status: 'active', stockrefilldate: '1288323623006', stockrefillquantity: '30'},
+    //                { id: 1, patientID: '1', name: 'Ibuprofen 500', dose: '1/2', doseunit: 'tablet', dosefrequency: 3, startdate: '1289323623006', enddate: '1288323623006', route: 3, notes: '', status: 'active', stockrefilldate: '1288323623006', stockrefillquantity: '30' },
+    //                { id: 2, patientID: '2', name: 'Asprin', dose: '5', doseunit: 'ml', dosefrequency: 2, startdate: '1298323623006', enddate: '1288323623006', route: 4, notes: '', status: 'active', stockrefilldate: '1288323623006', stockrefillquantity: '30' },
+    //                { id: 3, patientID: '4', name: 'Lanta Reflux li', dose: '1', doseunit: 'drop', dosefrequency: 1, startdate: '1288523623006', enddate: '1288323623006', route: 3, notes: '', status: 'active', stockrefilldate: '1288323623006', stockrefillquantity: '30' }
 	//                ];
     var setMedicationReminder = function (medicationID) {
         var deferredReminder = $q.defer();
@@ -112,6 +120,52 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
         return deferredReminder.promise;
     };
 
+    var setMedicationStockReminder = function (medicationID, date) {
+        var deferredReminder = $q.defer();
+        this.getMedicationByID(medicationID).then(function (medication) {
+            if (medication) {
+                var startDate = ''; //NR: start from right now
+                var endDate = medication.enddate;
+                var frequency = 0;  //NR: Trigger only one time 
+                var frequencyUnit = 0;
+                var newReminder = null, reminderText = "", reminderTitle = "";
+                
+                if (date) {
+                    if (!startDate) startDate = castToLongDate(new Date());
+                    if (!endDate) endDate = "";
+                    reminderText = "Reminder refill medication stock for: " + medication.name;
+                    reminderTitle = "Medication Stock is about to finish for: " + medication.name;
+                    newReminder = {
+                        patientID: medication.patientID,
+                        text: reminderText,
+                        title: reminderTitle,
+                        reminderType: 1,    //NR: medication reminder
+                        startdate: startDate,
+                        enddate: endDate,
+                        isRecursive: false,
+                        frequencyUnit: frequencyUnit,
+                        frequency: frequency,
+                        status: 'active',
+                        sourceID: 'MedicationStock_' + medication.id
+                    };
+                    RemindersStore.save(newReminder, { keyFields: ["sourceID"], saveEmptyValues: true }).then(function (reminder) {
+                        deferredReminder.resolve("Reminder set successfully!");
+                    }).fail(function (err) {
+                        deferredReminder.resolve("Could not set Reminder!!");
+                    });
+
+                } else {
+                    deferredReminder.resolve("Could not set Reminder!! Stock empty date not determined.");
+                }
+            } else {
+                deferredReminder.resolve("Could not set Reminder!! Medication not found");
+            }
+        }).fail(function (err) {
+            deferredReminder.resolve("Could not set Reminder!! please try again.");
+        });
+
+        return deferredReminder.promise;
+    };
 
     var removeMedicationReminder = function (medicationID) {
         var deferredReminder = $q.defer(),
@@ -130,6 +184,25 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
             deferredReminder.resolve("Could not remove Reminder!! please try again.");
         });
 
+        return deferredReminder.promise;
+    };
+
+    var removeMedicationStockReminder = function (medicationID) {
+        var deferredReminder = $q.defer(),
+            sourceID = 'MedicationStock_' + medicationID;
+        RemindersStore.getReminderBySourceID(sourceID).then(function (matchingReminders) {
+            if (matchingReminders && (matchingReminders.length > 0) && matchingReminders[0].id) {
+                RemindersStore.remove(matchingReminders[0].id).then(function () {
+                    deferredReminder.resolve("Reminder removed successfully!");
+                }).fail(function (err) {
+                    deferredReminder.resolve("Could not remove Reminder!! please try again.");
+                });
+            } else {
+                deferredReminder.resolve("Could not remove Reminder!! Reminder not found");
+            }
+        }).fail(function (err) {
+            deferredReminder.resolve("Could not remove Reminder!! please try again.");
+        });
         return deferredReminder.promise;
     };
 
@@ -175,7 +248,9 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
             return medicationsDataStore.getDataStore(app.context.getCurrentCluster()).save(medication);
         },
         setMedicationReminder: setMedicationReminder,
+        setMedicationStockReminder: setMedicationStockReminder,
         removeMedicationReminder: removeMedicationReminder,
+        removeMedicationStockReminder: removeMedicationStockReminder,
         remove: function (medicationID) {
             return medicationsDataStore.getDataStore(app.context.getCurrentCluster()).remove(medicationID);
         }

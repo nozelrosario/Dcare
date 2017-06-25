@@ -14,7 +14,8 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
                         { seq: 1, id:'dashboard', title: 'Dashboard', subTitle: 'Your summary page', icon: 'img/home-dashboard.png' },
                         { seq: 3, id:'add-new', title: 'Add New', subTitle: 'Add a new medication', icon: 'img/add-new.png' },
                         { seq: 2, id:'active-medications', title: 'Active Medications', subTitle: 'Show only Active medications', icon: 'img/active-list.png' },
-                        { seq: 4, id:'all-medications', title: 'All Medications', subTitle: 'Show all medications (active & inactive)', icon: 'img/list.png' }//,
+                        { seq: 4, id: 'manage-stock', title: 'Manage Medicine Stock', subTitle: 'Manage medicines in stock', icon: 'img/medicine-stock.png' },
+                        { seq: 5, id: 'all-medications', title: 'All Medications', subTitle: 'Show all medications (active & inactive)', icon: 'img/list.png' }//,
                         //{ seq: 5, id:'alerts', title: 'Alerts / Recomendations', subTitle: 'Your Messages & Alerts', icon: 'img/alerts-recommendations.png' },
                         //{ seq: 6, id:'settings', title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' }
     ];
@@ -63,6 +64,10 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
         $state.go("medicationForm", { patientID: $scope.currentPatient.id, medicationID: medicationID, parentState: $state.current.name });
     };
 
+    $scope.editMedicationStock = function (medicationID) {
+        $state.go("medicationStockForm", { patientID: $scope.currentPatient.id, medicationID: medicationID, parentState: $state.current.name });
+    };   
+
     $scope.newMedication = function () {
         $state.go("medicationForm", { patientID: $scope.currentPatient.id, parentState: 'activeMedicationslist' });
     };
@@ -98,8 +103,8 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
             case 'all-medications':
                 $state.go("allMedicationslist", { patientID: $scope.currentPatient.id, parentState: $scope.parentState });
                 break;
-            case 'alerts':
-                alert('Messages/Notificaions');
+            case 'manage-stock':
+                $state.go("manageMedicationsStock", { patientID: $scope.currentPatient.id, parentState: $scope.parentState });
                 break
             case 'settings':
                 alert('Settings');
@@ -251,20 +256,253 @@ medicationsModule.controller('MedicationFormController', function ($scope, $mdDi
     });
 });
 
+medicationsModule.controller('MedicationStockFormController', function ($scope, $mdDialog, $mdToast, $state, $stateParams, medication, currentPatient, MedicationsStore) {
+
+    // init enums [to add more enums use $.extend($scope.enums, newEnum)]
+    $scope.enums = MedicationsStore.enums;
+
+    // Init Data
+    $scope.currentPatient = currentPatient;
+    $scope.newRefill = { 'quantity': '', 'date': castToLongDate(new Date()) };
+    $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'manageMedicationsStock';
+    if (medication) {
+        $scope.medication = medication;
+    } else {
+        $scope.cancel();    //NR: not possible to update stock on non existing medication        
+    }
+    
+    // Action Methods
+
+    $scope.setReminder = function (medication) {
+        var confirmReminder = $mdDialog.confirm()
+                  //.parent(angular.element(document.body))
+                  .title('Would you like to set reminder?')
+                  .content('Would you like to set a reminder to refill stock for this medication')
+                  .ariaLabel('Would you like to set reminder?')
+                  .ok('Yes')
+                  .cancel('Not Now');
+        //.targetEvent(ev);
+        $mdDialog.show(confirmReminder).then(function () {
+            // User clicked Yes, set reminder
+            MedicationsStore.setMedicationStockReminder(medication.id, $scope.getEstimatedStockLastDate(medication)).then(function (reminder_status) {
+                // Notify user & Change state
+                $mdToast.show($mdToast.simple().content(reminder_status).position('bottom').hideDelay(app.config.toastAutoCloseDelay));
+                $scope.changeState(medication);
+            });
+        }, function () {
+            // User clicked No, do not set reminder
+            $scope.changeState(medication);
+        });
+    };
+
+    $scope.removeReminder = function (medication) {
+        MedicationsStore.removeMedicationStockReminder(medication.id).then(function (reminder_status) {
+            app.log.info(reminder_status);
+            $scope.changeState(medication);
+        });
+    };
+
+    $scope.getEstimatedStockLastDate = function (medication) {
+        var estimatedStockLastDate = '',
+            secondsToAdd = 0, milliSecondsToAdd=0;
+        //dose, doseunit, dosefrequency, stockrefilldate, stockrefillquantity
+        //calculate date
+        var totalSecondsIn = {
+            year: 31536000,
+            month: 2592000,
+            week: 604800,
+            day: 86400,
+            hour: 3600,
+            minute: 60,
+            second: 1
+        };
+        if ($scope.medication.stockrefilldate && $scope.medication.dosefrequency) {
+            switch ($scope.medication.dosefrequency) {
+                case 1:
+                    secondsToAdd = totalSecondsIn.hour * 6;  // 6 hourly
+                    break;
+                case 2: f
+                    secondsToAdd = totalSecondsIn.hour * 8;  // 8 hourly
+                    break;
+                case 3:
+                    secondsToAdd = totalSecondsIn.hour * 12; // 12 hourly
+                    break;
+                case 4:
+                    secondsToAdd = totalSecondsIn.day;       // 24 hourly
+                    break;
+                case 5:
+                    secondsToAdd = totalSecondsIn.week;      // weekly
+                    break;
+                case 6:
+                    secondsToAdd = totalSecondsIn.month;     // monthly
+                    break;
+                case 7:
+                    secondsToAdd = totalSecondsIn.year;      // yearly
+                    break;
+                default:
+                    secondsToAdd = 0;
+                    break;
+            }
+            //NR: Adjust nonStandard unit quantities wrt. dose
+            if ($scope.medication.dose) {
+                secondsToAdd = secondsToAdd * $scope.medication.dose * $scope.medication.stockrefillquantity;
+            }
+            //NR: Round-off
+            milliSecondsToAdd = (Math.floor(secondsToAdd)) * 1000;
+            //NR: Final secondsToAdd & Round-off
+            estimatedStockLastDate = $scope.medication.stockrefilldate + milliSecondsToAdd;
+        } else {
+            estimatedStockLastDate = '';
+        }
+        return estimatedStockLastDate;
+    };
+
+    $scope.getAvailableStockQuantity = function () {
+        //dose, doseunit, dosefrequency, stockrefilldate, stockrefillquantity
+        var availableStockQuantity = 0,
+            elapsedTime,
+            estimatedConsumedUnits = 0;
+        if ($scope.medication.stockrefilldate && $scope.medication.dosefrequency) {
+            elapsedTime = getElapsedTime($scope.medication.stockrefilldate, castToLongDate(new Date()));
+            switch ($scope.medication.dosefrequency) {
+                case 1:
+                    estimatedConsumedUnits = elapsedTime.hour / 6;  // 6 hourly
+                    break;
+                case 2: f
+                    estimatedConsumedUnits = elapsedTime.hour / 8;  // 8 hourly
+                    break;
+                case 3:
+                    estimatedConsumedUnits = elapsedTime.hour / 12; // 12 hourly
+                    break;
+                case 4:
+                    estimatedConsumedUnits = elapsedTime.day;       // 24 hourly
+                    break;
+                case 5:
+                    estimatedConsumedUnits = elapsedTime.week;      // weekly
+                    break;
+                case 6:
+                    estimatedConsumedUnits = elapsedTime.month;     // monthly
+                    break;
+                case 7:
+                    estimatedConsumedUnits = elapsedTime.year;      // yearly
+                    break;
+                default:
+                    estimatedConsumedUnits = 0;
+                    break;
+            }
+            //NR: Adjust nonStandard unit quantities wrt. dose
+            if ($scope.medication.dose) {
+                if ($scope.medication.doseUnit === 'teaspoon') {
+                    //NR: Assuming 1 teaspoon ~ 5ml
+                    estimatedConsumedUnits = estimatedConsumedUnits * ($scope.medication.dose * 5);
+                } else if ($scope.medication.doseUnit === 'drop') {
+                    //NR: Assuming 1 drop ~ 0.05ml
+                    estimatedConsumedUnits = estimatedConsumedUnits * ($scope.medication.dose * 0.05);
+                } else {
+                    estimatedConsumedUnits = estimatedConsumedUnits * $scope.medication.dose;
+                }
+            }
+            //NR: Round-off
+            estimatedConsumedUnits = Math.ceil(estimatedConsumedUnits);
+            if (estimatedConsumedUnits < 1) {
+                estimatedConsumedUnits = 0;
+            }
+            //NR: Final available Quantity & Round-off
+            availableStockQuantity = $scope.medication.stockrefillquantity - estimatedConsumedUnits;
+            availableStockQuantity = Math.floor(availableStockQuantity);
+            if (availableStockQuantity < 1) {
+                availableStockQuantity = 0;
+            }
+        } else {
+            availableStockQuantity = 0;
+        }  
+        return availableStockQuantity;
+    };
+
+    $scope.resetStock = function () {
+        var confirmReset;
+        $scope.newRefill.quantity = 0;
+        confirmReset = $mdDialog.confirm()
+                  .title('Reset stock count on this Medication?')
+                  .content('Would you like to Reset stock count on this Medication?')
+                  .ariaLabel('Reset stock count on this Medication?')
+                  .ok('Yes')
+                  .cancel('No');
+
+        $mdDialog.show(confirmReset).then(function () {
+            // User clicked Yes, reset stock
+            $scope.medication.stockrefilldate = '';
+            $scope.medication.stockrefillquantity = 0;
+            MedicationsStore.save($scope.medication).then($scope.removeReminder).fail($scope.saveFailed);
+        }, function () {
+            // User clicked No,
+            // Do Nothing
+            $scope.newRefill.quantity = '';
+        });
+    };
+
+    $scope.changeState = function (medication) {
+        $scope.medication = medication;
+        $state.go($scope.parentState, { patientID: $scope.currentPatient.id });
+    };
+
+    $scope.save = function (mode) {
+        if ($scope.medication_stock_entry_form.$valid) {
+            if (!$scope.medication.stockrefillquantity) $scope.medication.stockrefillquantity = 0;
+            $scope.medication.stockrefillquantity = $scope.medication.stockrefillquantity + $scope.newRefill.quantity;
+            $scope.medication.stockrefilldate = $scope.newRefill.date; //NR: Set refill date to now
+            MedicationsStore.save($scope.medication).then($scope.setReminder).fail($scope.saveFailed);        
+        }
+    };
+
+
+    $scope.cancel = function () {
+        // If required ask for confirmation
+        $scope.changeState($scope.medication);
+    };
+
+    $scope.saveFailed = function (errorMessage) {
+        $mdDialog.show($mdDialog.alert()
+                               .title('Something went wrong :(')
+                               .content('This is embarassing!!. Operation responded with ' + errorMessage)
+                               .ariaLabel(errorMessage)
+                               .ok('OK!'));
+    };
+
+    //Action Methods
+    $scope.navigateBack = function () {
+        // transition to previous state
+        $scope.cancel();
+    };
+
+    $scope.$on("navigate-back", function (event, data) {
+        if (data.intendedController === "MedicationStockFormController") $scope.navigateBack();
+    });
+});
+
 
 // Routings
 medicationsModule.config(function ($stateProvider, $urlRouterProvider) {
 
     $stateProvider
-          .state('activeMedicationslist', {
-              resolve: {
-                  medicationsList: function (MedicationsStore, $stateParams) { return MedicationsStore.getActiveMedicationsForPatient($stateParams.patientID); },
-                  currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
-              },
-              templateUrl: 'views/medications/list.html',
-              controller: 'MedicationsListController',
-              params: { 'patientID': null, 'parentState': 'activeMedicationslist' }
-          })
+            .state('activeMedicationslist', {
+                resolve: {
+                    medicationsList: function (MedicationsStore, $stateParams) { return MedicationsStore.getActiveMedicationsForPatient($stateParams.patientID); },
+                    currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
+                },
+                templateUrl: 'views/medications/list.html',
+                controller: 'MedicationsListController',
+                params: { 'patientID': null, 'parentState': 'activeMedicationslist' }
+            })
+            .state('manageMedicationsStock', {
+                resolve: {
+                    medicationsList: function (MedicationsStore, $stateParams) { return MedicationsStore.getActiveMedicationsForPatient($stateParams.patientID); },
+                    currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
+                },
+                templateUrl: 'views/medications/stock_list.html',
+                controller: 'MedicationsListController',
+                params: { 'patientID': null, 'parentState': 'activeMedicationslist' }
+            })
             .state('allMedicationslist', {
                 resolve: {
                     medicationsList: function (MedicationsStore, $stateParams) { return MedicationsStore.getAllMedicationsForPatient($stateParams.patientID); },
@@ -274,14 +512,23 @@ medicationsModule.config(function ($stateProvider, $urlRouterProvider) {
                 controller: 'MedicationsListController',
                 params: { 'patientID': null, 'parentState': 'allMedicationslist' }
             })
-          .state('medicationForm', {
-              resolve: {
-                  medication: function (MedicationsStore, $stateParams) { return MedicationsStore.getMedicationByID($stateParams.medicationID); },
-                  currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
-              },
-              templateUrl: 'views/medications/new_entry.html',
-              controller: 'MedicationFormController',
-              params: { 'patientID': null, 'medicationID': null, 'parentState': null }
-          });
+            .state('medicationStockForm', {
+                resolve: {
+                    medication: function (MedicationsStore, $stateParams) { return MedicationsStore.getMedicationByID($stateParams.medicationID); },
+                    currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
+                },
+                templateUrl: 'views/medications/update_stock.html',
+                controller: 'MedicationStockFormController',
+                params: { 'patientID': null, 'medicationID': null, 'parentState': null }
+            })
+            .state('medicationForm', {
+                resolve: {
+                    medication: function (MedicationsStore, $stateParams) { return MedicationsStore.getMedicationByID($stateParams.medicationID); },
+                    currentPatient: function (PatientsStore, $stateParams) { return PatientsStore.getPatientByID($stateParams.patientID); }
+                },
+                templateUrl: 'views/medications/new_entry.html',
+                controller: 'MedicationFormController',
+                params: { 'patientID': null, 'medicationID': null, 'parentState': null }
+            });
 
 });
