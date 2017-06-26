@@ -46,6 +46,25 @@
                             </div>
                         </div>
                         <div flex class="padding">
+                            <div><h2> Frequency ? </h2></div>
+                            <center>
+                                <div layout="row" style="background-image:url('img/infobox.png'); background-size:100% 100%;height:150px; min-width:300px; max-width:400px">
+                                    <div flex="80" layout="column">
+                                        <div style="margin-top: 10px;font-weight: bolder;margin-left: 15px;text-align: left;" layout="row">
+                                            <div style="border-radius: 12px; border:1px solid black;width: 20px;text-align: center;line-height: 18px;font-weight: bolder;margin: 3px;" ng-show="medication.dosefrequency>0">{{medication.dosefrequency}}</div>
+                                            <div style="line-height: 26px;">{{(medication.dosefrequency)? enums.doseFrequency[medication.dosefrequency].label : 'When to consume the medicine ?'}}</div>
+                                        </div>
+                                        <div style="font-weight: normal;margin-left: 20px;max-width: 200px;text-align: left;line-height: 16px;">{{(medication.dosefrequency)? enums.doseFrequency[medication.dosefrequency].short_label : 'Use the below slider to select a value'}}</div>
+                                    </div>
+                                    <div flex="20" layout-align="center center"><img ng-src="{{(medication.dosefrequency)? enums.doseFrequency[medication.dosefrequency].image : 'img/question.png'}}" style="height: 50px; width: 50px; margin: 10px; padding-right: 10px;"></div>
+                                </div>
+                            </center>
+                            <div style="margin-top:-20px;margin-bottom:20px">
+                                <md-slider md-discrete aria-label="Frequency" ng-model="medication.dosefrequency" step="1" min="1" max="7"></md-slider>
+                            </div>
+                        </div>
+                    </div>
+                        <div flex class="padding">
                             <div><h2> Dosage ? </h2></div>
                             <div layout="row" layout-sm="row">
                                 <div flex="30" class="padding ">
@@ -66,26 +85,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div flex class="padding">
-                            <div><h2> Frequency ? </h2></div>
-                            <center>
-                                <div layout="row" style="background-image:url('img/infobox.png'); background-size:100% 100%;height:150px; min-width:300px; max-width:400px">
-                                    <div flex="80" layout="column">
-                                        <div style="margin-top: 10px;font-weight: bolder;margin-left: 15px;text-align: left;" layout="row">
-                                            <div style="border-radius: 12px; border:1px solid black;width: 20px;text-align: center;line-height: 18px;font-weight: bolder;margin: 3px;" ng-show="medication.dosefrequency>0">{{medication.dosefrequency}}</div>
-                                            <div style="line-height: 26px;">{{(medication.dosefrequency)? enums.doseFrequency[medication.dosefrequency].label : 'When to consume the medicine ?'}}</div>
-                                        </div>
-                                        <div style="font-weight: normal;margin-left: 20px;max-width: 200px;text-align: left;line-height: 16px;">{{(medication.dosefrequency)? enums.doseFrequency[medication.dosefrequency].short_label : 'Use the below slider to select a value'}}</div>
-                                    </div>
-                                    <div flex="20" layout-align="center center"><img ng-src="{{(medication.dosefrequency)? enums.doseFrequency[medication.dosefrequency].image : 'img/question.png'}}" style="height: 50px; width: 50px; margin: 10px; padding-right: 10px;"></div>
-                                </div>
-                            </center>
-                            <div style="margin-top:-20px;margin-bottom:20px">
-                                <md-slider md-discrete aria-label="Frequency" ng-model="medication.dosefrequency" step="1" min="1" max="7"></md-slider>
-                            </div>
-                        </div>
-                    </div>
-                    <div layout="row" layout-sm="column" layout-align="center center">
+                       <div layout="row" layout-sm="column" layout-align="center center">
                         <div flex class="padding">
                             <div><h2> Start Date & Time ? </h2></div>
                             <center>
@@ -95,7 +95,6 @@
                                 <input label="Start Date" name="startdate" ng-model="medication.startdate" class="datetime-input" mobiscroll-date-time mobiscroll-config="{dateFormat:'dd M yy', dateOrder:'D ddMMyy', theme:'android-ics light', display:'modal' }"> </input>
                             </center>
                         </div>
-
                         <div flex class="padding">
                             <div><h2> End Date & Time ? </h2></div>
                             <center>
