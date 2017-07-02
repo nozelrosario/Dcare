@@ -14,29 +14,36 @@
         };
         if (config.secure) {
             UserStore.getUser().then(function (userData) {
-                var authToken = userData.authToken;
-                httpConfig.headers['x-access-token'] = authToken;
-                $http(httpConfig).then(function (response) {
-                    // Http Call Success
-                    if (response.status === 200) {
-                        if (response.data && response.data.status === "error" && response.data.error === "Invalid Login") {
-                            // Authentication Failure, redirect to login.
-                            deferedHttpCall.reject(response.data.message);
-                            $state.go("login");
+                if (userData) {
+                    var authToken = userData.authToken;
+                    httpConfig.headers['x-access-token'] = authToken;
+                    $http(httpConfig).then(function (response) {
+                        // Http Call Success
+                        if (response.status === 200) {
+                            if (response.data && response.data.status === "error" && response.data.error === "Invalid Login") {
+                                // Authentication Failure, redirect to login.
+                                deferedHttpCall.reject(response.data.message);
+                                $state.go("login");
+                            } else {
+                                // Authentication Success
+                                deferedHttpCall.resolve(response.data);
+                            }
                         } else {
-                            // Authentication Success
-                            deferedHttpCall.resolve(response.data);
+                            // Problem with Http Call
+                            app.log.error("Http Response Error: [Error]-" + JSON.stringify(response));
+                            deferedHttpCall.reject("Unknown Error!!");
                         }
-                    } else {
-                        // Problem with Http Call
-                        app.log.error("Http Response Error: [Error]-" + JSON.stringify(response));
-                        deferedHttpCall.reject("Unknown Error!!");
-                    }              
-                }, function (responseError) {
-                    // Http Call Failed
-                    app.log.error("Http Call Failed: [Error]-" + JSON.stringify(responseError));
-                    deferedHttpCall.reject(JSON.stringify(responseError));
-                });
+                    }, function (responseError) {
+                        // Http Call Failed
+                        app.log.error("Http Call Failed: [Error]-" + JSON.stringify(responseError));
+                        deferedHttpCall.reject(JSON.stringify(responseError));
+                    });
+                } else {
+                    // Problem with user data.
+                    app.log.error("User is un-authenticated");
+                    deferedHttpCall.reject("Unknown Error!!");
+                }
+                
             }).fail(function (error) {
                 // Token fetch failed redirect to login
                 app.log.error("User DB read Failed: [Error]" + error);
