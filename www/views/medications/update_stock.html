@@ -22,11 +22,11 @@
                     </div> 
                     <div>
                         <md-input-container>
-                            <div><h3> Stock Information </h3></div>
+                            <small>Stock Information</small>
                             <center ng-if="getAvailableStockQuantity() > 0">
                                 <h2 flex="20" style="display:inline-flex">
                                     <b>
-                                        <span style="color:green;border-bottom: 1px solid rgb(163, 157, 157) !important; width: 50px; background-color:#ffffff; border:none; text-align:center;font-weight:bold;display:inline-block;">
+                                        <span style="color:green;border-bottom: 1px solid rgb(163, 157, 157) !important; width: 100px; background-color:#ffffff; border:none; text-align:center;font-weight:bold;display:inline-block;">
                                             {{getAvailableStockQuantity()}}
                                         </span>
                                     </b>
@@ -44,23 +44,25 @@
                                 <small> Last refill was done on <span style="color:green;">{{medication.stockrefilldate|date:'mediumDate'}}</span></small>
                                 <small>Estimated date of next refill is: <span style="color:red;">{{getEstimatedStockLastDate()|date:'mediumDate'}}</span></small>
                             </md-whiteframe>                       
-                        </md-input-container>                        
-                        <div layout="row" layout-sm="row">
-                            <div flex="45">
-                                <md-button class="md-raised md-default button button-block icon ion-plus-round" aria-label="Reset" ng-click="resetStock()">
-                                    <b>Reset Stock</b>
-                                </md-button>
+                        </md-input-container>   
+                        <md-input-container>
+                            <div layout="row" layout-sm="row">
+                                <div flex="45">
+                                    <md-button class="md-raised md-default button button-block icon ion-plus-round" aria-label="Reset" ng-click="resetStock()">
+                                        <b>Reset Stock</b>
+                                    </md-button>
+                                </div>
+                                <div flex="5"></div>
+                                <div flex="45">
+                                    <md-button class="md-raised md-primary button button-block icon ion-plus-round" aria-label="Set Reminder" ng-click="setReminder(medication)">
+                                        <b> Set Reminder </b>
+                                    </md-button>
+                                </div>
                             </div>
-                            <div flex="5"></div>
-                            <div flex="45">
-                                <md-button class="md-raised md-primary button button-block icon ion-plus-round" aria-label="Set Reminder" ng-click="setReminder(medication)">
-                                    <b> Set Reminder </b>
-                                </md-button>
-                            </div>
-                        </div> 
+                        </md-input-container>                            
                     </div>            
                     <div flex class="padding">
-                        <div><h2> Refill Quantity ? </h2></div>
+                        <div><h2> Refill Again ? </h2></div>
                         <div layout="row" layout-sm="row">
                             <div flex="40" class="padding ">
                                 <md-input-container class="large-input">
@@ -75,7 +77,7 @@
                                 <md-input-container class="large-input">
                                     <!--<label>Unit</label>--> <!--Not working , try updating IONIC-->
                                     <md-select disabled ng-model="medication.doseunit" style="width:100%;" placeholder="Unit (Eg. tablet or ml)">
-                                        <md-option ng-repeat="option in enums.doseUnit" ng-value="option.value" aria-label="{{ option.label }}">
+                                        <md-option ng-repeat="option in enums.refillUnit" ng-value="option.value" aria-label="{{ option.label }}">
                                             {{ option.label }}
                                         </md-option>
                                     </md-select>

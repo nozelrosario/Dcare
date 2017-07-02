@@ -8,7 +8,7 @@
                 <div class="buttons">
                     <button class="button " ng-click="toggleActionsMenu()"><i class="icon ion-navicon-round"></i></button>
                 </div>
-                <h1 class="title"><center><b>Medications - {{currentPatient.name}}</b></center></h1>
+                <h1 class="title"><center><b>Medicine Stock - {{currentPatient.name}}</b></center></h1>
                 <div class="buttons">
                     <md-icon class="icon ion-help" style="font-size: 25px; margin-right: 15px;" ng-click="showHelp()"></md-icon> 
                 </div>
@@ -17,12 +17,14 @@
                 <md-list>
                     <md-item ng-repeat="medication in medicationsList" >
                         <md-item-content">
-                            <md-button menu-close on-tap="editMedicationStock(medication.id)" class="button-full menu-button">
+                            <md-button menu-close on-tap="editMedicationStock(medication)" class="button-full menu-button">
                                 <div layout="row" class="list-row">
                                     <img ng-src="{{enums.medicationRoute[medication.route].image}}" style="height:50px;width:50px;margin:10px">
                                     <div layout="column" layout-align="center start">
                                         <div class="menu-title">{{medication.name}}</div>
                                         <div class="menu-sub-title">{{medication.dose}} - {{enums.doseFrequency[medication.dosefrequency].label}}</div>
+                                        <div ng-if="getEstimatedStockLastDate(medication)" class="menu-sub-title"><small>Stock will last until</small> <span style="color:orange;">{{getEstimatedStockLastDate(medication)|date:'mediumDate'}}</span></div>
+                                        <div ng-if="!getEstimatedStockLastDate(medication)" class="menu-sub-title"><span style="color:red;">Stock Info is Unavailable</span></div>
                                     </div>
                                 </div>
                             </md-button>

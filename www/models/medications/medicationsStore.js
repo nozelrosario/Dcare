@@ -34,7 +34,7 @@ angular.module('dCare.Services.MedicationStore', ['dCare.Services.NotificationsS
         doseUnit: {
             'mg': { label: 'MG', short_label: 'mg', value: 'mg' },
             'ml': { label: 'ML', short_label: 'ml', value: 'ml' },
-            'teaspoon': { label: 'Tea Spoon', short_label: 't.Sp', value: 'teaspoon' },
+            'teaspoon': { label: 'Tea Spoon(s)', short_label: 't.Sp', value: 'teaspoon' },
             'tablet': { label: 'Tablet(s)', short_label: 'tab', value: 'tablet' },
             'drop': { label: 'Drop(s)', short_label: 'drop', value: 'drop' },
             'ointment': { label: 'Ointment', short_label: 'ointment', value: 'ointment' }

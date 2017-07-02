@@ -3,7 +3,7 @@ var medicationsModule = angular.module('dCare.medications', ['ionic',
                                                      'dCare.dateTimeBoxDirectives', 'highcharts-ng']);
 
 //Controllers
-medicationsModule.controller('MedicationsListController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdToast, $mdBottomSheet, $state, $stateParams, medicationsList, currentPatient, MedicationsStore) {
+medicationsModule.controller('MedicationsListController', function ($scope, $mdDialog, $ionicSideMenuDelegate, $ionicHistory, $mdToast, $mdBottomSheet, $state, $stateParams, medicationsList, currentPatient, MedicationsStore) {
 
     $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
@@ -60,12 +60,93 @@ medicationsModule.controller('MedicationsListController', function ($scope, $ion
         $scope.showOverlayHelp = true;
     };
 
+    $scope.isStockInfoAvailable = function (medication) {
+        if (medication.stockrefilldate && medication.dosefrequency && medication.dose) return true;
+    };
+
+    $scope.isStockInfoPossible = function (medication) {
+        if (medication.dosefrequency && medication.dose) return true;
+    };
+
+    $scope.getEstimatedStockLastDate = function (medication) {
+        var estimatedStockLastDate = '',
+            secondsToAdd = 0, milliSecondsToAdd = 0;
+        //dose, doseunit, dosefrequency, stockrefilldate, stockrefillquantity
+        //calculate date
+        var totalSecondsIn = {
+            year: 31536000,
+            month: 2592000,
+            week: 604800,
+            day: 86400,
+            hour: 3600,
+            minute: 60,
+            second: 1
+        };
+        if (medication.stockrefilldate && medication.dosefrequency) {
+            switch (medication.dosefrequency) {
+                case 1:
+                    secondsToAdd = totalSecondsIn.hour * 6;  // 6 hourly
+                    break;
+                case 2: f
+                    secondsToAdd = totalSecondsIn.hour * 8;  // 8 hourly
+                    break;
+                case 3:
+                    secondsToAdd = totalSecondsIn.hour * 12; // 12 hourly
+                    break;
+                case 4:
+                    secondsToAdd = totalSecondsIn.day;       // 24 hourly
+                    break;
+                case 5:
+                    secondsToAdd = totalSecondsIn.week;      // weekly
+                    break;
+                case 6:
+                    secondsToAdd = totalSecondsIn.month;     // monthly
+                    break;
+                case 7:
+                    secondsToAdd = totalSecondsIn.year;      // yearly
+                    break;
+                default:
+                    secondsToAdd = 0;
+                    break;
+            }
+            //NR: Adjust nonStandard unit quantities wrt. dose
+            if (medication.dose) {
+                if (medication.doseunit === 'teaspoon') {
+                    //NR: Assuming 1 teaspoon ~ 5ml
+                    secondsToAdd = secondsToAdd * medication.dose * (medication.stockrefillquantity / 5);
+                } else if (medication.doseunit === 'drop') {
+                    //NR: Assuming 1 drop ~ 0.05ml
+                    secondsToAdd = secondsToAdd * medication.dose * (medication.stockrefillquantity / 0.05);
+                } else {
+                    secondsToAdd = secondsToAdd * medication.dose * medication.stockrefillquantity;
+                }
+                //NR: Round-off
+                milliSecondsToAdd = (Math.floor(secondsToAdd)) * 1000;
+                //NR: Final secondsToAdd & Round-off
+                estimatedStockLastDate = medication.stockrefilldate + milliSecondsToAdd;
+            } else {
+                estimatedStockLastDate = '';
+            }
+        } else {
+            estimatedStockLastDate = '';
+        }
+        return estimatedStockLastDate;
+    };
+
     $scope.editMedication = function (medicationID) {
         $state.go("medicationForm", { patientID: $scope.currentPatient.id, medicationID: medicationID, parentState: $state.current.name });
     };
 
-    $scope.editMedicationStock = function (medicationID) {
-        $state.go("medicationStockForm", { patientID: $scope.currentPatient.id, medicationID: medicationID, parentState: $state.current.name });
+    $scope.editMedicationStock = function (medication) {
+        if ($scope.isStockInfoPossible(medication)) {
+            $state.go("medicationStockForm", { patientID: $scope.currentPatient.id, medicationID: medication.id, parentState: $state.current.name });
+        } else {
+            $mdDialog.show($mdDialog.alert()
+                .title('Missing Information!!')
+                .content('"Dose" and "Dose frequency" is required for estimating stock info. Please fill these on respective medication entry.')
+                .ariaLabel('Stock Info not possible')
+                .ok('OK!'));
+        }
     };   
 
     $scope.newMedication = function () {
@@ -210,6 +291,12 @@ medicationsModule.controller('MedicationFormController', function ($scope, $mdDi
         $mdDialog.show(confirmToggle).then(function () {
             // User clicked Yes, set reminder
             $scope.medication.status = newStatus;
+            //NR: reset stock info on discontinue.
+            if (newStatus === 'inactive') {
+                //NR: reset stock info.
+                $scope.medication.stockrefilldate = '';
+                $scope.medication.stockrefillquantity = 0;
+            }
             $scope.save();
         }, function () {
             // User clicked No, do not set reminder
@@ -260,6 +347,14 @@ medicationsModule.controller('MedicationStockFormController', function ($scope, 
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = MedicationsStore.enums;
+    $scope.enums.refillUnit = {
+        'mg': { label: 'MG', short_label: 'mg', value: 'mg' },
+        'ml': { label: 'ML', short_label: 'ml', value: 'ml' },
+        'teaspoon': { label: 'ML', short_label: 'ml', value: 'teaspoon' },
+        'tablet': { label: 'Tablet(s)', short_label: 'tab', value: 'tablet' },
+        'drop': { label: 'ML', short_label: 'ml', value: 'drop' },
+        'ointment': { label: 'MG', short_label: 'mg', value: 'ointment' }
+    };
 
     // Init Data
     $scope.currentPatient = currentPatient;
@@ -302,7 +397,7 @@ medicationsModule.controller('MedicationStockFormController', function ($scope, 
         });
     };
 
-    $scope.getEstimatedStockLastDate = function (medication) {
+    $scope.getEstimatedStockLastDate = function () {
         var estimatedStockLastDate = '',
             secondsToAdd = 0, milliSecondsToAdd=0;
         //dose, doseunit, dosefrequency, stockrefilldate, stockrefillquantity
@@ -344,13 +439,27 @@ medicationsModule.controller('MedicationStockFormController', function ($scope, 
                     break;
             }
             //NR: Adjust nonStandard unit quantities wrt. dose
-            if ($scope.medication.dose) {
-                secondsToAdd = secondsToAdd * $scope.medication.dose * $scope.medication.stockrefillquantity;
+            if ($scope.medication.dose) {                
+                if ($scope.medication.doseunit === 'teaspoon') {
+                    //NR: Assuming 1 teaspoon ~ 5ml
+                    secondsToAdd = secondsToAdd * $scope.medication.dose * ($scope.medication.stockrefillquantity / 5);
+                } else if ($scope.medication.doseunit === 'drop') {
+                    //NR: Assuming 1 drop ~ 0.05ml
+                    secondsToAdd = secondsToAdd * $scope.medication.dose * ($scope.medication.stockrefillquantity / 0.05);
+                } else {
+                    secondsToAdd = secondsToAdd * $scope.medication.dose * $scope.medication.stockrefillquantity;
+                }
+                //NR: Round-off
+                milliSecondsToAdd = (Math.floor(secondsToAdd)) * 1000;
+                //NR: Final secondsToAdd & Round-off
+                estimatedStockLastDate = $scope.medication.stockrefilldate + milliSecondsToAdd;
+                //NR: Check if estimated date is in Past
+                if (estimatedStockLastDate < castToLongDate(new Date())) {
+                    estimatedStockLastDate = '';
+                }
+            } else {
+                estimatedStockLastDate = '';
             }
-            //NR: Round-off
-            milliSecondsToAdd = (Math.floor(secondsToAdd)) * 1000;
-            //NR: Final secondsToAdd & Round-off
-            estimatedStockLastDate = $scope.medication.stockrefilldate + milliSecondsToAdd;
         } else {
             estimatedStockLastDate = '';
         }
@@ -361,7 +470,8 @@ medicationsModule.controller('MedicationStockFormController', function ($scope, 
         //dose, doseunit, dosefrequency, stockrefilldate, stockrefillquantity
         var availableStockQuantity = 0,
             elapsedTime,
-            estimatedConsumedUnits = 0;
+            estimatedConsumedUnits = 0,
+            doseRefillQuantity;
         if ($scope.medication.stockrefilldate && $scope.medication.dosefrequency) {
             elapsedTime = getElapsedTime($scope.medication.stockrefilldate, castToLongDate(new Date()));
             switch ($scope.medication.dosefrequency) {
@@ -392,25 +502,31 @@ medicationsModule.controller('MedicationStockFormController', function ($scope, 
             }
             //NR: Adjust nonStandard unit quantities wrt. dose
             if ($scope.medication.dose) {
-                if ($scope.medication.doseUnit === 'teaspoon') {
+                if ($scope.medication.doseunit === 'teaspoon') {
                     //NR: Assuming 1 teaspoon ~ 5ml
                     estimatedConsumedUnits = estimatedConsumedUnits * ($scope.medication.dose * 5);
-                } else if ($scope.medication.doseUnit === 'drop') {
+                    doseRefillQuantity = $scope.medication.stockrefillquantity / 5;
+                } else if ($scope.medication.doseunit === 'drop') {
                     //NR: Assuming 1 drop ~ 0.05ml
                     estimatedConsumedUnits = estimatedConsumedUnits * ($scope.medication.dose * 0.05);
+                    doseRefillQuantity = $scope.medication.stockrefillquantity / 0.05;
                 } else {
                     estimatedConsumedUnits = estimatedConsumedUnits * $scope.medication.dose;
+                    doseRefillQuantity = $scope.medication.stockrefillquantity;
                 }
-            }
-            //NR: Round-off
-            estimatedConsumedUnits = Math.ceil(estimatedConsumedUnits);
-            if (estimatedConsumedUnits < 1) {
-                estimatedConsumedUnits = 0;
-            }
-            //NR: Final available Quantity & Round-off
-            availableStockQuantity = $scope.medication.stockrefillquantity - estimatedConsumedUnits;
-            availableStockQuantity = Math.floor(availableStockQuantity);
-            if (availableStockQuantity < 1) {
+
+                //NR: Round-off final values
+                estimatedConsumedUnits = Math.ceil(estimatedConsumedUnits);
+                if (estimatedConsumedUnits < 1) {
+                    estimatedConsumedUnits = 0;
+                }
+                //NR: Final available Quantity & Round-off
+                availableStockQuantity = doseRefillQuantity - estimatedConsumedUnits;
+                availableStockQuantity = Math.floor(availableStockQuantity);
+                if (availableStockQuantity < 1) {
+                    availableStockQuantity = 0;
+                }
+            } else {
                 availableStockQuantity = 0;
             }
         } else {

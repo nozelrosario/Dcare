@@ -24,6 +24,7 @@
                                     <div layout="column" layout-align="center start">
                                         <div class="menu-title">{{medication.name}}</div>
                                         <div class="menu-sub-title">{{medication.dose}} - {{enums.doseFrequency[medication.dosefrequency].label}}</div>
+                                        <div ng-if="getEstimatedStockLastDate(medication)" class="menu-sub-title"><small>Stock will last until</small> <span style="color:orange;">{{getEstimatedStockLastDate(medication)|date:'mediumDate'}}</span></div>
                                     </div>
                                 </div>
                             </md-button>
