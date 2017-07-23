@@ -6,7 +6,7 @@ var dashboardModule = angular.module('dCare.dashboard', ['ionic',
 
 //Controllers
 dashboardModule.controller('DashboardController', function ($scope, $ionicSideMenuDelegate, $ionicHistory, $mdDialog, $mdToast, $state, $stateParams,
-                                                            allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData,notificationsData,
+                                                            allPatients, defaultPatient, latestVitals, latestGlucose, glucoseSparklineData, notificationsData,
                                                             PatientsStore, VitalsStore, GlucoseStore, NotificationsStore, UserStore, SyncManagerService) {
 
     $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
@@ -22,7 +22,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
                         { seq: 7, id: "fooddiary", title: 'Food Diary', subTitle: 'Your Meals', icon: 'img/food-diary.png' },
                         { seq: 8, id: "settings", title: 'Settings', subTitle: 'Change Application preferences', icon: 'img/settings.png' },
                         { seq: 9, id: "feedback", title: 'Feedback', subTitle: 'Give feedback & know more about D-Care', icon: 'img/info.png' }
-                       ];
+    ];
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = angular.extend({}, GlucoseStore.enums, NotificationsStore.enums);
@@ -39,24 +39,44 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
     $scope.showOverlayHelp = app.config.isFirstDashboardView;
     app.config.isFirstDashboardView = false;
     $scope.isExitConfirmed = false;
+    //NR: Load Patients profile photo url
+    var loadPatientProfileUrl = function (patientInfo) {
+
+    };
+    angular.forEach(allPatients, function (value, key) {
+        PatientsStore.getPatientProfilePhotoByGuid(value.guid).then(function (photoUrl) {
+            if (photoUrl) {
+                value.photo = photoUrl;
+            } else {
+                value.photo = 'img/ionic.png';
+            }
+        }).catch(function () {
+            value.photo = 'img/ionic.png';
+        });
+    });
 
     if (!defaultPatient) {
         $scope.currentPatient = allPatients[0];
     } else {
+        //NR: Get Patients profile photo url for default patient
+        PatientsStore.getPatientProfilePhoto(defaultPatient.id).then(function (photoUrl) {
+            defaultPatient.photo = photoUrl;
+        }).catch(function () {
+            defaultPatient.photo = 'img/ionic.png';
+        });
         $scope.currentPatient = defaultPatient;
     }
 
-
-    // Action Methods
+ // Action Methods
 
     $scope.showHelp = function () {
-            $scope.showOverlayHelp = true;  
+        $scope.showOverlayHelp = true;
     };
 
     $scope.toggleVitalsCardLayout = function () {
         if ($scope.isVitalsExpanded) {
             $scope.isVitalsExpanded = false;
-        }else {
+        } else {
             $scope.isVitalsExpanded = true;
         }
     }
@@ -77,7 +97,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
                 break;
             case "medications":
                 $state.go("activeMedicationslist", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
-                break;                
+                break;
             case "reminders":
                 $state.go("activeReminderslist", { patientID: $scope.currentPatient.id, parentState: "dashboard" });
                 break;
@@ -120,6 +140,13 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
         var notificationsDataPromise = NotificationsStore.getActiveNotificationsForPatient(patientID);
         notificationsDataPromise.then(function (notificationsData) {
             $scope.notificationsList = notificationsData;
+        });
+
+        //NR: Get Patients profile photo url for default patient
+        PatientsStore.getPatientProfilePhoto(patientID).then(function (photoUrl) {
+            $scope.currentPatient.photo = photoUrl;
+        }).catch(function () {
+            $scope.currentPatient.photo = 'img/ionic.png';
         });
     };
 
@@ -179,7 +206,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
                                .ok('OK!'));
                 $scope.isPreviousGlucoseAvailable = false;
             }
-            
+
         });
     };
 
@@ -203,7 +230,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
                                .content(notification.text)
                                .ariaLabel(notification.text)
                                .ok('OK!')).finally(function () {
-                                   
+
                                });
 
         //NR : due to issue with angular Material following doesnot work. revert after migrating to Material v0.10
@@ -228,7 +255,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
         //});
     };
     $scope.$on("navigate-back", function (event, data) {
-        
+
         if (app.config.confirmOnExit) {
             var confirmToggle = $mdDialog.confirm()
                   .title('Exit Application ?')
@@ -254,7 +281,7 @@ dashboardModule.controller('DashboardController', function ($scope, $ionicSideMe
                 }, 3000);
             }
         }
-        
+
 
 
     });

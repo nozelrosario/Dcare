@@ -191,7 +191,7 @@
                 firstName: userData.firstName,
                 lastName: userData.lastName,
                 email: userData.email,
-                photo: userData.photo,
+                //photo: userData.photo,
                 patients: userData.patients
             };
             ApiInvokerService.syncPatient(userDataPayload).then(function () {
@@ -214,58 +214,98 @@
         return deferedSync.promise;
     };
 
+    var performConditionalPatientSync = function (allPatients) {
+        var deferedSync = $q.defer();
+        var isPatientSyncRequired = false;
+        for (var i = 0; i < allPatients.length; i++) {
+            patientEntry = allPatients[i];
+            if (patientEntry.isEdited) {
+                isPatientSyncRequired = true;
+                break;
+            }
+        }
+        if (isPatientSyncRequired) {
+            performPatientSync().then(function () {
+                deferedSync.resolve();
+            }).catch(function () {
+                app.log.error("Patient Sync failed, thereby terminating DB-Sync.");
+                deferedSync.reject();
+            });
+        } else {
+            deferedSync.resolve();
+        }
+        return deferedSync.promise;
+    };
+
+    var invokePatientDataSyncSequentially = function (patientsToSync) {
+        var deferedSync = $q.defer();
+        var sequentialSyncInvoker = function (patientsToSync, index, deferedCaller) {
+            var patientEntry = patientsToSync[index];
+            performSync(patientEntry.guid, "sequential", false).then(function () {
+                index = index + 1;
+                if (index < patientsToSync.length) {
+                    sequentialSyncInvoker(patientsToSync, index, deferedCaller);
+                } else {
+                    deferedCaller.resolve();
+                }
+            }).catch(function () {
+                deferedCaller.reject();
+            });
+        }
+        if (patientsToSync && patientsToSync.length > 0) {
+            sequentialSyncInvoker(patientsToSync, 0, deferedSync);
+        } else {
+            deferedSync.resolve();
+        }        
+        return deferedSync.promise;
+    };
+
     var doFullSync = function () {
         var deferedSync = $q.defer();
         //NR: If Sync Not already running.
         if (app.context.fullSyncStatus !== 'busy') {
             app.context.fullSyncStatus = 'busy';
-            var sequentialPromiseResolver = $q.when();
+            var sequentialPromiseResolver = [];//$q.when();
+            var isPatientSyncDoneAlready = false;
             //NR: Obtain Refreshed Auth Token Before inviking Sync.
             AuthenticationService.refreshToken().then(function () {
-                var patientEntry;
+                var patientEntry, patientsToSync = [];
                 //NR: Get all patients for syncing 
                 UserStore.getAllPatients().then(function (allPatients) {
                     if (allPatients) {
-                        for (var i = 0; i < allPatients.length; i++) {
-                            patientEntry = allPatients[i];
-                            if (patientEntry.isEdited) {
-                                //NR: If isEdited == true possiblity => new patient added / update existing ptient)
-                                //    Start db-sync only after patient is saved remotely & cluster is setup on remote db. [else will face authentication issue]
-                                performPatientSync().then(function () {
-                                    //TODO: NR: Do sync DB unconditionally. If required bellow 4 conditions can be applied for Optimization. 
-                                    sequentialPromiseResolver = sequentialPromiseResolver.then(function () { return performSync(patientEntry.guid, "sequential", false); });
-                                    //performSync(patientEntry.guid, "sequential", false).then(function () {
-                                    //    deferedSync.resolve();
-                                    //}).catch(function () {
-                                    //    deferedSync.reject();
-                                    // });
-                                }).catch(function () {
-                                    app.log.error("Patient Sync failed, thereby terminating DB-Sync.");
-                                    deferedSync.reject();
-                                });
-                            } else if ((app.context.forceSync)          //NR: Sync Condition 1 : If Overriden
-                                       || (patientEntry.syncStatus === "complete" && ((castToLongDate(new Date())) - patientEntry.syncStartDate) > app.config.syncInterval)         //NR: Sync Condition 2 : If last sync time exceeds the interval
-                                       || (patientEntry.syncStatus === "busy" && ((castToLongDate(new Date())) - patientEntry.syncStartDate) > app.config.syncTimeout)              //NR: Sync Condition 3 : If last sync exceeds the timeout [hung or didnot finish in time]
-                                       || (patientEntry.syncStatus === "error")         //NR: Sync Condition 4 : If last sync resulted an error
-                                      ) {
-                                sequentialPromiseResolver = sequentialPromiseResolver.then(function () { return performSync(patientEntry.guid, "sequential", false); });
-                                //performSync(patientEntry.guid, "sequential", false).then(function () {
-                                //    deferedSync.resolve();
-                                //}).catch(function () {
-                                //    deferedSync.reject();
-                                //});
-                            } else {
-                                app.log.info("Sync will be attempted later.");
-                                deferedSync.resolve();
+                        //    Start db-sync only after patient is saved remotely (performConditionalPatientSync) & cluster is setup on remote db. [else will face authentication issue]
+                        //    Sync is Required to be done only once per Sync Session.
+                        performConditionalPatientSync(allPatients).then(function () {
+                            for (var i = 0; i < allPatients.length; i++) {
+                                patientEntry = allPatients[i];
+                                if (patientEntry.isEdited) {
+                                    //NR: If isEdited == true possiblity => new patient added / update existing ptient)    
+                                    //NR: un-conditionally sync for edited patient data
+                                    //sequentialPromiseResolver.push(performSync(patientEntry.guid, "sequential", false));
+                                    patientsToSync.push(patientEntry);
+                                } else if ((app.context.forceSync)          //NR: Sync Condition 1 : If Overriden
+                                           || (patientEntry.syncStatus === "complete" && ((castToLongDate(new Date())) - patientEntry.syncStartDate) > app.config.syncInterval)         //NR: Sync Condition 2 : If last sync time exceeds the interval
+                                           || (patientEntry.syncStatus === "busy" && ((castToLongDate(new Date())) - patientEntry.syncStartDate) > app.config.syncTimeout)              //NR: Sync Condition 3 : If last sync exceeds the timeout [hung or didnot finish in time]
+                                           || (patientEntry.syncStatus === "error")         //NR: Sync Condition 4 : If last sync resulted an error
+                                          ) {
+                                    //sequentialPromiseResolver.push(performSync(patientEntry.guid, "sequential", false));                                    
+                                    patientsToSync.push(patientEntry);
+                                } //else {
+                                 //   app.log.info("Sync will be attempted later for ");
+                                 //   deferedSync.resolve();
+                               // }
                             }
-                        }
-                        sequentialPromiseResolver.then(function () {
-                            app.context.fullSyncStatus = 'complete';
-                            deferedSync.resolve();
+                            invokePatientDataSyncSequentially(patientsToSync).then(function () {
+                                app.context.fullSyncStatus = 'complete';
+                                deferedSync.resolve();
+                            }).catch(function () {
+                                app.context.fullSyncStatus = 'error';
+                                deferedSync.reject();
+                            });
                         }).catch(function () {
                             app.context.fullSyncStatus = 'error';
                             deferedSync.reject();
-                        });;
+                        });                        
                     } else {
                         app.log.info("No Patients to sync !!");
                         app.context.fullSyncStatus = 'not-started';

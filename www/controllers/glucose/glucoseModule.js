@@ -125,7 +125,9 @@ glucoseModule.controller('GlucoseListController', function ($scope, $ionicSideMe
 
 
 
-glucoseModule.controller('GlucoseFormController', function ($scope, $mdDialog, $state, $stateParams, glucose, currentPatient, GlucoseStore, MealsStore) {
+glucoseModule.controller('GlucoseFormController', function ($scope, $mdDialog, $state, $stateParams, $ionicHistory, glucose, currentPatient, GlucoseStore, MealsStore) {
+
+    $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = GlucoseStore.enums;
@@ -224,7 +226,9 @@ glucoseModule.controller('GlucoseFormController', function ($scope, $mdDialog, $
 });
 
 
-glucoseModule.controller('GlucoseLinkedMealController', function ($scope, $mdDialog, $state, $stateParams, meal, currentPatient, MealsStore) {
+glucoseModule.controller('GlucoseLinkedMealController', function ($scope, $mdDialog, $state, $stateParams, $ionicHistory, meal, currentPatient, MealsStore) {
+
+    $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = MealsStore.enums;
@@ -344,10 +348,11 @@ glucoseModule.controller('GlucoseLinkedMealController', function ($scope, $mdDia
 });
 
 
-glucoseModule.controller('GlucoseTrendController', function ($scope, $state, $stateParams, glucoseTrendData, currentPatient, GlucoseStore) {
+glucoseModule.controller('GlucoseTrendController', function ($scope, $state, $stateParams, $ionicHistory, glucoseTrendData, currentPatient, GlucoseStore) {
+
+    $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
 
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'glucoselist';
-
 
     // init enums [to add more enums use $.extend($scope.enums, newEnum)]
     $scope.enums = GlucoseStore.enums;

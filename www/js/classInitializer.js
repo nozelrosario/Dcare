@@ -22,8 +22,8 @@ app = function () {
             syncedDataStores: ['glucose', 'meals', 'medications', 'notifications', 'patients', 'reminders', 'vitals'],
             syncTimeout: 600000,          // ms [10min]
             syncInterval: 600000,          // ms [10min]
-            syncURI: 'http://localhost:5050/dbProxy',
-            apiBaseURL: 'http://localhost:5050/',
+            syncURI: 'http://192.168.1.102:5050/dbProxy', //'https://dcare-server-nozelrosario.c9users.io:8080/dbProxy', //
+            apiBaseURL: 'http://192.168.1.102:5050/', //'https://dcare-server-nozelrosario.c9users.io:8080/', //
             syncOptions: { live:false, retry:false, timeout: 500000, batch_size: 100, batches_limit:10 }
         },
         info: {

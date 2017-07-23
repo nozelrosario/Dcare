@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' http://192.168.1.3:5050 ws://localhost:35729 data: gap: https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *;script-src 'self' localhost:35729 'unsafe-eval' 'unsafe-inline';">-->
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title>D-Care</title>
 <!-- Cloud9 -->
@@ -62,7 +63,12 @@
       
 <!-- JQ Class Library-->
 
+<!-- Blob Util JS -->
+      <script src="lib/blob-util/blob-util.js"></script>
+<!-- Blob Util -->
+
 <!-- Pouch DB -->
+      <!--<script src="lib/pouchDB/pouchdb-3.4.0.js"></script>-->
       <script src="lib/pouchDB/pouchdb-3.4.0.js"></script>
       <script src="lib/pouchDB/plugins/GQL/pouchdb-collate.js"></script>
       <script src="lib/pouchDB/adapters/pouchdb.localstorage.js"></script>
@@ -155,6 +161,7 @@
 
     <!-- Models -->   
     <script src="models/patients/patientsStore.js"></script>
+    <script src="models/patients/cameraService.js"></script>
     <script src="models/vitals/vitalsStore.js"></script> 
     <script src="models/glucose/glucoseStore.js"></script>  
     <script src="models/medications/medicationsStore.js"></script>   

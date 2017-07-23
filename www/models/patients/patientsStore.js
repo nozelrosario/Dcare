@@ -37,6 +37,57 @@ angular.module('dCare.Services.PatientsStore', [])
         },
         getPatientByID: function (patientID) {
             return patientDataStore.getDataStore(app.context.getCurrentCluster()).getDataByID(patientID);
+        },        
+        getPatientProfilePhoto: function (patientID) {
+            var deferred = $q.defer();
+            var profilePhotoUrl = '';
+            patientDataStore.getDataStore(app.context.getCurrentCluster()).getAttachmentDataByID(patientID, 'profile_photo').then(function (data) {
+                if (data && data instanceof Blob) {
+                    if (blobUtil) {
+                        profilePhotoUrl = blobUtil.createObjectURL(data);
+                    } else {
+                        app.log.error("Blob-Util libary required !!");
+                    }                    
+                }
+                deferred.resolve(profilePhotoUrl);
+            }).fail(function (err) {
+                app.log.error("Error during getPatientProfilePhoto. [" + err + ']');
+                deferred.reject();
+            });            
+            return deferred.promise;
+        },
+        getPatientProfilePhotoByGuid: function (guid) {
+            var deferred = $q.defer();
+            var profilePhotoUrl = '';
+            var getPatientByGuid = function (guid) {
+                return patientDataStore.getDataStore(guid).search({
+                    select: '*',
+                    where: "guid='" + guid + "'"
+                });
+            };
+
+            getPatientByGuid(guid).then(function (data) {
+                if (data[0] && (data[0])) {
+                    patientDataStore.getDataStore(guid).getAttachmentDataByID((data[0]).id, 'profile_photo').then(function (data) {
+                        if (data && data instanceof Blob) {
+                            if (blobUtil) {
+                                profilePhotoUrl = blobUtil.createObjectURL(data);
+                            } else {
+                                app.log.error("Blob-Util libary required !!");
+                            }
+                        }
+                        deferred.resolve(profilePhotoUrl);
+                    }).fail(function (err) {
+                        app.log.error("Error during getPatientProfilePhoto. [" + err + ']');
+                        deferred.reject();
+                    });
+                } else {
+                    app.log.warn("Unable to load profile picture, Data not synced yet!");
+                }
+            }).fail(function () {
+                app.log.warn("Unable to load profile picture, Data not synced yet!");
+            });            
+            return deferred.promise;
         },
         save: function (patient) {
             return patientDataStore.getDataStore(app.context.getCurrentCluster()).save(patient);

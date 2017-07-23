@@ -1,6 +1,8 @@
 var registrationModule = angular.module('dCare.registration', ['ionic',
-                                                                'dCare.Services.UserStore', 'dCare.Services.PatientsStore', 'dCare.Services.VitalsStore',
-                                                                'dCare.jqueryDynameterDirectives', 'dCare.mobiscrollDirectives', 'dCare.jqueryKnobDirectives', 'dCare.addclearDirectives']);
+                                                                'dCare.Services.UserStore', 'dCare.Services.PatientsStore',
+                                                                'dCare.Services.VitalsStore', 'dCare.jqueryDynameterDirectives',
+                                                                'dCare.mobiscrollDirectives', 'dCare.Services.CameraService', 
+                                                                'dCare.jqueryKnobDirectives', 'dCare.addclearDirectives']);
 
 // Controllers
 
@@ -58,12 +60,29 @@ registrationModule.controller('RegistrationController', function ($scope, $mdDia
 * Identification Information
 * [FirstName, Last Name, email, Phone ]
 */
-registrationModule.controller('IdentificationInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore, UserStore, patient) {
+registrationModule.controller('IdentificationInfoController', function ($scope, $mdDialog, $ionicHistory, CameraService, $state, $stateParams, PatientsStore, UserStore, patient) {
+
+    $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
+
     if (!patient) {
         // new patient
-        $scope.patient = {};
+        $scope.patient = {guid:''};
     } else {
         $scope.patient = patient;
+    }
+
+    //NR: Load Profile Photo if available
+    if ($scope.patient && $scope.patient.id) {
+        //NR: Get Patients profile photo url for current patient
+        PatientsStore.getPatientProfilePhoto($scope.patient.id).then(function (photoUrl) {
+            if (photoUrl) {
+                $scope.profilePhotoURL = photoUrl;
+            } else {
+                $scope.profilePhotoURL = 'img/ionic.png';
+            }            
+        }).catch(function () {
+            defaultPatient.photo = 'img/ionic.png';
+        });
     }
     $scope.parentState = ($stateParams.parentState) ? $stateParams.parentState : 'registration';
     $scope.changeState = function (patient) {
@@ -82,7 +101,7 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
     var addPatientToUserInfo = function (patient) {
         var userPatientEntry = {};
         userPatientEntry.fullName = patient.name;
-        userPatientEntry.photo = patient.photo;
+        //userPatientEntry.photo = patient.photo;
         userPatientEntry.guid = patient.guid;
         return UserStore.savePatient(userPatientEntry);
     };
@@ -91,8 +110,6 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
         if ($scope.identification_info_form.$valid) {
             // @NR: TODO: Remove Dirty defaulting, Implement this pending functionality
             $scope.patient.name = $scope.patient.firstname + " " + $scope.patient.lastname;
-            $scope.patient.photo = "img/ionic.png";
-
             addPatientToUserInfo($scope.patient).then(function (patientEntry) {
                 // Switch Cluster to new Patient Scope & Push Patient Data
                 app.context.setCurrentCluster(patientEntry.guid);
@@ -101,6 +118,40 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
                 savePatientDataPromise.then($scope.changeState, $scope.saveFailed);
             }, $scope.saveFailed);
         }        
+    };
+
+    $scope.captureFromCamera = function () {
+        CameraService.captureImage({ height: 100, width: 100, dataFormat:'blob' }).then(function (image) {
+            $scope.profilePhotoURL = blobUtil.createObjectURL(image);
+            $scope.patient.attachment = {
+                attachmentId: 'profile_photo',
+                binary: image,
+                type: 'image/png'
+            };
+        }).catch(function () {
+            $mdDialog.show($mdDialog.alert()
+                .title('Something went wrong :(')
+                .content('This is embarassing!!. Could not capture photo')
+                .ariaLabel('Could not capture photo')
+                .ok('OK!')).finally(function () { });
+        });
+    };
+
+    $scope.selectFromGallery = function () {
+        CameraService.selectImage({ height: 100, width: 100, dataFormat: 'blob' }).then(function (image) {
+            $scope.profilePhotoURL = blobUtil.createObjectURL(image);
+            $scope.patient.attachment = {
+                attachmentId: 'profile_photo',
+                binary: image,
+                type: 'image/png'
+            };
+        }).catch(function () {
+            $mdDialog.show($mdDialog.alert()
+                .title('Something went wrong :(')
+                .content('This is embarassing!!. Could not select photo from gallery')
+                .ariaLabel('Could not open photo gallery')
+                .ok('OK!')).finally(function () { });
+        });
     };
 
     //Action Methods
@@ -124,7 +175,10 @@ registrationModule.controller('IdentificationInfoController', function ($scope, 
 * Gender Information
 * [FirstName, Last Name, email, Phone ]
 */
-registrationModule.controller('GenderInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore, patient) {
+registrationModule.controller('GenderInfoController', function ($scope, $mdDialog, $ionicHistory, $state, $stateParams, PatientsStore, patient) {
+
+    $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
+
     if (!patient) {
         // Empty Patient , should never come at this stage, redirect to default page
         $scope.patient = {};
@@ -191,7 +245,10 @@ registrationModule.controller('GenderInfoController', function ($scope, $mdDialo
 * Age Information
 * [Birthdate & Age ]
 */
-registrationModule.controller('AgeInfoController', function ($scope, $mdDialog, $state, $stateParams, PatientsStore, patient) {
+registrationModule.controller('AgeInfoController', function ($scope, $mdDialog, $ionicHistory, $state, $stateParams, PatientsStore, patient) {
+
+    $ionicHistory.nextViewOptions({ expire: '' });  //NR: To supress console error when using menu-close directive of side-menu
+
     if (!patient) {
         //Nozel : Empty Patient , should never come at this stage, redirect to default page
         $scope.patient = {};

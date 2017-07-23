@@ -24,7 +24,7 @@
                     <md-input-container class="md-icon-float md-icon-right large-input">
                         <label>Login ID</label>
                         <md-icon class="ion-person"></md-icon>
-                        <input type="text" md-maxlength="30" required name="loginID" ng-model="user.loginID">
+                        <input type="email" md-maxlength="30" required name="loginID" ng-model="user.loginID">
                         <div ng-messages="login_form.loginID.$error">
                             <div ng-message="required">This is required.</div>
                             <div ng-message="md-maxlength">The id has to be less than 30 characters long.</div>

@@ -119,18 +119,67 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
     */
 	insertOrUpdate : function (data) {
 	    var deferredSave = $.Deferred();
-	    this.trigger("before-save", { data: data });                                 // Trigger Before-Save Event
 	    var me = this;
+	    var attachmentData = null;
+	    var saveAttachmentIfExists = function (docId, rev, attachment) {
+	        //NR: https://pouchdb.com/api.html#save_attachment
+	        var deferredSaveAttachment = $.Deferred();	        
+	        if (docId && attachment) {
+	            if (attachment.attachmentId && attachment.binary) {
+	                attachment.type = attachment.type || 'application/octet-stream'; //NR: Default to "application/octet-stream" if not supplied
+	                if (rev) {
+	                    me.getDataStore().putAttachment(docId, attachment.attachmentId, rev, attachment.binary, attachment.type).then(function (result) {
+	                        deferredSaveAttachment.resolve();
+	                    }).catch(function (err) {
+	                        app.log.error("Failed add attachment on Data Store [" + me.getDataStoreName() + "]");
+	                        deferredSaveAttachment.reject(err);
+	                    });
+	                } else {
+	                    //NR: This will never be the case."rev" will always be available.
+	                    //      Including this just to avoid any errors.
+	                    me.getDataStore().putAttachment(docId, attachment.attachmentId, attachment.binary, attachment.type).then(function (result) {
+	                        deferredSaveAttachment.resolve();
+	                    }).catch(function (err) {
+	                        app.log.error("Failed add attachment on Data Store [" + me.getDataStoreName() + "]");
+	                        deferredSaveAttachment.reject(err);
+	                    });
+	                }	                
+	            } else {
+	                app.log.error("Attachment Data Invalid!!. Failed add attachment on Data Store [" + me.getDataStoreName() + "]");
+	                app.log.error(attachment);
+	                deferredSaveAttachment.reject();
+	            }	            
+	        } else {
+                //NR: If attachment not present, skip and proceed.
+	            deferredSaveAttachment.resolve();
+	        }
+	        return deferredSaveAttachment;
+	    };
+
+	    this.trigger("before-save", { data: data });                                // Trigger Before-Save Event	    
+
+	    //NR: Check if data has attachment included!
+	    if (data.attachment) {
+	        attachmentData = data.attachment;
+	        delete data.attachment; //NR: Clear attachment property from data, else it will be pushed to document as it is.
+	    }
+        // perform Insert Or Update
 	    if (!data.id) {	        
             this.__generateNewID().then(function (id) {
                 data._id = id.toString();   // maintain _id as String
                 data.id = parseInt(id);              // maintain _id as Integer
-                me.trigger("before-insert", { data: data });                        // Trigger Before-Insert Event
+                me.trigger("before-insert", { data: data });                        // Trigger Before-Insert Event                
                 me.getDataStore().put(data).then(function (response) {
                     if (response.ok) {
-                        me.trigger("after-insert", { data: data });                 // Trigger After-Insert Event
-                        me.trigger("after-save", { data: data });                   // Trigger After-Save Event
-                        deferredSave.resolve(data);
+                        saveAttachmentIfExists(response.id, response.rev, attachmentData).then(function () {
+                            me.trigger("after-insert", { data: data });                 // Trigger After-Insert Event
+                            me.trigger("after-save", { data: data });                   // Trigger After-Save Event
+                            deferredSave.resolve(data);
+                        }).fail(function (err) {
+                            me.trigger("after-insert", { data: data });                 // Trigger After-Insert Event
+                            me.trigger("after-save", { data: data });                   // Trigger After-Save Event
+                            deferredSave.reject(response);
+                        });                        
                     } else {
                         app.log.error("Failed response from insert on Data Store [" + me.getDataStoreName() + "]");
                         app.log.error(err);
@@ -152,9 +201,15 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
             this.trigger("before-update", { data: data });                          // Trigger Before-Update Event
             this.getDataStore().put(data).then(function (response) {
                 if (response.ok) {
-                    me.trigger("after-update", { data: data });                     // Trigger After-Update Event
-                    me.trigger("after-save", { data: data });                       // Trigger After-Save Event
-                    deferredSave.resolve(data);                    
+                    saveAttachmentIfExists(response.id, response.rev, attachmentData).then(function () {
+                        me.trigger("after-update", { data: data });                     // Trigger After-Update Event
+                        me.trigger("after-save", { data: data });                       // Trigger After-Save Event
+                        deferredSave.resolve(data);
+                    }).fail(function (err) {
+                        me.trigger("after-update", { data: data });                     // Trigger After-Update Event
+                        me.trigger("after-save", { data: data });                       // Trigger After-Save Event
+                        deferredSave.reject(data);
+                    });                                       
                 } else {
                     app.log.error("Failed response from update on Data Store [" + me.getDataStoreName() + "]");
                     app.log.error(err);
@@ -183,6 +238,22 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
             deferredFetch.resolve(null);
         }
         return deferredFetch;
+	},
+	getAttachmentDataByID: function (id, attachmentId) {
+	    var deferredFetch = $.Deferred();
+	    var me = this;
+	    if (id && id > 0 && attachmentId) {
+	        this.getDataStore().getAttachment(id.toString(), attachmentId).then(function (data) {
+	            deferredFetch.resolve(data);
+	        }).catch(function (err) {
+	            app.log.error("DataStore.getAttachmentDataByID : error occured while querying " + me.getDataStoreName() + " [Error: " + err + "]");
+	            deferredFetch.resolve(null);
+	        });
+	    } else {
+	        app.log.warn("DataStore.getAttachmentDataByID : empty id not valid returning null data");
+	        deferredFetch.resolve(null);
+	    }
+	    return deferredFetch;
 	},
 	remove: function (id) {
 	    var deferredDelete = $.Deferred(),
@@ -310,16 +381,26 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
         var me = this;
         var syncInfo = { remoteURI: remoteDB, dataStoreName: this.dataStoreName, mode: "push", startTime: castToLongDate(new Date()) };
         me.trigger("sync-started", { syncInfo: syncInfo }).then(function () {     // Trigger Sync-Started Event
+            app.log.info("Starting Push-Sync for DataStore [" + me.dataStoreName + "]");
             me.getDataStore().replicate.to(remoteDB, syncOptions).then(function (syncResult) {
                 syncInfo.result = syncResult;
                 syncInfo.endTime = castToLongDate(new Date());
-                me.trigger("sync-complete", { syncInfo: syncInfo });              // Trigger Sync-Complete Event
-                deferredSync.resolve(syncResult);
+                // Trigger Sync-Complete Event
+                me.trigger("sync-complete", { syncInfo: syncInfo }).then(function () {
+                    deferredSync.resolve(syncResult);
+                }).fail(function () {
+                    deferredSync.reject();
+                });              
+                
             }).catch(function (error) {
                 syncInfo.error = error;
                 syncInfo.endTime = castToLongDate(new Date());
-                me.trigger("sync-error", { syncInfo: syncInfo });                // Trigger Sync-Error Event
-                deferredSync.reject(error);
+                // Trigger Sync-Error Event
+                me.trigger("sync-error", { syncInfo: syncInfo }).then(function () {
+                    deferredSync.resolve(syncResult);
+                }).fail(function () {
+                    deferredSync.reject();
+                });
             });
         }).fail(function () {
             deferredSync.reject();
@@ -342,15 +423,26 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
         var me = this;
         var syncInfo = { remoteURI: remoteDB, dataStoreName: this.dataStoreName, mode: "pull", startTime: castToLongDate(new Date()) };
         me.trigger("sync-started", { syncInfo: syncInfo }).then(function () {     // Trigger Sync-Started Event
+            app.log.info("Starting Pull-Sync for DataStore [" + me.dataStoreName + "]");
             me.getDataStore().replicate.from(remoteDB, syncOptions).then(function (syncResult) {
                 syncInfo.result = syncResult;
                 syncInfo.endTime = castToLongDate(new Date());
-                me.trigger("sync-complete", { syncInfo: syncInfo });              // Trigger Sync-Complete Event
+                // Trigger Sync-Complete Event
+                me.trigger("sync-complete", { syncInfo: syncInfo }).then(function () {
+                    deferredSync.resolve(syncResult);
+                }).fail(function () {
+                    deferredSync.reject();
+                });              
                 deferredSync.resolve(syncResult);
             }).catch(function (error) {
                 syncInfo.error = error;
                 syncInfo.endTime = castToLongDate(new Date());
-                me.trigger("sync-error", { syncInfo: syncInfo });                 // Trigger Sync-Error Event
+                // Trigger Sync-Error Event
+                me.trigger("sync-error", { syncInfo: syncInfo }).then(function () {
+                    deferredSync.resolve(syncResult);
+                }).fail(function () {
+                    deferredSync.reject();
+                });                 
                 deferredSync.reject(error);
             });
         }).fail(function () {
@@ -359,11 +451,27 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
         
         return deferredSync;
     },
+
+    sync: function (remoteHost) {
+        var deferredSync = $.Deferred();
+        var me = this;
+        me.syncTo(remoteHost).then(function () {
+            me.syncFrom(remoteHost).then(function () {
+                deferredSync.resolve();
+            }).fail(function () {
+                deferredSync.reject();
+            });
+        }).fail(function () {
+            deferredSync.reject();
+        });
+        return deferredSync;
+    }
+
     /*
     * Device <=> Server Sync
     */
 
-    sync: function (remoteHost) {
+    /*sync: function (remoteHost) {
         var deferredSync = $.Deferred();
         var syncOptions = app.config.syncOptions;
         var dbAuthCookie = app.context.dbAuthCookie;
@@ -374,15 +482,26 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
         var me = this;
         var syncInfo = { remoteURI: remoteDB, dataStoreName: this.dataStoreName, mode: "push-pull", startTime: castToLongDate(new Date()) };
         me.trigger("sync-started", { syncInfo: syncInfo }).then(function () {     // Trigger Sync-Started Event
+            app.log.info("Starting Sync for DataStore [" + me.dataStoreName + "]");
             me.getDataStore().replicate.sync(remoteDB, syncOptions).then(function (syncResult) {
                 syncInfo.result = syncResult;
                 syncInfo.endTime = castToLongDate(new Date());
-                me.trigger("sync-complete", { syncInfo: syncInfo });              // Trigger Sync-Complete Event
+                // Trigger Sync-Complete Event
+                me.trigger("sync-complete", { syncInfo: syncInfo }).then(function () {
+                    deferredSync.resolve(syncResult);
+                }).fail(function () {
+                    deferredSync.reject();
+                });              
                 deferredSync.resolve(syncResult);
             }).catch(function (error) {
                 syncInfo.error = error;
                 syncInfo.endTime = castToLongDate(new Date());
-                me.trigger("sync-error", { syncInfo: syncInfo });                 // Trigger Sync-Error Event
+                // Trigger Sync-Error Event
+                me.trigger("sync-error", { syncInfo: syncInfo }).then(function () {
+                    deferredSync.resolve(syncResult);
+                }).fail(function () {
+                    deferredSync.reject();
+                });;                 
                 deferredSync.reject(error);
             });
         }).fail(function () {
@@ -390,7 +509,7 @@ app.classes.data.adapters.PouchDbAdapter = new Class({
         });
         
         return deferredSync;
-    }
+    }*/
 });
 
 DataAdapterFactory.register("pouchDB", app.classes.data.adapters.PouchDbAdapter);

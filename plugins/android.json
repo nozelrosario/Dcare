@@ -31,15 +31,19 @@
         "cordova-plugin-x-socialsharing": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },
-        "de.appplant.cordova.plugin.email-composer": {
-            "PACKAGE_NAME": "com.nozel.dcare"
-        },
         "de.appplant.cordova.plugin.local-notification": {
             "PACKAGE_NAME": "com.nozel.dcare"
         },
         "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "com.nozel.dcare"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.nozel.dcare"
         }
     },
-    "dependent_plugins": {}
+    "dependent_plugins": {
+        "de.appplant.cordova.plugin.email-composer": {
+            "PACKAGE_NAME": "com.nozel.dcare"
+        }
+    }
 }

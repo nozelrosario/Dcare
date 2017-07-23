@@ -81,7 +81,7 @@ app.classes.data.eventTriggers = new Module({
             var unifiedTriggerInvoker = [];
             for (var i = 0; i < registeredActions.length; i++) {
                 eventData.triggerName = (registeredActions[i]).name;
-                app.log.info("Executing trigger [" + eventData.triggerName + "] on [" + eventData.trigger + "]");
+                app.log.info("Executing trigger [" + eventData.triggerName + "] on [" + eventData.trigger + "] for Data-Store: [" + this.dataStoreName + "]");
                 unifiedTriggerInvoker.push((registeredActions[i]).action.call(this, eventData));
             }
             $.when.apply($, unifiedTriggerInvoker).then(function () {
@@ -91,6 +91,8 @@ app.classes.data.eventTriggers = new Module({
                 //Some/all trigger executions failed  [results in argument object]
                 deferredTrigger.reject();
             });
+        } else {
+            deferredTrigger.resolve();
         }
         return deferredTrigger;
     }

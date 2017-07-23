@@ -1,18 +1,36 @@
 ﻿<ion-pane>
-	  <ion-header-bar class="bar bar-header bar-energized">
+    <ion-header-bar class="bar bar-header bar-energized">
         <md-button class="button" ng-click="navigateBack()" aria-label="Back">
             <span class="ion-button-style ion-chevron-left"></span>
         </md-button>
-		<h1 class="title"><center><b>D-Care</b></center></h1>
+        <h1 class="title"><center><b>D-Care</b></center></h1>
         <md-button class="button" aria-label="Save" ng-click="proceed()">
             <b> Save </b>
             <span class="ion-button-style next-arrow"></span>
         </md-button>
-	  </ion-header-bar>    
+    </ion-header-bar>
     <form name="identification_info_form" style="height:99%;">
         <br />
-        <ion-scroll direction="y" style="height:100%;padding: 45px 45px 45px 15px;">
-            <div layout="column">
+        <ion-scroll direction="y" style="height:100%;padding: 65px 45px 45px 15px;">
+            <div layout="column">                
+                <div layout="row">                    
+                    <md-whiteframe class="md-whiteframe-z4" layout layout-align="center center" style="border-radius:50%">
+                        <img height="100" width="100" ng-src="{{profilePhotoURL}}" style="border-radius: 50%; margin: 5px; border: 1px solid rgba(0, 0, 0, 0.23);">
+                    </md-whiteframe>
+                    <div layout="column" layout-align="center center">
+                        <div class="padding">
+                            <button ng-click="captureFromCamera()" class="button button-small icon-left ion-camera button-positive" style="width: 150px; margin-left: 30px;">
+                                <b class="md-body-2">Camera Capture</b>
+                            </button>
+                        </div>
+                        <div class="padding">
+                            <button ng-click="selectFromGallery()" class="button button-small icon-left ion-images button-positive" style="width: 150px; margin-left: 30px;">
+                                <b class="md-body-2"> Select from Gallery </b>
+                            </button>
+                        </div>                        
+                    </div>
+                </div>
+                <label class="padding">Profile Picture</label>
                 <div layout="column">
                     <md-input-container class="md-icon-float md-icon-right large-input">
                         <label>First Name</label>
